@@ -48,6 +48,7 @@ namespace Planet
         {
             string rasterseriesname = "";
             string rasterseriesid = "";
+            bool _isPlanetRaster = false;
             if (geometry == null)
                 return Task.FromResult(false);
 
@@ -71,10 +72,16 @@ namespace Planet
                     {
                         rasterseriesname = tiledService.Name;
                         rasterseriesid = tiledService.URL.Substring(tiledService.URL.IndexOf("mosaics") + 8, 36);
+                        _isPlanetRaster = true;
                     }
                 }
             }
+            if (! _isPlanetRaster)
+            {
+                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("The selected layer is not a Planet Image layer", "Wrong Layer type", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return Task.FromResult(false);
 
+            }
             //var response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics/48fff803-4104-49bc-b913-7467b7a5ffb5/quads?api_key=1fe575980e78467f9c28b552294ea410&bbox=" + geometry.Extent.XMin.ToString() + "," + geometry.Extent.YMin.ToString() + "," + geometry.Extent.XMax.ToString() + "," + geometry.Extent.YMax.ToString()).Result;
             //SpatialReference sr = SpatialReferences.WGS84;
             //SpatialReference sr2 = SpatialReferences.WebMercator;
@@ -126,8 +133,9 @@ namespace Planet
 
 
             using (HttpClient client = new HttpClient())
-            {                
-                var response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics/" + rasterseriesid + "/quads?api_key=1fe575980e78467f9c28b552294ea410&bbox=" + ff[1] + "," + ff[0] + "," + ff[3] + "," + ff[2] + ",").Result;
+            {
+                //var response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics/" + rasterseriesid + "/quads?api_key=1fe575980e78467f9c28b552294ea410&bbox=" + ff[1] + "," + ff[0] + "," + ff[3] + "," + ff[2] + ",").Result;
+                var response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics/" + rasterseriesid + "/quads?api_key=" + Module1.Current.API_KEY.API_KEY_Value  + "&bbox=" + ff[1] + "," + ff[0] + "," + ff[3] + "," + ff[2]).Result;
                 ObservableCollection<Data.GeoTiffs2> geotiffs = new ObservableCollection<Data.GeoTiffs2>();
                 if (response.IsSuccessStatusCode)
                 {
@@ -138,6 +146,11 @@ namespace Planet
                         geotiffs.Add(new Data.GeoTiffs2() { Name = item.id, DownloadURL=item._links.download });
                     }
                     Console.WriteLine(responseContent.Result);
+                }
+                else
+                {
+                    MessageBox.Show("Extent not found");
+                    return;
                 }
                 string area = "";
                 if (geometry.GeometryType == GeometryType.Polygon )
@@ -182,8 +195,11 @@ namespace Planet
                     {
                         Title = "Download Successful",
                         Message = "Successfully dowloaded the requesed quads",
-                        ImageUrl = @"pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/Planet_logo-dark.png"
+                        ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
+                        
                     });
+
+
 
                 }
 

@@ -136,14 +136,15 @@
     <Compile Include="FolderSelector.xaml.cs">
       <DependentUpon>FolderSelector.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LoginDetails.xaml.cs">
-      <DependentUpon>LoginDetails.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="LoginDetailsViewModel.cs" />
     <Compile Include="LoginRefresh.cs" />
     <Compile Include="Moasic.cs" />
     <Compile Include="Module1.cs" />
     <Compile Include="OpenFilesDialog.cs" />
+    <Compile Include="PanetConneionWindowViewModel.cs" />
+    <Compile Include="PlanetConectionWindow.xaml.cs">
+      <DependentUpon>PlanetConectionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PlanetConnection.cs" />
     <Compile Include="PlanetGalleryInline.cs" />
     <Compile Include="PlanetLogin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -172,7 +173,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Planet_logo-dark.png" />
+    <AddInContent Include="Images\Planet_logo-dark.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AddInContent>
   </ItemGroup>
   <ItemGroup>
     <AddInContent Include="Images\GenericButtonBlue16.png" />
@@ -207,7 +210,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="LoginDetails.xaml">
+    <Page Include="PlanetConectionWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

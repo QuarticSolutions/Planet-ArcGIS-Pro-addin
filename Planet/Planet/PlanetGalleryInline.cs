@@ -19,37 +19,65 @@ using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
 using System.Net.Http;
 using Newtonsoft.Json;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Linq.Expressions;
 
 namespace Planet
 {
     internal class PlanetGalleryInline : Gallery 
     {
         private bool _isInitialized;
+        private HttpClient _client;
 
+        
         public PlanetGalleryInline()
         {
+            APIKeyChangedEvent.Subscribe((args) =>
+            {
+                this.Clear();
+                //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show($"Name has changed:\r\nOld: {args.OldName}\r\nNew: {args.NewName}", "NameChangedEvent");
+                _isInitialized = false;
+                Initialize();
+            });
             Initialize();
         }
+
 
         private async void Initialize()
         {
             if (_isInitialized)
                 return;
-            _isInitialized = true;
-            var lstWebmapItems = await GetMosicsAsync();
-            foreach (var dataItem in lstWebmapItems)
-                Add(dataItem);
-
             
-            //Add 6 items to the gallery
-            //for (int i = 0; i < 6; i++)
-            //{
-            //    string name = string.Format("Item {0}", i);
-            //    Add(new GalleryItem(name, this.LargeImage != null ? ((ImageSource)this.LargeImage).Clone() : null, name));
-            //}
+            
+            if (Module1.Current.API_KEY.API_KEY_Value == null || Module1.Current.API_KEY.API_KEY_Value == "" )
+            {
+                FrameworkApplication.State.Deactivate("planet_state_connection");
+                return;
+            }
+            else
+            {
+                var lstWebmapItems = await GetMosicsAsync();
+                if (lstWebmapItems.Count>0)
+                {
+                    foreach (var dataItem in lstWebmapItems)
+                        Add(dataItem);
+                    _isInitialized = true;
+                    FrameworkApplication.State.Activate("planet_state_connection");
+                }
 
-
+            }
         }
+        //private async Task<bool>ValidKey()
+        //{
+        //    bool validKey = false;
+        //    HttpResponseMessage response = await _client.GetAsync("https://api.planet.com/basemaps/v1/mosaics?api_key=" + Module1.Current.API_KEY.API_KEY_Value);
+        //    if (response.IsSuccessStatusCode  )
+        //    {
+        //        validKey = true;
+        //    }
+        //    return validKey;
+        //}
         private async Task<List<Mosaic>>GetMosicsAsync()
         {
             var lstMosaics = new List<Mosaic>();
@@ -59,31 +87,47 @@ namespace Planet
                 {
                     using (HttpClient client = new HttpClient())
                     {
-                        HttpResponseMessage response = await client.GetAsync("https://api.planet.com/basemaps/v1/mosaics?api_key=1fe575980e78467f9c28b552294ea410");
-                        response.EnsureSuccessStatusCode();
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        Mosaics splashInfo = JsonConvert.DeserializeObject<Mosaics>(responseBody);
-                        string x = "0";
-                        string y = "0";
-                        string z = "0";
-                        foreach (Mosaic item in splashInfo.mosaics)
+                        try
                         {
-                            //item.Thumbnail = string.Format(item._links.tiles,"0","0","0");
-                            item.Thumbnail = item._links.tiles.Replace("{x}", x).Replace("{y}", y).Replace("{z}", z);
-                            lstMosaics.Add(item);
+                            //HttpResponseMessage response = await client.GetAsync("https://api.planet.com/basemaps/v1/mosaics?api_key=1fe575980e78467f9c28b552294ea410");
+                            HttpResponseMessage response = await client.GetAsync("https://api.planet.com/basemaps/v1/mosaics?api_key=" + Module1.Current.API_KEY.API_KEY_Value);
+                            response.EnsureSuccessStatusCode();
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            Mosaics splashInfo = JsonConvert.DeserializeObject<Mosaics>(responseBody);
+                            string x = "0";
+                            string y = "0";
+                            string z = "0";
+                            foreach (Mosaic item in splashInfo.mosaics)
+                            {
+                                //item.Thumbnail = string.Format(item._links.tiles,"0","0","0");
+                                item.Thumbnail = item._links.tiles.Replace("{x}", x).Replace("{y}", y).Replace("{z}", z);
+                                lstMosaics.Add(item);
+                            }
                         }
+                        catch  (HttpRequestException hex)
+                        {
+                            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was a problem logging in" + Environment.NewLine + hex.Message + Environment.NewLine + "Please check your key and try again", "Error logging in",MessageBoxButton.OK,MessageBoxImage.Exclamation);
+
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+
                     }
 
                 });
             }
             catch (HttpRequestException hex)
             {
+                _isInitialized = false;
                 Console.WriteLine("\nException Caught!");
                 Console.WriteLine("Message :{0} ", hex.Message);
             }
             catch (Exception e)
             {
-
+                _isInitialized = false;
                 Console.WriteLine("\nException Caught!");
                 Console.WriteLine("Message :{0} ", e.Message);
             }
@@ -94,17 +138,7 @@ namespace Planet
 
         protected override void OnClick(object item)
         {
-            OpenWebMapAsync(item);
-            //TODO - insert your code to manipulate the clicked gallery item here
-            //Mosaic mosaic = (Mosaic)item;
-
-            //var project = Project.Current;
-            //var serverConnection = new CIMProjectServerConnection { URL = "https://api.planet.com/basemaps/v1/mosaics/48fff803-4104-49bc-b913-7467b7a5ffb5/wmts?REQUEST=GetCapabilities&api_key=1fe575980e78467f9c28b552294ea410" };
-            //var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
-            //BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, MapView.Active.Map, 0, connection.LayerName + "_asd");
-            //System.Diagnostics.Debug.WriteLine("Remove this line after adding your custom behavior.");
-            //base.OnClick(item);
-            
+            OpenWebMapAsync(item);          
         }
 
         private async void OpenWebMapAsync(object item)
@@ -112,7 +146,7 @@ namespace Planet
             if (item is Mosaic mosaic)
             {
                 Project project = Project.Current;
-                var serverConnection = new CIMProjectServerConnection { URL = mosaic._links._self.Substring(0, mosaic._links._self.IndexOf("?")) + "/wmts?REQUEST=GetCapabilities&api_key=1fe575980e78467f9c28b552294ea410" };
+                var serverConnection = new CIMProjectServerConnection { URL = mosaic._links._self.Substring(0, mosaic._links._self.IndexOf("?")) + "/wmts?REQUEST=GetCapabilities&api_key=" + Module1.Current.API_KEY.API_KEY_Value };// "1fe575980e78467f9c28b552294ea410"
                 var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
                 await QueuedTask.Run(() =>
                 {
@@ -121,5 +155,6 @@ namespace Planet
 
             }
         }
+
     }
 }

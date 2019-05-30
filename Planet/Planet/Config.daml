@@ -10,8 +10,13 @@
     <!-- Note subject can be one or more of these topics:
                     Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
   </AddInInfo>
+  <conditions>
+    <insertCondition id="planet_condition_isconnected"   caption="Planet Connections">
+      <state id="planet_state_connection"  />
+    </insertCondition>
+  </conditions>
   <modules>
-    <insertModule id="Planet_Module" className="Module1" autoLoad="false" caption="Planet Module">
+    <insertModule id="Planet_Module" className="Module1" autoLoad="true" caption="Planet Module">
       <!-- uncomment to have the control hosted on a separate tab-->
       <tabs>
         <tab keytip="z1" id="Planet_Tab1" caption="Planet Imagery">
@@ -34,9 +39,9 @@
       <controls>
         <!-- add your controls here -->
 
-        <button id="Planet_Pane1_OpenButton" caption="Open Pane 1" className="Pane1_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen32.png">
+        <!--<button id="Planet_Pane1_OpenButton" caption="Open Pane 1" className="Pane1_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen32.png">
           <tooltip heading="Open Pane">Open Pane<disabledText /></tooltip>
-        </button>
+        </button>-->
         <button keytip="asdf" id="Planet_LoginDetails_OpenButton" caption="Open LoginDetails" className="LoginDetails_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen32.png">
           <tooltip heading="Open Pane">Open Pane<disabledText /></tooltip>
         </button>
@@ -46,10 +51,16 @@
         </tool>
       </controls>
       <galleries>
-        <gallery id="Planet_PlanetGalleryInline" showGroup="true" itemWidth="900" caption="Planet Rasters Mosaics" className="PlanetGalleryInline" itemsInRow="4" dataTemplateFile="pack://application:,,,/Planet;component//PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
-          <tooltip heading="Planet Rasters">Tooltip text<disabledText /></tooltip>
+        <gallery id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Rasters Mosaics" className="PlanetGalleryInline" itemsInRow="4" dataTemplateFile="pack://application:,,,/Planet;component//PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
+          <tooltip heading="Planet Rasters">Planet Rasters
+            <disabledText>You must Enter a valid api key first</disabledText>
+          </tooltip>
         </gallery>
-        <gallery id="Planet_PlanetLogin" caption="PlanetLogin" className="PlanetLogin" itemsInRow="3" dataTemplateFile="pack://application:,,,/Planet;component//PlanetLoginTemplate.xaml" templateID="PlanetLoginItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonOrange32.png">
+        <gallery id="Planet_PlanetLogin"  caption="PlanetLogin" className="PlanetLogin"  
+                 itemsInRow="3" 
+                 dataTemplateFile="pack://application:,,,/Planet;component//PlanetLoginTemplate.xaml" 
+                 templateID="PlanetLoginItemTemplate" resizable="true" 
+                 largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonOrange32.png" >
           <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
         </gallery>
       </galleries>
@@ -57,9 +68,9 @@
         <pane id="Planet_Pane1" caption="Pane 1" className="Pane1ViewModel" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" defaultTab="esri_mapping_homeTab" defaultTool="esri_mapping_navigateTool">
           <content className="Pane1View" />
         </pane>
-        <pane id="Planet_LoginDetails" caption="LoginDetails" className="LoginDetailsViewModel" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" defaultTab="esri_mapping_homeTab" defaultTool="esri_mapping_navigateTool">
+        <!--<pane id="Planet_LoginDetails" caption="LoginDetails" className="LoginDetailsViewModel" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" defaultTab="esri_mapping_homeTab" defaultTool="esri_mapping_navigateTool">
           <content className="LoginDetailsView" />
-        </pane>
+        </pane>-->
       </panes>
     </insertModule>
   </modules>

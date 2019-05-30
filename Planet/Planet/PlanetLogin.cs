@@ -17,13 +17,17 @@ using ArcGIS.Desktop.Framework.Contracts;
 using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace Planet
 {
-    internal class PlanetLogin : Gallery
-    {
-        private bool _isInitialized;
+    internal class PlanetLogin : Gallery, INotifyPropertyChanged
 
+    {
+        public bool _canExecuteMyCommand = true;
+        private bool _isInitialized;
+        public ICommand LogIn { get; set; }
         protected override void OnDropDownOpened()
         {
             Initialize();
@@ -31,25 +35,41 @@ namespace Planet
 
         private void Initialize()
         {
+            //PlanetConectionWindow planetConectionWindow = new PlanetConectionWindow();
+            //planetConectionWindow.ShowDialog();
+
+
+
+            //_canExecuteMyCommand = true;
             if (_isInitialized)
                 return;
+            //LogIn = new RelayCommand(new Action<object>(getkey), () => _canExecuteMyCommand);
+            PlanetConnection planetConnection = new PlanetConnection();
+            if (Module1.Current.API_KEY != null)
+            {
+                planetConnection.API_Key = Module1.Current.API_KEY;
+            }
+            else
+            {
 
-            Add(new GalleryItem("Set api key",null));
-            //Add 6 items to the gallery
-            //for (int i = 0; i < 6; i++)
-            //{
-            //    string name = string.Format("Item {0}", i);
-            //    Add(new GalleryItem(name, this.LargeImage != null ? ((ImageSource)this.LargeImage).Clone() : null, name));
-            //}
+            }
+            Add(planetConnection);
+
             _isInitialized = true;
 
         }
 
-        protected override void OnClick(GalleryItem item)
+        private void getkey(object obj)
+        {
+            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Connecting");
+        }
+
+        protected override void OnClick(object item)
         {
             //TODO - insert your code to manipulate the clicked gallery item here
             System.Diagnostics.Debug.WriteLine("Remove this line after adding your custom behavior.");
-            base.OnClick(item);
+            //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Gallery Clicked");
+            //base.OnClick(item);
         }
     }
 }

@@ -25,5 +25,10 @@ namespace Planet
         {
             InitializeComponent();
         }
+
+        private void BtnConnect_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

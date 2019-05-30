@@ -5,7 +5,7 @@
     <ResourceDictionary.MergedDictionaries>
                 <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml"/>
     </ResourceDictionary.MergedDictionaries>
-    <DataTemplate x:Key="PlanetGalleryInlineItemTemplate">
+    <DataTemplate x:Key="PlanetGalleryInlineItemTemplate" >
         <Grid Margin="0,0,0,0" Width="100" Height="86">
             <Grid.RowDefinitions>
                 <RowDefinition Height="56"/>

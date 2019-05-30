@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ArcGIS.Core.CIM;
 using ArcGIS.Core.Data;
 using ArcGIS.Core.Geometry;
@@ -17,10 +19,12 @@ using ArcGIS.Desktop.Mapping;
 
 namespace Planet
 {
-    internal class LoginDetailsViewModel : ViewStatePane
+    internal class LoginDetailsViewModel : ViewStatePane, INotifyPropertyChanged
     {
-        private const string _viewPaneID = "Planet_LoginDetails";
 
+        private const string _viewPaneID = "Planet_LoginDetails";
+        PlanetConnection planetco = new PlanetConnection();
+        
         /// <summary>
         /// Consume the passed in CIMView. Call the base constructor to wire up the CIMView.
         /// </summary>
@@ -32,11 +36,15 @@ namespace Planet
         /// </summary>
         internal static LoginDetailsViewModel Create()
         {
+            
             var view = new CIMGenericView();
             view.ViewType = _viewPaneID;
             return FrameworkApplication.Panes.Create(_viewPaneID, new object[] { view }) as LoginDetailsViewModel;
         }
-
+        private void getkey(object obj)
+        {
+            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Connecting");
+        }
         #region Pane Overrides
 
         /// <summary>
@@ -57,6 +65,7 @@ namespace Planet
         protected async override Task InitializeAsync()
         {
             await base.InitializeAsync();
+
         }
 
         /// <summary>

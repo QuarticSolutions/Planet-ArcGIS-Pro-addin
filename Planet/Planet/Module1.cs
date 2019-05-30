@@ -16,12 +16,34 @@ using ArcGIS.Desktop.Framework.Contracts;
 using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
+using ArcGIS.Desktop.Core.Events;
+using System.ComponentModel;
+using System.Net.Http;
+using ArcGIS.Core.Events;
 
 namespace Planet
 {
-    internal class Module1 : Module
+    internal class Module1 : Module, INotifyPropertyChanged
     {
         private static Module1 _this = null;
+        public API_KEY API_KEY = new API_KEY();
+
+        private Module1()
+        {
+            FrameworkApplication.State.Deactivate("planet_state_connection");
+            ProjectOpenedEvent.Subscribe(OnProjectOpen);
+            ProjectClosedEvent.Subscribe(OnProjectClose);
+        }
+
+        private void OnProjectClose(ProjectEventArgs obj)
+        {
+            hasSettings = false;
+        }
+
+        private void OnProjectOpen(ProjectEventArgs obj)
+        {
+            
+        }
 
         /// <summary>
         /// Retrieve the singleton instance to this module here
@@ -33,6 +55,7 @@ namespace Planet
                 return _this ?? (_this = (Module1)FrameworkApplication.FindModule("Planet_Module"));
             }
         }
+        private Dictionary<string, string> _moduleSettings = new Dictionary<string, string>();
 
         #region Overrides
         /// <summary>
@@ -45,8 +68,160 @@ namespace Planet
             //return false to ~cancel~ Application close
             return true;
         }
+        private bool hasSettings = false;
+        protected override Task OnReadSettingsAsync(ModuleSettingsReader settings)
+        {
 
+            // set the flag
+            hasSettings = true;
+            // clear existing setting values
+            _moduleSettings.Clear();
+
+            if (settings == null) return Task.FromResult(0);
+
+            // Settings defined in the Property sheet’s viewmodel.	
+            string[] keys = new string[] { "planet_api_key" };
+
+            foreach (string key in keys)
+            {
+
+                object value = settings.Get(key);
+                if (value != null)
+                {
+                    API_KEY.API_KEY_Value = value.ToString();
+                    if (_moduleSettings.ContainsKey(key))
+                    {
+                        _moduleSettings[key] = value.ToString();
+
+                    }
+                    else
+                        _moduleSettings.Add(key, value.ToString());
+                    using (HttpClient client = new HttpClient())
+                    {
+                        HttpResponseMessage response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics?api_key=" + Module1.Current.API_KEY.API_KEY_Value).Result;
+                        if (response.IsSuccessStatusCode)
+                        {
+                            FrameworkApplication.State.Activate("planet_state_connection");
+                            //IPlugInWrapper wrapper = FrameworkApplication.GetPlugInWrapper("Planet_PlanetGalleryInline");
+                            //FrameworkApplication.SetCurrentToolAsync("Planet_PlanetGalleryInline");
+                        }
+                    }
+
+                }
+            }
+            return Task.FromResult(0);
+        }
+        protected override Task OnWriteSettingsAsync(ModuleSettingsWriter settings)
+        {
+            if (API_KEY.API_KEY_Value != "")
+            {
+                settings.Add("planet_api_key", API_KEY.API_KEY_Value);
+            }
+            //foreach (string key in _moduleSettings.Keys)
+            //{
+            //    settings.Add(key, _moduleSettings[key]);
+            //}
+            return Task.FromResult(0);
+
+        }
         #endregion Overrides
 
     }
+
+    public class API_KEY : INotifyPropertyChanged
+    {
+
+        private string _apikey;
+        public string API_KEY_Value
+        {
+            get
+            {
+                return _apikey;
+            }
+            set
+            {
+                _apikey = value;
+                OnPropertyChanged("API_KEY_Value");
+            }
+        }
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion INotifyPropertyChanged
+    }
+    public class APIKeyChangedEventArgs : EventBase
+    {
+
+        /// <summary>
+        /// Gets the old name
+        /// </summary>
+        public string OldName { get; private set; }
+
+        /// <summary>
+        /// Gets the new name
+        /// </summary>
+        public string NewName { get; private set; }
+
+        /// <summary>
+        /// Constructor. Create a name changed event passing in the new and old names
+        /// </summary>
+        /// <param name="oldName">The old name</param>
+        /// <param name="newName">The new name</param>
+        public APIKeyChangedEventArgs(string oldName, string newName)
+        {
+            OldName = oldName;
+            NewName = newName;
+        }
+    }
+
+    /// <summary>
+    /// A custom CompositePresentationEvent to be published when we change the name
+    /// of Pro
+    /// </summary>
+    public class APIKeyChangedEvent : CompositePresentationEvent<APIKeyChangedEventArgs>
+    {
+
+        /// <summary>
+        /// Allow subscribers to register for our custom event
+        /// </summary>
+        /// <param name="action">The callback which will be used to notify the subscriber</param>
+        /// <param name="keepSubscriberReferenceAlive">Set to true to retain a strong reference</param>
+        /// <returns><see cref="ArcGIS.Core.Events.SubscriptionToken"/></returns>
+        public static SubscriptionToken Subscribe(Action<APIKeyChangedEventArgs> action, bool keepSubscriberReferenceAlive = false)
+        {
+            return FrameworkApplication.EventAggregator.GetEvent<APIKeyChangedEvent>()
+                .Register(action, keepSubscriberReferenceAlive);
+        }
+
+        /// <summary>
+        /// Allow subscribers to unregister from our custom event
+        /// </summary>
+        /// <param name="subscriber">The action that will be unsubscribed</param>
+        public static void Unsubscribe(Action<APIKeyChangedEventArgs> subscriber)
+        {
+            FrameworkApplication.EventAggregator.GetEvent<APIKeyChangedEvent>().Unregister(subscriber);
+        }
+        /// <summary>
+        /// Allow subscribers to unregister from our custom event
+        /// </summary>
+        /// <param name="token">The token that will be used to find the subscriber to unsubscribe</param>
+        public static void Unsubscribe(SubscriptionToken token)
+        {
+            FrameworkApplication.EventAggregator.GetEvent<APIKeyChangedEvent>().Unregister(token);
+        }
+
+        /// <summary>
+        /// Event owner calls publish to raise the event and notify subscribers
+        /// </summary>
+        /// <param name="payload">The associated event information</param>
+        internal static void Publish(APIKeyChangedEventArgs payload)
+        {
+            FrameworkApplication.EventAggregator.GetEvent<APIKeyChangedEvent>().Broadcast(payload);
+        }
+    }
+
 }

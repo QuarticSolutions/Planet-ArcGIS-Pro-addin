@@ -36,7 +36,7 @@
 
         </StackPanel>
         <StackPanel Grid.Row="1"  Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button x:Name="btnConnect" Content="Connect" HorizontalAlignment="Left" Margin="6,6,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75"/>
+            <Button x:Name="btnConnect" Content="Connect" HorizontalAlignment="Left" Margin="6,6,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Command="{Binding LogIn}"/>
             <Button x:Name="btnClose" Content="Close" HorizontalAlignment="Left" Margin="6,6,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75"/>
         </StackPanel>
         <TextBlock Grid.Row="3"  Text="api_key=1fe575980e78467f9c28b552294ea410" HorizontalAlignment="Stretch"  Style="{DynamicResource Esri_TextBlockH3}"
