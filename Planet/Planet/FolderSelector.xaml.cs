@@ -54,7 +54,7 @@ namespace Planet
 					btnNewFolder.Visibility = Visibility.Visible;
 			}
 		}
-        ObservableCollection<Data.GeoTiffs2> geotiffs;
+        //ObservableCollection<Data.GeoTiffs2> geotiffs;
 
 		#endregion
 

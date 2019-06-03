@@ -12,6 +12,4 @@
             </WrapPanel>
             <TextBox Name="txtEditor" />
         </DockPanel>
-
-
 </Window>

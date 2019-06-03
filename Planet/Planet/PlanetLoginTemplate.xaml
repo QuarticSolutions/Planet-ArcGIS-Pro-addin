@@ -19,7 +19,9 @@
                         Command="{Binding OpenHyperlinkCommand}">https://www.planet.com/account/#/
                     </Hyperlink>
                     <LineBreak/>
-                    Once entered click the connect button to view your Raster Map Services
+                    Once you login to this site you should see your api_key.
+                <LineBreak/>
+                    Copy and paste it into the box below and click the connect button to view your Raster Map Services
             </TextBlock>
             <StackPanel Grid.Row="1"  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <!--<TextBlock Text="User Name:" HorizontalAlignment="Stretch"  Style="{DynamicResource Esri_TextBlockH3}"

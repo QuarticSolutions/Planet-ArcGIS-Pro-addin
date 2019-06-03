@@ -9,11 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using ArcGIS.Core.CIM;
 using ArcGIS.Core.Data;
 using ArcGIS.Core.Geometry;
 using ArcGIS.Desktop.Catalog;
 using ArcGIS.Desktop.Core;
+using ArcGIS.Desktop.Core.Geoprocessing;
 using ArcGIS.Desktop.Editing;
 using ArcGIS.Desktop.Extensions;
 using ArcGIS.Desktop.Framework;
@@ -44,7 +46,7 @@ namespace Planet
         /// </summary>
         /// <param name="geometry">The geometry created by the sketch.</param>
         /// <returns>A Task returning a Boolean indicating if the sketch complete event was successfully handled.</returns>
-        protected  override Task<bool> OnSketchCompleteAsync(Geometry geometry)
+        protected  override  Task<bool> OnSketchCompleteAsync(Geometry geometry)
         {
             string rasterseriesname = "";
             string rasterseriesid = "";
@@ -112,7 +114,7 @@ namespace Planet
             }
             string[] ff = quadparm.Trim(',').Split(',');
             getQuadsAsync(geometry, ff, rasterseriesname, rasterseriesid);
-
+             
             return Task.FromResult(true);
 
 
@@ -141,6 +143,11 @@ namespace Planet
                 {
                     Task<string>  responseContent =  response.Content.ReadAsStringAsync();
                     Quads quads = JsonConvert.DeserializeObject<Quads>(responseContent.Result);
+                    if (quads.items.Count() > 50)
+                    {
+                        MessageBox.Show("More than 50 Quads delected, please download a smaller area.");
+                        return;
+                    } 
                     foreach (Item item in quads.items)
                     {
                         geotiffs.Add(new Data.GeoTiffs2() { Name = item.id, DownloadURL=item._links.download });
@@ -162,12 +169,12 @@ namespace Planet
                         double sqMeters = AreaUnit.SquareFeet.ConvertToSquareMeters(polygon.Area);
                         area = AreaUnit.SquareKilometers.ConvertFromSquareMeters(sqMeters).ToString();
                     }
-                    else if (geometry.SpatialReference.Unit.Wkt == "meters")
+                    else if (geometry.SpatialReference.Unit.Name == "Meter")
                     {
                         area = AreaUnit.SquareKilometers.ConvertFromSquareMeters(polygon.Area).ToString();
                     }
 
-                    area = "Approx Sqkm: " + area. Substring(0,area.IndexOf("."));
+                    area = " Approx Sqkm: " + area. Substring(0,area.IndexOf("."));
                     
                 }
                 FolderSelector folderSelector = new FolderSelector();
@@ -187,10 +194,109 @@ namespace Planet
                 if ((bool)folderSelector.DialogResult)
                 {
                     string savelocation = folderSelector.SelectedPath;
+                    List<string> tiffs = new List<string>() ;
+                    int i = 0;
+                    int total = geotiffs.Count();
+                    
                     foreach (Data.GeoTiffs2 quad in geotiffs)
                     {
                         await LoadImage(quad.DownloadURL, savelocation + "\\" + rasterseriesname + quad.Name + ".tif");
+                        tiffs.Add(savelocation + "\\" + rasterseriesname + quad.Name + ".tif");
+                        if (total%++i == 0)
+                        {
+                            FrameworkApplication.AddNotification(new Notification()
+                            {
+                                Title = "Downloading........",
+                                Message = String.Format("{0} of {1} files successfully dowloaded",i,total) ,
+                                ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
+
+                            });
+                        }
+
+
                     }
+                    FrameworkApplication.AddNotification(new Notification()
+                    {
+                        Title = "Downloading Finished",
+                        Message = String.Format("Successfully dowloaded {0} of {1} files ", i, total) + Environment.NewLine + "Sting the Mosic process",
+                        ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
+
+                    });
+                    string inpath = Project.Current.DefaultGeodatabasePath;
+                    //inpath = @"C:\Users\Andrew\Documents\ArcGIS\Projects\MyProject22\MyProject22.gdb";
+                    string in_mosaicdataset_name = rasterseriesname;
+                    var sr = await QueuedTask.Run(() => {
+                        return SpatialReferenceBuilder.CreateSpatialReference(3857);
+                    });
+
+                    var parameters = Geoprocessing.MakeValueArray(inpath, in_mosaicdataset_name, sr, "3", "8_BIT_UNSIGNED", "NATURAL_COLOR_RGB");
+                    string tool_path = "management.CreateMosaicDataset";
+                    System.Threading.CancellationTokenSource _cts = new System.Threading.CancellationTokenSource();
+                    IGPResult result = await Geoprocessing.ExecuteToolAsync(tool_path, parameters, null, _cts.Token, (event_name, o) =>  // implement delegate and handle events, o is message object.
+                    {
+                        switch (event_name)
+                        {
+                            case "OnValidate": // stop execute if any warnings
+                                if ((o as IGPMessage[]).Any(it => it.Type == GPMessageType.Warning || it.Type == GPMessageType.Error))
+                                {
+                                    System.Windows.MessageBox.Show(o.ToString());
+                                    _cts.Cancel();
+                                }
+                                break;
+                            //case "OnProgressMessage":
+                            //    string msg = string.Format("{0}: {1}", new object[] { event_name, (string)o });
+                            //    //System.Windows.MessageBox.Show(msg);
+                            //    //_cts.Cancel();
+                            //    break;
+                            //case "OnProgressPos":
+                            //    string msg2 = string.Format("{0}: {1} %", new object[] { event_name, (int)o });
+                            //    System.Windows.MessageBox.Show(msg2);
+                            //    //_cts.Cancel();
+                            //    break;
+                        }
+                    });
+                    result = null;
+                    parameters = null;
+                    _cts = null;
+                    System.Threading.CancellationTokenSource _cts2 = new System.Threading.CancellationTokenSource();
+                    tool_path = "management.AddRastersToMosaicDataset";
+                    parameters = Geoprocessing.MakeValueArray(inpath + "\\" + in_mosaicdataset_name, "Raster Dataset", String.Join(";",tiffs), "UPDATE_CELL_SIZES", "UPDATE_BOUNDARY","UPDATE_OVERVIEWS","-1");
+                    //parameters = Geoprocessing.MakeValueArray(inpath + "\\" + in_mosaicdataset_name, "Raster Dataset", @"D:\Planet\global_monthly_2019_02_mosaic982-1377.tif;D:\Planet\global_monthly_2019_02_mosaic983-1377.tif");
+                    try
+                    {
+                        
+                        IGPResult gPResult = await Geoprocessing.ExecuteToolAsync(tool_path, parameters, null, _cts2.Token, (event_name, o) =>  // implement delegate and handle events, o is message object.
+                        {
+                            switch (event_name)
+                            {
+                                case "OnValidate": // stop execute if any warnings or errors
+                                    if ((o as IGPMessage[]).Any(it => it.Type == GPMessageType.Warning || it.Type == GPMessageType.Error))
+                                    {
+                                        System.Windows.MessageBox.Show("Failed to add .tif files" + Environment.NewLine + o.ToString() + Environment.NewLine+ "The files have been downloaded but not added to The raster Mosic","Failed to add .tif files");
+                                        _cts2.Cancel();
+                                    }
+                                    break;
+                                case "OnProgressMessage":
+                                    //string msg = string.Format("{0}: {1}", new object[] { event_name, (string)o });
+                                    //System.Windows.MessageBox.Show(msg);
+                                    //_cts.Cancel();
+                                    break;
+                                case "OnProgressPos":
+                                    //string msg2 = string.Format("{0}: {1} %", new object[] { event_name, (int)o });
+                                    //System.Windows.MessageBox.Show(msg2);
+                                    //_cts.Cancel();
+                                    break;
+                            }
+                        });
+                        Geoprocessing.ShowMessageBox(gPResult.Messages, "GP Messages", gPResult.IsFailed ? GPMessageBoxStyle.Error : GPMessageBoxStyle.Default);
+                        //Geoprocessing.OpenToolDialog(tool_path, parameters);
+                    }
+                    catch (Exception  ex)
+                    {
+                        System.Windows.MessageBox.Show(ex.Message.ToString());
+                        _cts2.Cancel();
+                    }
+
                     FrameworkApplication.AddNotification(new Notification()
                     {
                         Title = "Download Successful",
@@ -198,11 +304,7 @@ namespace Planet
                         ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
                         
                     });
-
-
-
                 }
-
             }
         }
 

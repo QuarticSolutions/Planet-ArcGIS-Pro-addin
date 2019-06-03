@@ -114,7 +114,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <AddInContent Include="Config.daml" />
+    <AddInContent Include="Config.daml">
+      <SubType>Designer</SubType>
+    </AddInContent>
     <AddInContent Include="Images\AddInDesktop16.png" />
     <AddInContent Include="Images\AddInDesktop32.png" />
     <AddInContent Include="DarkImages\AddInDesktop16.png" />
@@ -127,23 +129,13 @@
     <Compile Include="Data\GeoTiffs2.cs" />
     <Compile Include="Data\ItemsManager.cs" />
     <Compile Include="Data\QuadCount.cs" />
-    <Compile Include="Dowloadvi.cs" />
-    <Compile Include="Download.xaml.cs">
-      <DependentUpon>Download.xaml</DependentUpon>
-    </Compile>
     <Compile Include="DownloadData.cs" />
     <Compile Include="DownloadViewModel.cs" />
     <Compile Include="FolderSelector.xaml.cs">
       <DependentUpon>FolderSelector.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LoginRefresh.cs" />
     <Compile Include="Moasic.cs" />
     <Compile Include="Module1.cs" />
-    <Compile Include="OpenFilesDialog.cs" />
-    <Compile Include="PanetConneionWindowViewModel.cs" />
-    <Compile Include="PlanetConectionWindow.xaml.cs">
-      <DependentUpon>PlanetConectionWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="PlanetConnection.cs" />
     <Compile Include="PlanetGalleryInline.cs" />
     <Compile Include="PlanetLogin.cs" />
@@ -202,17 +194,9 @@
     <AddInContent Include="DarkImages\GenericButtonGreen32.png" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Download.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="FolderSelector.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="PlanetConectionWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Style.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -254,6 +238,14 @@
   <ItemGroup>
     <Resource Include="DarkImages\FolderClosed.png" />
     <Resource Include="DarkImages\FolderOpened.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\Clouddata.png" />
+    <AddInContent Include="Images\Download.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="DarkImages\Cloud.png" />
+    <AddInContent Include="DarkImages\Download.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--

@@ -28,7 +28,7 @@ namespace Planet
     internal class PlanetGalleryInline : Gallery 
     {
         private bool _isInitialized;
-        private HttpClient _client;
+        //private HttpClient _client;
 
         
         public PlanetGalleryInline()
@@ -107,7 +107,7 @@ namespace Planet
                         catch  (HttpRequestException hex)
                         {
                             ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was a problem logging in" + Environment.NewLine + hex.Message + Environment.NewLine + "Please check your key and try again", "Error logging in",MessageBoxButton.OK,MessageBoxImage.Exclamation);
-
+                            FrameworkApplication.State.Deactivate("planet_state_connection");
                         }
                         catch (Exception)
                         {

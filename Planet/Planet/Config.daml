@@ -42,12 +42,14 @@
         <!--<button id="Planet_Pane1_OpenButton" caption="Open Pane 1" className="Pane1_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen32.png">
           <tooltip heading="Open Pane">Open Pane<disabledText /></tooltip>
         </button>-->
-        <button keytip="asdf" id="Planet_LoginDetails_OpenButton" caption="Open LoginDetails" className="LoginDetails_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen32.png">
+        <button keytip="asdf" id="Planet_LoginDetails_OpenButton" caption="Open LoginDetails" className="LoginDetails_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="Images\Clouddata.png">
           <tooltip heading="Open Pane">Open Pane<disabledText /></tooltip>
         </button>
-        <tool id="Planet_DownloadData" categoryRefID="esri_editing_construction_point" caption="DownloadData" className="DownloadData" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed32.png">
+        <tool id="Planet_DownloadData" categoryRefID="esri_editing_construction_point" caption="DownloadData" className="DownloadData" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" largeImage="Images\Download.png" condition="planet_condition_isconnected">
           <!--note: use esri_editing_construction_polyline,  esri_editing_construction_polygon for categoryRefID as needed-->
-          <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
+          <tooltip heading="Download">Download basemap quads
+            <disabledText>You must connect with a valid API_Key first</disabledText>
+        </tooltip>
         </tool>
       </controls>
       <galleries>
@@ -57,10 +59,10 @@
           </tooltip>
         </gallery>
         <gallery id="Planet_PlanetLogin"  caption="PlanetLogin" className="PlanetLogin"  
-                 itemsInRow="3" 
+                 itemsInRow="1" 
                  dataTemplateFile="pack://application:,,,/Planet;component//PlanetLoginTemplate.xaml" 
                  templateID="PlanetLoginItemTemplate" resizable="true" 
-                 largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonOrange32.png" >
+                 largeImage="Images\Clouddata.png" >
           <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
         </gallery>
       </galleries>

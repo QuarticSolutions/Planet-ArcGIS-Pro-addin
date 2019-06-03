@@ -26,8 +26,10 @@ namespace Planet.Data
         {
             if (_items is null)
             {
-                _items = new ObservableCollection<string>();
-                _items.Add("Drew Test");
+                _items = new ObservableCollection<string>
+                {
+                    "Drew Test"
+                };
             }
             _items.Add(newtiff);
             OnPropertyChanged("GeoTIFFS");
@@ -43,8 +45,7 @@ namespace Planet.Data
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion INotifyPropertyChanged
 
@@ -53,8 +54,7 @@ namespace Planet.Data
 
         protected virtual void OnCollectionChanged(NotifyCollectionChangedAction action)
         {
-            if (CollectionChanged != null)
-                CollectionChanged(this, new NotifyCollectionChangedEventArgs(action));
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(action));
         }
         #endregion INotifyCollectionChanged
     }
