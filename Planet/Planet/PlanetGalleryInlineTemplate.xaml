@@ -14,7 +14,7 @@
             <!--Source="pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"-->
             <Image Grid.Row="0" StretchDirection="DownOnly"  Stretch="Fill" VerticalAlignment="Bottom" HorizontalAlignment="Center"  >
                 <Image.Source>
-                    <BitmapImage UriCachePolicy="CacheIfAvailable" UriSource="{Binding Path=Thumbnail}"/>
+                    <BitmapImage UriCachePolicy="NoCacheNoStore"  UriSource="{Binding Path=Thumbnail}"/>
                     
                 </Image.Source>
                 <Image.Effect>
