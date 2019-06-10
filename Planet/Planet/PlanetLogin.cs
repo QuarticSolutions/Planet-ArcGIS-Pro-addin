@@ -70,6 +70,7 @@ namespace Planet
             System.Diagnostics.Debug.WriteLine("Remove this line after adding your custom behavior.");
             //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Gallery Clicked");
             //base.OnClick(item);
+            
         }
     }
 }

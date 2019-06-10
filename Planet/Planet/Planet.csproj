@@ -51,8 +51,8 @@
     <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.4.0\lib\net461\Microsoft.IdentityModel.Tokens.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -139,6 +139,9 @@
   <ItemGroup>
     <Compile Include="Data\AsyncObservableCollection.cs" />
     <Compile Include="Data\BaseItem.cs" />
+    <Compile Include="Data\payload.cs" />
+    <Compile Include="Data\token.cs" />
+    <Compile Include="Data\User.cs" />
     <Compile Include="Data\Geotiffs.cs" />
     <Compile Include="Data\GeoTiffs2.cs" />
     <Compile Include="Data\ItemsManager.cs" />

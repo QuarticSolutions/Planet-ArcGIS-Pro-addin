@@ -8,12 +8,12 @@
     <DataTemplate x:Key="PlanetLoginItemTemplate">
         <Grid Margin="0,0,0,0" Width="500" >
             <Grid.RowDefinitions>
-                <RowDefinition Height="100" />
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" TextWrapping="Wrap">Please enter you API_Key below. 
+            <!--<TextBlock Grid.Row="0" TextWrapping="Wrap">Please enter you API_Key below. 
                     <LineBreak/> This can be found by logging into 
                     <Hyperlink  xml:space="preserve" 
                         NavigateUri="https://www.planet.com/account/#/"
@@ -23,28 +23,44 @@
                     Once you login to this site you should see your api_key.
                 <LineBreak/>
                     Copy and paste it into the box below and click the connect button to view your Raster Map Services
-            </TextBlock>
-            <StackPanel Grid.Row="1"  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <!--<TextBlock Text="User Name:" HorizontalAlignment="Stretch"  Style="{DynamicResource Esri_TextBlockH3}"
-                       Margin="10,3,20,3"/>
-                <TextBox Name="txtUserName" Text="{Binding Path=API_Key}"  Background="{DynamicResource Esri_BackgroundPressedBrush}" 
-                      Width="100" 
-                      Foreground="{DynamicResource Esri_TextStyleDefaultBrush}"
-                      HorizontalAlignment="Center"/>
-                <TextBlock Text="Password:" HorizontalAlignment="Left"  Style="{DynamicResource Esri_TextBlockH3}"
-                       Margin="10,3,20,3"/>
-                <PasswordBox Width="100"
-                         Background="{DynamicResource Esri_BackgroundPressedBrush}"
-                         Foreground="{DynamicResource Esri_TextStyleDefaultBrush}"></PasswordBox>-->
-                <TextBlock Text="API_KEY:" HorizontalAlignment="Left"  Style="{DynamicResource Esri_TextBlockH3}"
-                       Margin="10,3,20,3"/>
-                <TextBox Grid.Row="2" Text="{Binding Path=API_Key.API_KEY_Value, Mode=TwoWay}"   MinWidth="400" HorizontalAlignment="Stretch"  
-                       Margin="10,3,20,3"/>
+            </TextBlock>-->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,6,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                        <TextBlock  Text="User Name:   "  Style="{DynamicResource Esri_TextBlockRegular}"/>
+                        <TextBox Name="txtUserName" Text="{Binding Path=UserName}" 
+                          Width="170" Height="23" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                        <TextBlock Text="Password:     "  Style="{DynamicResource Esri_TextBlockRegular}"
+                           />
+                        <PasswordBox Width="170" Name="txtPassword" ></PasswordBox>
+                    </StackPanel>
+                    <Button x:Name="btnLogin" Content="Login" Grid.Row="0" Grid.Column="1"  Width="75" Command="{Binding Path=ClickLogin2}" CommandParameter="{Binding ElementName=txtPassword}" Style="{DynamicResource Esri_Button}" Margin="10,1,0,1" VerticalAlignment="Bottom"/>
+                </Grid>
+            </StackPanel>
+            <TextBlock Grid.Row="1"  Text="Or" HorizontalAlignment="Center" VerticalAlignment="Center"  Style="{DynamicResource Esri_TextBlockH1}"/>
+            <StackPanel Grid.Row="2"  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,6,0,0">
+
+                <TextBlock Text="API_KEY:" HorizontalAlignment="Left"  Style="{DynamicResource Esri_TextBlockRegular}" 
+                       />
+                <TextBox Text="{Binding Path=API_Key.API_KEY_Value, Mode=TwoWay}"   MinWidth="300"   Height="23"
+                       />
+                <Button x:Name="btnConnect" Content="Connect" HorizontalAlignment="Left" Margin="10,1,0,1"    Command="{Binding Path=ClickCommand}" Style="{DynamicResource Esri_Button}"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="2"  Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button x:Name="btnConnect" Content="Connect" HorizontalAlignment="Left" Margin="6,6,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Command="{Binding Path=ClickCommand}"/>
-                <Button x:Name="btnClose" Content="Close" HorizontalAlignment="Left" Margin="6,6,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75"/>
+            <StackPanel Grid.Row="3"  Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                <Button x:Name="btnClose" Content="Close" HorizontalAlignment="Left" Margin="6,6,0,0"  VerticalAlignment="Top" Width="75" Style="{DynamicResource Esri_Button}"/>
             </StackPanel>
 
         </Grid>

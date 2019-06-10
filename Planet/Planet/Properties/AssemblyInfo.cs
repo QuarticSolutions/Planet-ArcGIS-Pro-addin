@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Planet")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Planet Basemap Explorer")]
+[assembly: AssemblyDescription("ArcGIS Pro addin to add and vire Planet basemaps")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Acme")]
-[assembly: AssemblyProduct("Planet")]
-[assembly: AssemblyCopyright("Copyright © Acme 2019")]
+[assembly: AssemblyCompany("Planet")]
+[assembly: AssemblyProduct("Planet Basemap Explorer")]
+[assembly: AssemblyCopyright("Copyright © Quartic Solutions 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
