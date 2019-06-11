@@ -64,7 +64,7 @@
         <gallery id="Planet_PlanetLogin"  caption="Planet Login" className="PlanetLogin"  
                  itemsInRow="1"  
                  dataTemplateFile="pack://application:,,,/Planet;component//PlanetLoginTemplate.xaml" 
-                 templateID="PlanetLoginItemTemplate" resizable="true" 
+                 templateID="PlanetLoginItemTemplate" resizable="false" 
                  largeImage="Images\Clouddata.png" >
           <tooltip heading="Login">
             Open Login Details Panel<disabledText />

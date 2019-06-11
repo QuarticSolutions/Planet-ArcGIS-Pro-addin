@@ -113,8 +113,8 @@ namespace Planet
                 quadparm = quadparm + "," + crr;
             }
             string[] ff = quadparm.Trim(',').Split(',');
-            getQuadsAsync(geometry, ff, rasterseriesname, rasterseriesid);
-             
+            var result =  getQuadsAsync(geometry, ff, rasterseriesname, rasterseriesid);
+            //result.Wait();
             return Task.FromResult(true);
 
 
@@ -133,7 +133,15 @@ namespace Planet
         private async Task getQuadsAsync(Geometry geometry, string[] ff, string rasterseriesname, string rasterseriesid)
         {
 
-
+            var ll = ArcGIS.Core.Licensing.LicenseInformation.Level;
+            if (ll == ArcGIS.Core.Licensing.LicenseLevels.Basic)
+            {
+                MessageBoxResult messageBoxResult = MessageBox.Show("ArcGIS Pro is currently using a Basic license. The data source tiles can still be downloaded but a Raster Mosaic will not created." + Environment.NewLine+ "Would you like to continue?", "Basic License Detected", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (messageBoxResult == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
             using (HttpClient client = new HttpClient())
             {
                 //var response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics/" + rasterseriesid + "/quads?api_key=1fe575980e78467f9c28b552294ea410&bbox=" + ff[1] + "," + ff[0] + "," + ff[3] + "," + ff[2] + ",").Result;
@@ -208,7 +216,8 @@ namespace Planet
                             {
                                 Title = "Downloading........",
                                 Message = String.Format("{0} of {1} files successfully dowloaded",i,total) ,
-                                ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
+                                ImageUrl = @"Images/Planet_logo-dark.png"
+                                //ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
 
                             });
                         }
