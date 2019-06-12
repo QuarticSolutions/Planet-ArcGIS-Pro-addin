@@ -53,7 +53,7 @@
 
                 <TextBlock Text="API_KEY:" HorizontalAlignment="Left"  Style="{DynamicResource Esri_TextBlockRegular}" 
                        />
-                <TextBox Text="{Binding Path=API_Key.API_KEY_Value, Mode=TwoWay}"   MinWidth="300"   Height="23"
+                <TextBox Text="{Binding Path=API_Key.API_KEY_Value, Mode=TwoWay}"   MinWidth="300"   Height="23" Margin="5"
                        />
                 <Button x:Name="btnConnect" Content="Connect" HorizontalAlignment="Left" Margin="10,1,0,1"    Command="{Binding Path=ClickCommand}" Style="{DynamicResource Esri_Button}"/>
             </StackPanel>

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Planet Basemap Explorer")]
-[assembly: AssemblyDescription("ArcGIS Pro addin to add and vire Planet basemaps")]
+[assembly: AssemblyDescription("ArcGIS Pro addin to add and view Planet basemaps")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Planet")]
 [assembly: AssemblyProduct("Planet Basemap Explorer")]

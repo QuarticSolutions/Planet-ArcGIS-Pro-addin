@@ -115,6 +115,12 @@ namespace Planet
             string[] ff = quadparm.Trim(',').Split(',');
             var result =  getQuadsAsync(geometry, ff, rasterseriesname, rasterseriesid);
             //result.Wait();
+            if (result.IsFaulted)
+            {
+                MessageBox.Show(result.Exception.Message,"An error Occured",MessageBoxButton.OK,MessageBoxImage.Error);
+                return Task.FromResult(false);
+            }
+            //result.Wait();
             return Task.FromResult(true);
 
 

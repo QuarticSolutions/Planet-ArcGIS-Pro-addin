@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Planet.Data;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using ArcGIS.Desktop.Framework;
 
 namespace Planet
 {
@@ -62,7 +63,8 @@ namespace Planet
 
 		public FolderSelector()
 		{
-			InitializeComponent();
+
+            InitializeComponent();
 
 			DataContext = new ItemsManager().Root;
 
