@@ -23,6 +23,9 @@ using ArcGIS.Core.Events;
 
 namespace Planet
 {
+    /// <summary>
+    /// Addin control module. Connects addin to Pro framework
+    /// </summary>
     internal class Module1 : Module, INotifyPropertyChanged
     {
         private static Module1 _this = null;
@@ -68,7 +71,15 @@ namespace Planet
             //return false to ~cancel~ Application close
             return true;
         }
+
         private bool hasSettings = false;
+        /// <summary>
+        /// When the project forst loads the setting are read. If a planet_api_key key value pair
+        /// exists then make a call to the Planet api to test key va;idity. If good set the project state
+        /// planet_state_connection so Planet tab controls will be enabled.
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
         protected override Task OnReadSettingsAsync(ModuleSettingsReader settings)
         {
 
@@ -111,6 +122,11 @@ namespace Planet
             }
             return Task.FromResult(0);
         }
+        /// <summary>
+        /// If a api key value has been set write  it to the project settings.
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
         protected override Task OnWriteSettingsAsync(ModuleSettingsWriter settings)
         {
             if (API_KEY.API_KEY_Value != "")
@@ -127,7 +143,10 @@ namespace Planet
         #endregion Overrides
 
     }
-
+    /// <summary>
+    /// Class to store the api key setting. tools will use this value to query the server.
+    /// Planet connection MVVM will use it as the inital value to bind to.
+    /// </summary>
     public class API_KEY : INotifyPropertyChanged
     {
 
@@ -153,6 +172,10 @@ namespace Planet
         }
         #endregion INotifyPropertyChanged
     }
+
+    /// <summary>
+    /// ESRI Framwaork custom event args that we use to track and react to api key value changes
+    /// </summary>
     public class APIKeyChangedEventArgs : EventBase
     {
 
@@ -179,8 +202,7 @@ namespace Planet
     }
 
     /// <summary>
-    /// A custom CompositePresentationEvent to be published when we change the name
-    /// of Pro
+    /// A custom CompositePresentationEvent to be published when we change the api key
     /// </summary>
     public class APIKeyChangedEvent : CompositePresentationEvent<APIKeyChangedEventArgs>
     {

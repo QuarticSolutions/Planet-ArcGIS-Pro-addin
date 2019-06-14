@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+/// <summary>
+/// Model to hold info about Basemap items that a user has access to.
+/// </summary>
 namespace Planet
 {
 

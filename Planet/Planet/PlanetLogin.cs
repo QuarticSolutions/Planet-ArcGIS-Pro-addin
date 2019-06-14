@@ -32,18 +32,15 @@ namespace Planet
         {
             Initialize();
         }
-
+        /// <summary>
+        /// Load a single gallery item consiting of a PlanetLoginTemplate.xaml and PlannetConnection model
+        /// </summary>
         private void Initialize()
         {
-            //PlanetConectionWindow planetConectionWindow = new PlanetConectionWindow();
-            //planetConectionWindow.ShowDialog();
 
-
-
-            //_canExecuteMyCommand = true;
             if (_isInitialized)
                 return;
-            //LogIn = new RelayCommand(new Action<object>(getkey), () => _canExecuteMyCommand);
+
             PlanetConnection planetConnection = new PlanetConnection();
             if (Module1.Current.API_KEY != null)
             {
@@ -63,11 +60,14 @@ namespace Planet
         {
             ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Connecting");
         }
-
+        /// <summary>
+        /// Clear the gallery collection so username and passord aren't stored.
+        /// </summary>
+        /// <param name="item"></param>
         protected override void OnClick(object item)
         {
             //TODO - insert your code to manipulate the clicked gallery item here
-            System.Diagnostics.Debug.WriteLine("Remove this line after adding your custom behavior.");
+            //System.Diagnostics.Debug.WriteLine("Remove this line after adding your custom behavior.");
             this.Clear();
             _isInitialized = false;
             //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Gallery Clicked");

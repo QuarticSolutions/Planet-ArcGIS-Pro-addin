@@ -27,9 +27,12 @@ namespace Planet
     internal class PlanetGalleryInline : Gallery 
     {
         private bool _isInitialized;
-        //private HttpClient _client;
-
         
+
+        /// <summary>
+        /// Initial load but also
+        /// listen for changes to the api key value and reload the gallery if detected
+        /// </summary>
         public PlanetGalleryInline()
         {
             APIKeyChangedEvent.Subscribe((args) =>
@@ -42,7 +45,10 @@ namespace Planet
             Initialize();
         }
 
-
+        /// <summary>
+        /// Load the gallery items into the Gallery listbox
+        /// Items are based on the PlanetGalleryInlineTemplate.xaml and Mosics model
+        /// </summary>
         private async void Initialize()
         {
             
@@ -81,7 +87,14 @@ namespace Planet
 
             }
         }
-
+        /// <summary>
+        /// query the Planet api to get a list of mosics that the user is allowed to see.
+        /// Use pagination as the server returns 50 by default and there my be more.
+        /// Has a call back funtion to access the results between pages but not currently used
+        /// Might use in the future to asyn load the thumbnails
+        /// </summary>
+        /// <param name="callBack"></param>
+        /// <returns></returns>
         private static async Task<List<Mosaic>>GetMosicsAsync2(Action<Mosaics> callBack = null)
         {
             var lstMosaics = new List<Mosaic>();
@@ -143,6 +156,11 @@ namespace Planet
             }
            
         }
+        /// <summary>
+        /// call back to access results of a page while inside the pagination loop
+        /// not currently used
+        /// </summary>
+        /// <param name="getmaoicstask2"></param>
         private static void ResultCallBack(Mosaics getmaoicstask2)
         {
             if (getmaoicstask2 != null )
@@ -160,11 +178,18 @@ namespace Planet
                 }
             }
         }
+        /// <summary>
+        /// Click event for gallery items
+        /// </summary>
+        /// <param name="item"></param>
         protected override void OnClick(object item)
         {
             OpenWebMapAsync(item);          
         }
-
+        /// <summary>
+        /// Create a map raster layer using the URL of the gallery item
+        /// </summary>
+        /// <param name="item"></param>
         private async void OpenWebMapAsync(object item)
         {
             if (item is Mosaic mosaic)

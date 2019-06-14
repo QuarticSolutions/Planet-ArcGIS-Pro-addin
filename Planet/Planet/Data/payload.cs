@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+/// <summary>
+/// Model to user info returned from the api autorization token
+/// </summary>
 namespace Planet.Data
 {
     public class Payload

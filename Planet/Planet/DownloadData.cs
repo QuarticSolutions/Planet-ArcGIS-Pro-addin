@@ -28,6 +28,9 @@ using MessageBox = ArcGIS.Desktop.Framework.Dialogs.MessageBox;
 
 namespace Planet
 {
+    /// <summary>
+    /// Tool that downloads the data. 
+    /// </summary>
     internal class DownloadData : MapTool
     {
         public DownloadData()
@@ -43,6 +46,10 @@ namespace Planet
 
         /// <summary>
         /// Called when the sketch finishes. This is where we will create the sketch operation and then execute it.
+        /// The sketch geometry will be turned into an envelope and used to query the Planet api for the relevant quads
+        /// The FolderSelector view and various models will then be presented allowing the user to choose a save location
+        /// Finally, after the .tif files have been downloaded a raster mosic will be created in the project default FGDB and 
+        /// the downloaded .tif files added.
         /// </summary>
         /// <param name="geometry">The geometry created by the sketch.</param>
         /// <returns>A Task returning a Boolean indicating if the sketch complete event was successfully handled.</returns>
@@ -54,6 +61,8 @@ namespace Planet
             if (geometry == null)
                 return Task.FromResult(false);
 
+
+            //Make sure a valid Planet layer is selected.
             IReadOnlyList<Layer> ts = MapView.Active.GetSelectedLayers();
             if(ts.Count > 1)
             {
@@ -84,10 +93,11 @@ namespace Planet
                 return Task.FromResult(false);
 
             }
+
             //var response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics/48fff803-4104-49bc-b913-7467b7a5ffb5/quads?api_key=1fe575980e78467f9c28b552294ea410&bbox=" + geometry.Extent.XMin.ToString() + "," + geometry.Extent.YMin.ToString() + "," + geometry.Extent.XMax.ToString() + "," + geometry.Extent.YMax.ToString()).Result;
             //SpatialReference sr = SpatialReferences.WGS84;
             //SpatialReference sr2 = SpatialReferences.WebMercator;
-
+            //Create min max points from the envelope and get the coords in Decimal Degrees
             MapPoint point0 = MapPointBuilder.CreateMapPoint(geometry.Extent.XMin, geometry.Extent.YMin, MapView.Active.Extent.SpatialReference);
             MapPoint point1 = MapPointBuilder.CreateMapPoint(geometry.Extent.XMax, geometry.Extent.YMax, MapView.Active.Extent.SpatialReference);
             ToGeoCoordinateParameter ddParam = new ToGeoCoordinateParameter(GeoCoordinateType.DD);
@@ -98,7 +108,7 @@ namespace Planet
 
             IEnumerable<string> union = lowP.Union(highP);
             string quadparm = "";
-
+            //need to change the formatting of the coords.
             for (int i = 0; i < union.Count(); i++)
             {
                 string crr = union.ElementAt(i);
@@ -122,23 +132,20 @@ namespace Planet
             }
             //result.Wait();
             return Task.FromResult(true);
-
-
-            //// Create an edit operation
-            //var createOperation = new EditOperation();
-            //createOperation.Name = string.Format("Create {0}", CurrentTemplate.Layer.Name);
-            //createOperation.SelectNewFeatures = true;
-
-            //// Queue feature creation
-            //createOperation.Create(CurrentTemplate, geometry);
-
-            //// Execute the operation
-            //return createOperation.ExecuteAsync();
         }
 
+        /// <summary>
+        /// Downloads the quads from the Planet servers using a geometry, 
+        /// an array of DD coords, raster service name and raster serviceid.
+        /// </summary>
+        /// <param name="geometry"></param>
+        /// <param name="ff"></param>
+        /// <param name="rasterseriesname"></param>
+        /// <param name="rasterseriesid"></param>
+        /// <returns></returns>
         private async Task getQuadsAsync(Geometry geometry, string[] ff, string rasterseriesname, string rasterseriesid)
         {
-
+            //Mosicing can only happen with a standard license, warn user
             var ll = ArcGIS.Core.Licensing.LicenseInformation.Level;
             if (ll == ArcGIS.Core.Licensing.LicenseLevels.Basic)
             {
@@ -148,6 +155,10 @@ namespace Planet
                     return;
                 }
             }
+
+            //should not use a using statement, need to fix
+            //get a list of quads as GeoTiffs2 items by querying the rest endpoint of the selected layer
+            //with the geometry and points
             using (HttpClient client = new HttpClient())
             {
                 //var response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics/" + rasterseriesid + "/quads?api_key=1fe575980e78467f9c28b552294ea410&bbox=" + ff[1] + "," + ff[0] + "," + ff[3] + "," + ff[2] + ",").Result;
@@ -191,6 +202,8 @@ namespace Planet
                     area = " Approx Sqkm: " + area. Substring(0,area.IndexOf("."));
                     
                 }
+
+                //set up the Folderselector view with a list of the quads and area
                 FolderSelector folderSelector = new FolderSelector();
                 folderSelector.lbxGrids.ItemsSource = geotiffs;
                 folderSelector.ShowNewFolderButton = false;
@@ -201,12 +214,12 @@ namespace Planet
                 {
                     ba.QuadCount = "Total Quads selected: " + geotiffs.Count.ToString() + area;
                 }
-
-
-
                 folderSelector.ShowDialog();
+
+                //If the user clicked OK on the view start the download
                 if ((bool)folderSelector.DialogResult)
                 {
+                    //Do the download
                     string savelocation = folderSelector.SelectedPath;
                     List<string> tiffs = new List<string>() ;
                     int i = 0;
@@ -230,6 +243,7 @@ namespace Planet
 
 
                     }
+                    //Download Part finished, tell user
                     FrameworkApplication.AddNotification(new Notification()
                     {
                         Title = "Downloading Finished",
@@ -237,6 +251,8 @@ namespace Planet
                         ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
 
                     });
+
+                    //Create a raster Mosic in the default FGDB using Geoprocessing tools
                     string inpath = Project.Current.DefaultGeodatabasePath;
                     //inpath = @"C:\Users\Andrew\Documents\ArcGIS\Projects\MyProject22\MyProject22.gdb";
                     string in_mosaicdataset_name = rasterseriesname;
@@ -273,6 +289,8 @@ namespace Planet
                     result = null;
                     parameters = null;
                     _cts = null;
+
+                    //Load the downloaded .tifs into the Mosic
                     System.Threading.CancellationTokenSource _cts2 = new System.Threading.CancellationTokenSource();
                     tool_path = "management.AddRastersToMosaicDataset";
                     parameters = Geoprocessing.MakeValueArray(inpath + "\\" + in_mosaicdataset_name, "Raster Dataset", String.Join(";",tiffs), "UPDATE_CELL_SIZES", "UPDATE_BOUNDARY","UPDATE_OVERVIEWS","-1");
@@ -312,6 +330,8 @@ namespace Planet
                         _cts2.Cancel();
                     }
 
+
+                    //Everything downloaded and added to the mosic
                     FrameworkApplication.AddNotification(new Notification()
                     {
                         Title = "Download Successful",
@@ -323,6 +343,13 @@ namespace Planet
             }
         }
 
+
+        /// <summary>
+        /// Does the actual download from the PLanet Servers
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="destination"></param>
+        /// <returns></returns>
         public async static Task<bool> LoadImage(string uri, string destination)
         {
             //BitmapImage bitmapImage = new BitmapImage();
@@ -359,12 +386,5 @@ namespace Planet
 
             return false;
         }
-
-
-        //public static IEnumerable<T> Replace<T>(this IEnumerable<T> enumerable, int index, T value)
-        //{
-        //    return enumerable.Select((x, i) => index == i ? value : x);
-        //}
-
     }
 }
