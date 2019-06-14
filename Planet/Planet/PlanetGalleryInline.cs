@@ -111,16 +111,16 @@ namespace Planet
                                 foreach (Mosaic item in result.mosaics)
                                 
                                 {
-                                    double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
-                                    double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
-                                    PointF point = tilePointConvert.WorldToTilePos(centerlong, centerlat, z);
+                                    //double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
+                                    //double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
+                                    //PointF point = tilePointConvert.WorldToTilePos(centerlong, centerlat, z);
                                     item.Thumbnail = item._links.tiles.Replace("{x}", x).Replace("{y}", y).Replace("{z}", "0");
                                     //item.Thumbnail = item._links.tiles.Replace("{x}", Math.Floor(point.X).ToString()).Replace("{y}", Math.Floor(point.Y).ToString()).Replace("{z}", z.ToString());
                                     lstMosaics.Add(item);
                                 }
 
                                 // Run the callback method, passing the current page of data from the API.
-                                callBack?.Invoke(result);
+                                //callBack?.Invoke(result);
 
                                 // Get the URL for the next page
                                 nextUrl = result._links._next ?? string.Empty;
