@@ -13,22 +13,26 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-
 namespace Planet
 {
     /// <summary>
-    /// Interaction logic for LoginDetailsView.xaml
+    /// Interaction logic for TrialWarning.xaml
     /// </summary>
-    public partial class LoginDetailsView : UserControl
+    public partial class TrialWarning : ArcGIS.Desktop.Framework.Controls.ProWindow
     {
-        public LoginDetailsView()
+        public TrialWarning()
         {
             InitializeComponent();
         }
 
-        private void BtnConnect_Click(object sender, RoutedEventArgs e)
+        private void Purchase_Click(object sender, RoutedEventArgs e)
         {
+            System.Diagnostics.Process.Start("https://go.planet.com/basemaps-stripe-esri");
+        }
 
+        private void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

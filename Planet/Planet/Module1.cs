@@ -30,7 +30,7 @@ namespace Planet
     {
         private static Module1 _this = null;
         public API_KEY API_KEY = new API_KEY();
-
+        public bool IsTrial = false;
         private Module1()
         {
             FrameworkApplication.State.Deactivate("planet_state_connection");
@@ -92,7 +92,7 @@ namespace Planet
 
             // Settings defined in the Property sheet’s viewmodel.	
             string[] keys = new string[] { "planet_api_key" };
-
+            
             foreach (string key in keys)
             {
 
@@ -120,6 +120,16 @@ namespace Planet
 
                 }
             }
+
+            object trial = settings.Get("IsTrial");
+            if (trial != null )
+            {
+                if (trial.ToString() == "true")
+                {
+                    IsTrial = true;
+                }
+                
+            }
             return Task.FromResult(0);
         }
         /// <summary>
@@ -132,6 +142,10 @@ namespace Planet
             if (API_KEY.API_KEY_Value != "")
             {
                 settings.Add("planet_api_key", API_KEY.API_KEY_Value);
+            }
+            if (IsTrial==true)
+            {
+                settings.Add("IsTrial", "true");
             }
             //foreach (string key in _moduleSettings.Keys)
             //{

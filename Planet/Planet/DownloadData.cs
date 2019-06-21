@@ -227,6 +227,11 @@ namespace Planet
                     
                     foreach (Data.GeoTiffs2 quad in geotiffs)
                     {
+                        if (string.IsNullOrEmpty(quad.DownloadURL))
+                        {
+                            MessageBox.Show(String.Format("No download link provided for quad {0}", quad.Name));
+                            continue;
+                        }
                         await LoadImage(quad.DownloadURL, savelocation + "\\" + rasterseriesname + quad.Name + ".tif");
                         tiffs.Add(savelocation + "\\" + rasterseriesname + quad.Name + ".tif");
                         if (total%++i == 0)
@@ -242,6 +247,11 @@ namespace Planet
                         }
 
 
+                    }
+
+                    if (tiffs.Count == 0)
+                    {
+                        return;
                     }
                     //Download Part finished, tell user
                     FrameworkApplication.AddNotification(new Notification()

@@ -11,11 +11,11 @@
                     Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
   </AddInInfo>
   <conditions>
-    <insertCondition id="planet_condition_isconnected"   caption="Planet Connections">
-      <state id="planet_state_connection"  />
+    <insertCondition id="planet_condition_isconnected" caption="Planet Connections">
+      <state id="planet_state_connection" />
     </insertCondition>
-    <insertCondition id="planet_condition_mappanelvisible" caption ="Map Visible">
-      <state id="esri_mapping_mapPane"/>
+    <insertCondition id="planet_condition_mappanelvisible" caption="Map Visible">
+      <state id="esri_mapping_mapPane" />
     </insertCondition>
   </conditions>
   <modules>
@@ -33,15 +33,13 @@
           <!-- host controls within groups -->
           <gallery refID="Planet_PlanetLogin" inline="false" size="large" />
           <gallery refID="Planet_PlanetGalleryInline" inline="true" size="large" />
-
           <!--<button refID="Planet_LoginDetails_OpenButton" size="large" />-->
-          
-          <tool refID ="Planet_DownloadData" size="large" />
+          <tool refID="Planet_DownloadData" size="large" />
+          <!--<button refID="Planet_TrialWarning" size="large" />-->
         </group>
       </groups>
       <controls>
         <!-- add your controls here -->
-
         <!--<button id="Planet_Pane1_OpenButton" caption="Open Pane 1" className="Pane1_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen32.png">
           <tooltip heading="Open Pane">Open Pane<disabledText /></tooltip>
         </button>-->
@@ -51,30 +49,26 @@
         <tool id="Planet_DownloadData" categoryRefID="esri_editing_construction_point" caption="Download Data" className="DownloadData" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" largeImage="Images\Download.png" condition="planet_condition_isconnected">
           <!--note: use esri_editing_construction_polyline,  esri_editing_construction_polygon for categoryRefID as needed-->
           <tooltip heading="Download">Download basemap quads as .tif files
-            <disabledText>You must connect with a valid API_Key first</disabledText>
-        </tooltip>
+            <disabledText>You must connect with a valid API_Key first</disabledText></tooltip>
         </tool>
+        <!--<button id="Planet_TrialWarning" caption="TrialWarning" className="ShowTrialWarning" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
+        </button>-->
       </controls>
       <galleries>
         <gallery id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Basemap Mosaics" className="PlanetGalleryInline" itemsInRow="4" dataTemplateFile="pack://application:,,,/Planet;component//PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
           <tooltip heading="Planet Rasters">Planet Rasters
-            <disabledText>You must Enter a valid api key first</disabledText>
-          </tooltip>
+            <disabledText>You must Enter a valid api key first</disabledText></tooltip>
         </gallery>
-        <gallery id="Planet_PlanetLogin"  caption="Planet Login" className="PlanetLogin"  
-                 itemsInRow="1"  
-                 dataTemplateFile="pack://application:,,,/Planet;component//PlanetLoginTemplate.xaml" 
-                 templateID="PlanetLoginItemTemplate" resizable="false" 
-                 largeImage="Images\Clouddata.png" >
+        <gallery id="Planet_PlanetLogin" caption="Planet Login" className="PlanetLogin" itemsInRow="1" dataTemplateFile="pack://application:,,,/Planet;component//PlanetLoginTemplate.xaml" templateID="PlanetLoginItemTemplate" resizable="false" largeImage="Images\Clouddata.png">
           <tooltip heading="Login">
-            Open Login Details Panel<disabledText />
-          </tooltip>
+            Open Login Details Panel<disabledText /></tooltip>
         </gallery>
       </galleries>
       <panes>
-        <pane id="Planet_Pane1" caption="Pane 1" className="Pane1ViewModel" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" defaultTab="esri_mapping_homeTab" defaultTool="esri_mapping_navigateTool">
+        <!--<pane id="Planet_Pane1" caption="Pane 1" className="Pane1ViewModel" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" defaultTab="esri_mapping_homeTab" defaultTool="esri_mapping_navigateTool">
           <content className="Pane1View" />
-        </pane>
+        </pane>-->
         <!--<pane id="Planet_LoginDetails" caption="LoginDetails" className="LoginDetailsViewModel" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" defaultTab="esri_mapping_homeTab" defaultTool="esri_mapping_navigateTool">
           <content className="LoginDetailsView" />
         </pane>-->

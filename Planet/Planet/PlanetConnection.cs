@@ -85,7 +85,7 @@ namespace Planet
         }
         private void ExecuteAttachmentChecked(object param)
         {
-            Console.WriteLine(param.ToString());
+            //Console.WriteLine(param.ToString());
             if (param is PasswordBox passwordBox)
             {
                 //string pass = passwordBox.Password;
@@ -159,7 +159,16 @@ namespace Planet
                         //string txtJwtOut = "\r\nPayload:\r\n" + JToken.Parse(jwtPayload).ToString(Formatting.Indented);
                         Data.Payload payload = JsonConvert.DeserializeObject<Data.Payload>(jwtPayload);
                         _api_key.API_KEY_Value = payload.api_key;
+                        if (payload.program_id == "29")
+                        {
+                            Module1.Current.IsTrial = true;
+                        }
+                        else
+                        {
+                            Module1.Current.IsTrial = false;
+                        }
                     }
+
                     getkey();
                     //var response = await postResp.Content.ReadAsStringAsync();
                     Console.WriteLine(result.token);
@@ -199,7 +208,7 @@ namespace Planet
 
         private void ExecuteHyperlink()
         {
-            System.Diagnostics.Process.Start("https://www.planet.com/account/#/");
+            System.Diagnostics.Process.Start("https://go.planet.com/basemaps-trial-esri");
         }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)
@@ -270,6 +279,10 @@ namespace Planet
                     //string txtJwtOut = "\r\nPayload:\r\n" + JToken.Parse(jwtPayload).ToString(Formatting.Indented);
                     Data.Payload payload = JsonConvert.DeserializeObject<Data.Payload>( jwtPayload );
                     _api_key.API_KEY_Value = payload.api_key;
+                    if (payload.program_id=="29")
+                    {
+                        Module1.Current.IsTrial = true;
+                    }
                 }
                 getkey();
                 //var response = await postResp.Content.ReadAsStringAsync();

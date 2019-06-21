@@ -209,6 +209,14 @@ namespace Planet
                 });
 
             }
+            //Module1.Current.IsTrial = true;
+            if (Module1.Current.IsTrial)
+            {
+                TrialWarning _trialwarning = new TrialWarning();
+                _trialwarning.Owner = FrameworkApplication.Current.MainWindow;
+                _trialwarning.Closed += (o, e) => { _trialwarning = null; };
+                _trialwarning.ShowDialog();
+            }
         }
 
     }

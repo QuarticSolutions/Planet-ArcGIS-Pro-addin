@@ -158,6 +158,10 @@
     <Compile Include="PlanetLogin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quads.cs" />
+    <Compile Include="ShowTrialWarning.cs" />
+    <Compile Include="TrialWarning.xaml.cs">
+      <DependentUpon>TrialWarning.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\SystemIconManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +224,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="TrialWarning.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Resource Include="PlanetLoginTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -264,6 +272,18 @@
   <ItemGroup>
     <AddInContent Include="DarkImages\Cloud.png" />
     <AddInContent Include="DarkImages\Download.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\GenericButtonPurple16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="Images\GenericButtonPurple32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="DarkImages\GenericButtonPurple16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AddInContent Include="DarkImages\GenericButtonPurple32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--
