@@ -209,7 +209,9 @@ namespace Planet
                 });
 
             }
-            //Module1.Current.IsTrial = true;
+
+            //Hardcoding trial to false so warning is never shown per Annies request 20190703
+            Module1.Current.IsTrial = false;
             if (Module1.Current.IsTrial)
             {
                 TrialWarning _trialwarning = new TrialWarning();
