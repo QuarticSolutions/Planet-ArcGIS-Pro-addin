@@ -83,6 +83,11 @@ namespace Planet
                         Console.WriteLine(e.Message);
                     }
                 }
+                catch  (Exception ex)
+                {
+                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message);
+
+                }
 
 
             }
@@ -131,11 +136,16 @@ namespace Planet
                                     mapPoints.Add(ne);
                                     double zz = TilePointConvert.BestMapView(mapPoints, 100, 56, 2);
                                     z = (int)Math.Floor(zz);
+                                    if (z < 0)
+                                    {
+                                        z = z * -1;
+                                    }
                                     double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
                                     double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
+                                    //z=4;
                                     PointF point = tilePointConvert.WorldToTilePos(centerlong, centerlat, z);
-                                    item.Thumbnail = item._links.tiles.Replace("{x}", x).Replace("{y}", y).Replace("{z}", "0");
-                                    //item.Thumbnail = item._links.tiles.Replace("{x}", Math.Floor(point.X).ToString()).Replace("{y}", Math.Floor(point.Y).ToString()).Replace("{z}", z.ToString());
+                                    //item.Thumbnail = item._links.tiles.Replace("{x}", x).Replace("{y}", y).Replace("{z}", "0");
+                                    item.Thumbnail = item._links.tiles.Replace("{x}", Math.Floor(point.X).ToString()).Replace("{y}", Math.Floor(point.Y).ToString()).Replace("{z}", z.ToString());
                                     lstMosaics.Add(item);
                                 }
 
@@ -265,11 +275,14 @@ namespace Planet
             double zoom = 0;
             double zoomLevel = 0;
 
-            double maxLat = -85;
-            double minLat = 85;
-            double maxLon = -180;
-            double minLon = 180;
-            
+            //double maxLat = -85;
+            //double minLat = 85;
+            //double maxLon = -180;
+            //double minLon = 180;
+            double maxLat = -180;
+            double minLat = 180;
+            double maxLon = -85;
+            double minLon = 85;
             //calculate bounding rectangle
             for (int i = 0; i < locations.Count; i++)
             {
@@ -310,9 +323,17 @@ namespace Planet
                 zoom2 = Math.Log(180.0 / 256.0 * (mapHeight - 2 * buffer) / (maxLat - minLat)) / Math.Log(2);
             }
 
+            if (zoom1 < 0)
+            {
+                zoom1 = zoom1 * -1;
+            }
+            if (zoom2 < 0)
+            {
+                zoom2 = zoom2 * -1;
+            }
             //use the most zoomed out of the two zoom levels
             zoom = (zoom1 < zoom2) ? zoom1 : zoom2;
-
+            zoom = zoom1;
             //mapView = new MapViewSpecification(center, zoomLevel);
 
             return zoom;
