@@ -1,0 +1,87 @@
+﻿<ArcGIS defaultAssembly="test_docing_Panel.dll" defaultNamespace="test_docing_Panel" xmlns="http://schemas.esri.com/DADF/Registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
+  <AddInInfo id="{ee8edd9e-caf1-4da3-9f87-2599102975fb}" version="1.0" desktopVersion="2.3.15769">
+    <Name>test_docing_Panel</Name>
+    <Description>test_docing_Panel description</Description>
+    <Image>Images\AddinDesktop32.png</Image>
+    <Author>Andrew</Author>
+    <Company>Acme</Company>
+    <Date>8/15/2019 12:08:16 PM, 2019</Date>
+    <Subject>Framework</Subject>
+    <!-- Note subject can be one or more of these topics:
+                    Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
+  </AddInInfo>
+  <modules>
+    <insertModule id="test_docing_Panel_Module" className="Module1" autoLoad="false" caption="Module1">
+      <!-- uncomment to have the control hosted on a separate tab-->
+      <tabs>
+        <!--<tab id="test_docing_Panel_Tab1" caption="New Tab">
+          <group refID="test_docing_Panel_Group1"/>
+        </tab>-->
+      </tabs>
+      <groups>
+        <!-- comment this out if you have no controls on the Addin tab to avoid
+              an empty group-->
+        <group id="test_docing_Panel_Group1" caption="Group 1" appearsOnAddInTab="true">
+          <!-- host controls within groups -->
+          <button refID="test_docing_Panel_testDocPanel_burger_ShowButton" size="large" />
+          <gallery refID="test_docing_Panel_embedgallery" inline="false" size="large" />
+          <button refID="test_docing_Panel_PlanetDocPane_ShowButton" size="large" />
+          <tool refID="test_docing_Panel_PLanetScapeAOITool" size="large" />
+          <button refID="test_docing_Panel_Demo_ShowButton" size="large" />
+        </group>
+      </groups>
+      <controls>
+        <!-- add your controls here -->
+        <button id="test_docing_Panel_testDocPanel_burger_ShowButton" caption="Show testDocPanel _burger" className="testDocPanel_burger_ShowButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Show Dockpane">Show Dockpane<disabledText /></tooltip>
+        </button>
+        <button id="test_docing_Panel_testDocPanel_burger_MenuButton" caption="Burger Menu Button" className="testDocPanel_burger_MenuButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
+        </button>
+        <button id="test_docing_Panel_PlanetDocPane_ShowButton" caption="Show PlanetDocPane" className="PlanetDocPane_ShowButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Show Dockpane">Show Dockpane<disabledText /></tooltip>
+        </button>
+        <button id="test_docing_Panel_PlanetDocPane_MenuButton" caption="Burger Menu Button" className="PlanetDocPane_MenuButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
+        </button>
+        <tool id="test_docing_Panel_PLanetScapeAOITool" caption="PLanetScapeAOITool" className="PLanetScapeAOITool" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed32.png" condition="esri_mapping_mapPane">
+          <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
+        </tool>
+        <button id="test_docing_Panel_Demo_ShowButton" caption="Show Demo" className="Demo_ShowButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Show Dockpane">Show Dockpane<disabledText /></tooltip>
+        </button>
+        <button id="test_docing_Panel_Demo_MenuButton" caption="Burger Menu Button" className="Demo_MenuButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
+        </button>
+      </controls>
+      <dockPanes>
+        <dockPane id="test_docing_Panel_testDocPanel_burger" caption="testDocPanel _burger" className="testDocPanel_burgerViewModel" dock="group" dockWith="esri_core_contentsDockPane">
+          <content className="testDocPanel_burgerView" />
+          <!--<content className="test_docing_Panel_embedgallery" />-->
+        </dockPane>
+        <dockPane id="test_docing_Panel_PlanetDocPane" caption="PlanetDocPane" className="PlanetDocPaneViewModel" dock="group" dockWith="esri_core_contentsDockPane">
+          <content className="PlanetDocPaneView" />
+        </dockPane>
+        <dockPane id="test_docing_Panel_Demo" caption="Demo" className="DemoViewModel" dock="group" dockWith="esri_core_contentsDockPane">
+          <content className="DemoView" />
+        </dockPane>
+      </dockPanes>
+      <menus>
+        <menu id="test_docing_Panel_testDocPanel_burger_Menu" caption="Options" contextMenu="true">
+          <button refID="test_docing_Panel_testDocPanel_burger_MenuButton" />
+        </menu>
+        <menu id="test_docing_Panel_PlanetDocPane_Menu" caption="Options" contextMenu="true">
+          <button refID="test_docing_Panel_PlanetDocPane_MenuButton" />
+        </menu>
+        <menu id="test_docing_Panel_Demo_Menu" caption="Options" contextMenu="true">
+          <button refID="test_docing_Panel_Demo_MenuButton" />
+        </menu>
+      </menus>
+      <galleries>
+        <gallery id="test_docing_Panel_embedgallery" caption="embedgallery" className="embedgallery" itemsInRow="3" dataTemplateFile="pack://application:,,,/test_docing_Panel;component//embedgalleryTemplate.xaml" templateID="embedgalleryItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonOrange32.png">
+          <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
+        </gallery>
+      </galleries>
+    </insertModule>
+  </modules>
+</ArcGIS>
