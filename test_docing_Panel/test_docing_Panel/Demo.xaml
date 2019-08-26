@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="test_docing_Panel.DemoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"    
+             xmlns:ui="clr-namespace:test_docing_Panel"
+             xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
+             xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"                       
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{Binding Path=ui.DemoViewModel}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+         </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" LastChildFill="true" KeyboardNavigation.TabNavigation="Local" Height="30">
+            <controls:BurgerButton DockPanel.Dock="Right"
+                ToolTip="{Binding BurgerButtonTooltip}"
+                PopupMenu="{Binding BurgerButtonMenu}"/>
+            <TextBlock Grid.Column="1" Text="{Binding Heading}" Style="{DynamicResource Esri_TextBlockDockPaneHeader}">
+                <TextBlock.ToolTip>
+                    <WrapPanel Orientation="Vertical" MaxWidth="300">
+                        <TextBlock Text="{Binding Heading}" TextWrapping="Wrap"/>
+                    </WrapPanel>
+                </TextBlock.ToolTip>
+          </TextBlock>
+
+        </DockPanel>
+        <TreeView Grid.Row="1">
+            <TreeViewItem Header="2019-08-18">
+                <TreeViewItem Header="Planet Scope">
+                    <StackPanel Orientation="Vertical" Margin="5,0,5,0" >
+                        <Grid Margin="5">
+                            <!-- The image for the gallery item-->
+                            <Image MaxHeight="32" MaxWidth="32" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave">
+                                <Image.Effect>
+                                    <DropShadowEffect Color="{DynamicResource Esri_Color_Gray145}" Opacity="0.4" />
+                                </Image.Effect>
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Setter Property="Source" Value="https://tiles3.planet.com/v1/experimental/tiles/PSScene4Band/20190614_201004_0f2d/11/117/896.png?api_key=1fe575980e78467f9c28b552294ea410"/>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Grid>
+                        <TextBlock Text="20190614_201004_0f2d" HorizontalAlignment="Center" />
+                        <Grid Margin="5">
+                            <!-- The image for the gallery item-->
+                            <Image MaxHeight="32" MaxWidth="32">
+                                <Image.Effect>
+                                    <DropShadowEffect Color="{DynamicResource Esri_Color_Gray145}" Opacity="0.4" />
+                                </Image.Effect>
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Setter Property="Source" Value="https://tiles0.planet.com/v1/experimental/tiles/PSScene4Band/20190610_234257_0f4c/thumb?api_key=1fe575980e78467f9c28b552294ea410"/>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Grid>
+                        <TextBlock Text="20190614_201004_0f2d" HorizontalAlignment="Center" />
+                    </StackPanel>
+                    
+                </TreeViewItem>
+                <TreeViewItem Header="SkySat">
+                    <StackPanel Orientation="Vertical" Margin="5,0,5,0">
+                        <Grid Margin="5">
+                            <!-- The image for the gallery item-->
+                            <Image MaxHeight="32" MaxWidth="32">
+                                <Image.Effect>
+                                    <DropShadowEffect Color="{DynamicResource Esri_Color_Gray145}" Opacity="0.4" />
+                                </Image.Effect>
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Setter Property="Source" Value="https://tiles3.planet.com/v1/experimental/tiles/PSScene4Band/20190614_205000_101f/11/116/896.png?api_key=1fe575980e78467f9c28b552294ea410"/>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Grid>
+                        <TextBlock Text="20190614_205000_101f" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </TreeViewItem>
+            </TreeViewItem>
+            <TreeViewItem Header="2019-08-05">
+                <TreeViewItem Header="Planet Scope">
+                    
+                </TreeViewItem>
+                <TreeViewItem Header="SkySat">
+                    
+                </TreeViewItem>
+            </TreeViewItem>
+            <TreeViewItem Header="2019-07-18">
+                <TreeViewItem Header="Planet Scope">
+                    
+                </TreeViewItem>
+            </TreeViewItem>
+        </TreeView>
+    </Grid>
+</UserControl>
