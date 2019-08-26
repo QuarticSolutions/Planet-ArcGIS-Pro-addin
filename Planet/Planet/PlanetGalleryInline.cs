@@ -83,6 +83,11 @@ namespace Planet
                         Console.WriteLine(e.Message);
                     }
                 }
+                catch  (Exception ex)
+                {
+                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message);
+
+                }
 
 
             }
@@ -124,11 +129,23 @@ namespace Planet
                                 foreach (Mosaic item in result.mosaics)
                                 
                                 {
-                                    //double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
-                                    //double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
-                                    //PointF point = tilePointConvert.WorldToTilePos(centerlong, centerlat, z);
-                                    item.Thumbnail = item._links.tiles.Replace("{x}", x).Replace("{y}", y).Replace("{z}", "0");
-                                    //item.Thumbnail = item._links.tiles.Replace("{x}", Math.Floor(point.X).ToString()).Replace("{y}", Math.Floor(point.Y).ToString()).Replace("{z}", z.ToString());
+                                    MapPoint sw = MapPointBuilder.CreateMapPoint(item.bbox[0], item.bbox[1], MapView.Active.Extent.SpatialReference);
+                                    MapPoint ne = MapPointBuilder.CreateMapPoint(item.bbox[2], item.bbox[3], MapView.Active.Extent.SpatialReference);
+                                    IList<MapPoint> mapPoints = new List<MapPoint>();
+                                    mapPoints.Add(sw);
+                                    mapPoints.Add(ne);
+                                    double zz = TilePointConvert.BestMapView(mapPoints, 100, 56, 2);
+                                    z = (int)Math.Floor(zz);
+                                    if (z < 0)
+                                    {
+                                        z = z * -1;
+                                    }
+                                    double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
+                                    double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
+                                    //z=4;
+                                    PointF point = tilePointConvert.WorldToTilePos(centerlong, centerlat, z);
+                                    //item.Thumbnail = item._links.tiles.Replace("{x}", x).Replace("{y}", y).Replace("{z}", "0");
+                                    item.Thumbnail = item._links.tiles.Replace("{x}", Math.Floor(point.X).ToString()).Replace("{y}", Math.Floor(point.Y).ToString()).Replace("{z}", z.ToString());
                                     lstMosaics.Add(item);
                                 }
 
@@ -244,5 +261,83 @@ namespace Planet
 
             return p;
         }
+
+        /// <summary>
+        /// Calculates the best map view for a list of locations for a map
+        /// </summary>
+        /// <param name="locations">List of location objects</param>
+        /// <param name="mapWidth">Map width in pixels</param>
+        /// <param name="mapHeight">Map height in pixels</param>
+        /// <param name="buffer">Width in pixels to use to create a buffer around the map. This is to keep pushpins from being cut off on the edge</param>
+        /// <returns>Returns a MapViewSpecification with the best map center point and zoom level for the given set of locations</returns>
+        public static double BestMapView(IList<MapPoint> locations, double mapWidth, double mapHeight, int buffer)
+        {
+            double zoom = 0;
+            double zoomLevel = 0;
+
+            //double maxLat = -85;
+            //double minLat = 85;
+            //double maxLon = -180;
+            //double minLon = 180;
+            double maxLat = -180;
+            double minLat = 180;
+            double maxLon = -85;
+            double minLon = 85;
+            //calculate bounding rectangle
+            for (int i = 0; i < locations.Count; i++)
+            {
+                if (locations[i].X > maxLat)
+                {
+                    maxLat = locations[i].X;
+                }
+
+                if (locations[i].X < minLat)
+                {
+                    minLat = locations[i].X;
+                }
+
+                if (locations[i].Y > maxLon)
+                {
+                    maxLon = locations[i].Y;
+                }
+
+                if (locations[i].Y < minLon)
+                {
+                    minLon = locations[i].Y;
+                }
+            }
+            MapPoint center = MapPointBuilder.CreateMapPoint((maxLat + minLat) / 2, (maxLon + minLon) / 2, MapView.Active.Extent.SpatialReference);
+
+            //center.X = (maxLat + minLat) / 2;
+            //center.Y = (maxLon + minLon) / 2;
+
+            double zoom1 = 0, zoom2 = 0;
+
+            //Determine the best zoom level based on the map scale and bounding coordinate information
+            if (maxLon != minLon && maxLat != minLat)
+            {
+                //best zoom level based on map width
+
+                zoom1 = Math.Log(360.0 / 256.0 * (mapWidth - 2 * buffer) / (maxLon - minLon)) / Math.Log(2);
+                //best zoom level based on map height
+                zoom2 = Math.Log(180.0 / 256.0 * (mapHeight - 2 * buffer) / (maxLat - minLat)) / Math.Log(2);
+            }
+
+            if (zoom1 < 0)
+            {
+                zoom1 = zoom1 * -1;
+            }
+            if (zoom2 < 0)
+            {
+                zoom2 = zoom2 * -1;
+            }
+            //use the most zoomed out of the two zoom levels
+            zoom = (zoom1 < zoom2) ? zoom1 : zoom2;
+            zoom = zoom1;
+            //mapView = new MapViewSpecification(center, zoomLevel);
+
+            return zoom;
+        }
+
     }
 }

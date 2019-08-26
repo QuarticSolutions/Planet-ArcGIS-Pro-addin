@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="test_docing_Panel.ViewModel.demoviewmodel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:test_docing_Panel.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" d:DataContext="">
+    <Grid>
+        <StackPanel Orientation="Vertical" Margin="5,0,5,0">
+                <Grid Margin="5">
+                    <!-- The image for the gallery item-->
+                    <Image MaxHeight="32" MaxWidth="32">
+                        <Image.Effect>
+                            <DropShadowEffect Color="{DynamicResource Esri_Color_Gray145}" Opacity="0.4" />
+                        </Image.Effect>
+                        <Image.Style>
+                            <Style TargetType="{x:Type Image}">
+                                <Setter Property="Source" Value="{Binding Icon}"/>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </Grid>
+                <TextBlock Text="{Binding Text}" HorizontalAlignment="Center" />
+            </StackPanel>
+    </Grid>
+</UserControl>
