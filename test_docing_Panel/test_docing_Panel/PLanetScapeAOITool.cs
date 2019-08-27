@@ -52,34 +52,34 @@ namespace test_docing_Panel
                 {
                     _graphic.Dispose();
                 }
-                Polygon polygon;
-                await ArcGIS.Desktop.Framework.Threading.Tasks.QueuedTask.Run(() =>
-                {
-                    List<Coordinate2D> coordinates2 = new List<Coordinate2D>()
-                {
-                  //new Coordinate2D(-159.20168702818188, 21.876487211082708),
-                  //new Coordinate2D(-159.42653907783114, 21.838951660451173),
-                  //new Coordinate2D(-159.44077880308507, 21.94718691051718),
-                  //new Coordinate2D(-159.21630329750306, 21.94718691051718),
-                  //new Coordinate2D(-159.21413990271841, 21.9365008022738),
-                  //new Coordinate2D(-159.21383956606297, 21.93655454291286),
-                  //new Coordinate2D(-159.20168702818188, 21.876487211082708),
-                  new Coordinate2D(-17773406.8675, 2478583.7239999995),
-                  new Coordinate2D(-17773406.8675, 2578583.7239999995),
-                  new Coordinate2D(-16773406.8675, 2578583.7239999995),
-                  new Coordinate2D(-17773406.8675, 2478583.7239999995)
-                };
-                    CIMPolygonSymbol _polygonSymbol = null;
-                    _polygonSymbol = SymbolFactory.Instance.ConstructPolygonSymbol(ColorFactory.Instance.BlackRGB, SimpleFillStyle.Null, SymbolFactory.Instance.ConstructStroke(ColorFactory.Instance.BlackRGB, 2.0, SimpleLineStyle.Solid));
-                    using (PolygonBuilder polygonBuilder = new PolygonBuilder(coordinates2, MapView.Active.Extent.SpatialReference))
-                    {
-                        polygonBuilder.SpatialReference = MapView.Active.Extent.SpatialReference;
-                        polygon = polygonBuilder.ToGeometry();
-                        geometry = polygonBuilder.ToGeometry();
-                        //Geometry geometry2 = GeometryEngine.Instance.ProjectEx(geometry, projTransFromSRs);
-                        _graphic = MapView.Active.AddOverlayAsync(geometry, _polygonSymbol.MakeSymbolReference());
-                    }
-                });
+                //Polygon polygon;
+                //await ArcGIS.Desktop.Framework.Threading.Tasks.QueuedTask.Run(() =>
+                //{
+                //    List<Coordinate2D> coordinates2 = new List<Coordinate2D>()
+                //{
+                //  //new Coordinate2D(-159.20168702818188, 21.876487211082708),
+                //  //new Coordinate2D(-159.42653907783114, 21.838951660451173),
+                //  //new Coordinate2D(-159.44077880308507, 21.94718691051718),
+                //  //new Coordinate2D(-159.21630329750306, 21.94718691051718),
+                //  //new Coordinate2D(-159.21413990271841, 21.9365008022738),
+                //  //new Coordinate2D(-159.21383956606297, 21.93655454291286),
+                //  //new Coordinate2D(-159.20168702818188, 21.876487211082708),
+                //  new Coordinate2D(-17773406.8675, 2478583.7239999995),
+                //  new Coordinate2D(-17773406.8675, 2578583.7239999995),
+                //  new Coordinate2D(-16773406.8675, 2578583.7239999995),
+                //  new Coordinate2D(-17773406.8675, 2478583.7239999995)
+                //};
+                //    CIMPolygonSymbol _polygonSymbol = null;
+                //    _polygonSymbol = SymbolFactory.Instance.ConstructPolygonSymbol(ColorFactory.Instance.BlackRGB, SimpleFillStyle.Null, SymbolFactory.Instance.ConstructStroke(ColorFactory.Instance.BlackRGB, 2.0, SimpleLineStyle.Solid));
+                //    using (PolygonBuilder polygonBuilder = new PolygonBuilder(coordinates2, MapView.Active.Extent.SpatialReference))
+                //    {
+                //        polygonBuilder.SpatialReference = MapView.Active.Extent.SpatialReference;
+                //        polygon = polygonBuilder.ToGeometry();
+                //        geometry = polygonBuilder.ToGeometry();
+                //        //Geometry geometry2 = GeometryEngine.Instance.ProjectEx(geometry, projTransFromSRs);
+                //        _graphic = MapView.Active.AddOverlayAsync(geometry, _polygonSymbol.MakeSymbolReference());
+                //    }
+                //});
 
                 //return true;
                 //DockPane pane = FrameworkApplication.DockPaneManager.Find("test_docing_Panel_PlanetDocPane");
@@ -168,17 +168,22 @@ namespace test_docing_Panel
 
 
                 //DateFilter
+                Config dateconfigconfig2 = new Config
+                {
+                    gte = "2019-05-19T16:51:19.926Z",
+                    lte = "2019-08-19T16:51:19.926Z"
+                };
+
                 Config dateconfigconfig = new Config
                 {
                     type = "DateRangeFilter",
                     field_name = "acquired",
-                    gte = "2019-05-19T16:51:19.926Z",
-                    lte = "2019-08-19T16:51:19.926Z"
+                    config= dateconfigconfig2
                 };
                 Config dateconfig = new Config
                 {
                     type = "OrFilter",
-                    config = dateconfigconfig
+                    config = new[] { dateconfigconfig }
                 };
 
                 SearchFilter searchFilter = new SearchFilter();
@@ -199,7 +204,12 @@ namespace test_docing_Panel
                 searchFilter.filter.config = mainconfigs.ToArray();
 
 
-                string json = JsonConvert.SerializeObject(searchFilter);
+                //string json = JsonConvert.SerializeObject(searchFilter);
+                string json = JsonConvert.SerializeObject(searchFilter, new JsonSerializerSettings()
+                {
+                    NullValueHandling=NullValueHandling.Ignore
+
+                });
                 string asas = "{\"filter\":{\"type\":\"AndFilter\",\"config\":[{\"type\":\"GeometryFilter\",\"field_name\":\"geometry\",\"config\":{\"type\":\"Polygon\",\"coordinates\":[[[-159.44149017333984,21.877787931279187],[-159.44998741149902,21.87679231243837],[-159.45372104644778,21.872769941600623],[-159.45217609405518,21.866835742000745],[-159.44372177124023,21.864207091531895],[-159.43561077117923,21.86930503623256],[-159.44149017333984,21.877787931279187]]]}},{\"type\":\"OrFilter\",\"config\":[{\"type\":\"DateRangeFilter\",\"field_name\":\"acquired\",\"config\":{\"gte\":\"2019-05-22T16:36:32.254Z\",\"lte\":\"2019-08-22T16:36:32.254Z\"}}]}]},\"item_types\":[\"PSScene4Band\",\"REOrthoTile\",\"SkySatCollect\"]}";
                 //var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.somewhere.com/v2/cases");
                 HttpClientHandler handler = new HttpClientHandler()
@@ -219,7 +229,7 @@ namespace test_docing_Panel
                 request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
                 //request.Headers.Remove("Content-Type");
                 //request.Headers.Add("Content-Type", "application/json");
-                var content = new StringContent(asas, Encoding.UTF8, "application/json");
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
                 request.Content = content;
                 var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:hgvhgv");
                 client.DefaultRequestHeaders.Host = "api.planet.com";
