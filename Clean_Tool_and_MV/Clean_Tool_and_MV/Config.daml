@@ -1,0 +1,54 @@
+﻿<ArcGIS defaultAssembly="Clean_Tool_and_MV.dll" defaultNamespace="Clean_Tool_and_MV" xmlns="http://schemas.esri.com/DADF/Registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
+  <AddInInfo id="{e9fe896e-6f70-4b80-afea-7098f958ecaa}" version="1.0" desktopVersion="2.3.15769">
+    <Name>Clean_Tool_and_MV</Name>
+    <Description>Clean_Tool_and_MV description</Description>
+    <Image>Images\AddinDesktop32.png</Image>
+    <Author>Andrew</Author>
+    <Company>Acme</Company>
+    <Date>8/27/2019 11:22:29 AM, 2019</Date>
+    <Subject>Framework</Subject>
+    <!-- Note subject can be one or more of these topics:
+                    Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
+  </AddInInfo>
+  <modules>
+    <insertModule id="Clean_Tool_and_MV_Module" className="Module1" autoLoad="false" caption="Module1">
+      <!-- uncomment to have the control hosted on a separate tab-->
+      <tabs>
+        <!--<tab id="Clean_Tool_and_MV_Tab1" caption="New Tab">
+          <group refID="Clean_Tool_and_MV_Group1"/>
+        </tab>-->
+      </tabs>
+      <groups>
+        <!-- comment this out if you have no controls on the Addin tab to avoid
+              an empty group-->
+        <group id="Clean_Tool_and_MV_Group1" caption="Group 1" appearsOnAddInTab="true">
+          <!-- host controls within groups -->
+          <tool refID="Clean_Tool_and_MV_AOI_Select" size="large" />
+          <button refID="Clean_Tool_and_MV_Data_DocPane_ShowButton" size="large" />
+        </group>
+      </groups>
+      <controls>
+        <!-- add your controls here -->
+        <tool id="Clean_Tool_and_MV_AOI_Select" caption="AOI _Select" className="AOI_Select" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed32.png" condition="esri_mapping_mapPane">
+          <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
+        </tool>
+        <button id="Clean_Tool_and_MV_Data_DocPane_ShowButton" caption="Show Data _DocPane" className="Data_DocPane_ShowButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Show Dockpane">Show Dockpane<disabledText /></tooltip>
+        </button>
+        <button id="Clean_Tool_and_MV_Data_DocPane_MenuButton" caption="Burger Menu Button" className="Data_DocPane_MenuButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
+        </button>
+      </controls>
+      <dockPanes>
+        <dockPane id="Clean_Tool_and_MV_Data_DocPane" caption="Data _DocPane" className="Data_DocPaneViewModel" dock="group" dockWith="esri_core_contentsDockPane">
+          <content className="Data_DocPaneView" />
+        </dockPane>
+      </dockPanes>
+      <menus>
+        <menu id="Clean_Tool_and_MV_Data_DocPane_Menu" caption="Options" contextMenu="true">
+          <button refID="Clean_Tool_and_MV_Data_DocPane_MenuButton" />
+        </menu>
+      </menus>
+    </insertModule>
+  </modules>
+</ArcGIS>
