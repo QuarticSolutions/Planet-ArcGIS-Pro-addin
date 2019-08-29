@@ -27,5 +27,23 @@ namespace test_docing_Panel.Models
         public string gte { get; set; }
         public string lte { get; set; }
     }
+    public class DateRangeFilterConfig
+    {
+        public string gte { get; set; }
+        public string lte { get; set; }
+    }
+    public class RangeFilterConfig
+    {
+        public int gte { get; set; }
+        public int lte { get; set; }
+    }
+
+    public class RangeFilter
+    {
+        public string type { get; set; }
+        public string field_name { get; set; }
+        public RangeFilterConfig config { get; set; }
+
+    }
 
 }

@@ -23,6 +23,7 @@ using System.Net.Http.Headers;
 using System.Net;
 using Newtonsoft.Json;
 using System.Net.Http;
+using System.Globalization;
 
 namespace Clean_Tool_and_MV
 {
@@ -32,6 +33,61 @@ namespace Clean_Tool_and_MV
         private const string _dockPaneID = "Clean_Tool_and_MV_Data_DocPane";
         private const string _menuID = "Clean_Tool_and_MV_Data_DocPane_Menu";
         private ObservableCollection<QuickSearchResult> _quickSearchResults = null;
+        private int _CloudcoverLow = 0;
+        private int _CloudcoverHigh = 100;
+        private DateTime _DateFrom = DateTime.Now.AddYears(-1);
+        private DateTime _DateTo = DateTime.Now;
+
+
+        public DateTime DateFrom
+        {
+            get
+            {
+                return _DateFrom;
+            }
+            set
+            {
+                _DateFrom = value;
+                OnPropertyChanged("DateFrom");
+            }
+        }
+        public DateTime DateTo
+        {
+            get
+            {
+                return _DateTo;
+            }
+            set
+            {
+                _DateTo = value;
+                OnPropertyChanged("DateTo");
+            }
+        }
+        public int CloudcoverLow {
+            get {
+                return _CloudcoverLow;
+            }
+            set {
+                _CloudcoverLow = value;
+                OnPropertyChanged("CloudcoverLow");
+            }
+        }
+
+        public int CloudcoverHigh
+        {
+            get
+            {
+                return _CloudcoverHigh;
+            }
+            set
+            {
+                _CloudcoverHigh = value;
+                OnPropertyChanged("CloudcoverHigh");
+            }
+        }
+
+
+
 
         public bool CanExecuteSearch { get; set; } = true;
         private ICommand _searchcommand;
@@ -131,6 +187,10 @@ namespace Clean_Tool_and_MV
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        /// <summary>
+        /// Do a Quick search against the Planet Data api
+        /// The results of the search update the QuickSearchResults Collection
+        /// </summary>
         private void DoSearch()
         {
             Polygon poly = (Polygon)AOIGeometry;
@@ -189,12 +249,29 @@ namespace Clean_Tool_and_MV
             };
 
 
+            //cloudcoverfiler
+            RangeFilterConfig cloudconfig = new RangeFilterConfig
+            {
+                gte = _CloudcoverLow,
+                lte = _CloudcoverHigh
+            };
+            
+            Config cloudCoverFilter = new Config
+            {
+                type = "RangeFilter",
+                field_name = "cloud_cover",
+                config = cloudconfig
+
+            };
+
+
+
 
             //DateFilter
             Config dateconfigconfig2 = new Config
             {
-                gte = "2019-05-19T16:51:19.926Z",
-                lte = "2019-08-19T16:51:19.926Z"
+                gte = _DateFrom.ToString("yyyy-MM-dd'T'HH:mm:ss.fffzzz", DateTimeFormatInfo.InvariantInfo),//"2019-05-19T16:51:19.926Z",
+                lte = _DateTo.ToString("yyyy-MM-dd'T'HH:mm:ss.fffzzz", DateTimeFormatInfo.InvariantInfo) //"2019-08-19T16:51:19.926Z"
             };
 
             Config dateconfigconfig = new Config
@@ -216,9 +293,12 @@ namespace Clean_Tool_and_MV
             typoes.Add("REOrthoTile");
 
 
-            List<Config> mainconfigs = new List<Config>();
-            mainconfigs.Add(dateconfig);
-            mainconfigs.Add(configGeom);
+            List<Config> mainconfigs = new List<Config>
+            {
+                dateconfig,
+                cloudCoverFilter,
+                configGeom
+            };
             searchFilter.item_types = typoes.ToArray();
             Filter topfilter = new Filter();
             topfilter.type = "AndFilter";
@@ -233,7 +313,7 @@ namespace Clean_Tool_and_MV
                 NullValueHandling = NullValueHandling.Ignore
 
             });
-            string asas = "{\"filter\":{\"type\":\"AndFilter\",\"config\":[{\"type\":\"GeometryFilter\",\"field_name\":\"geometry\",\"config\":{\"type\":\"Polygon\",\"coordinates\":[[[-159.44149017333984,21.877787931279187],[-159.44998741149902,21.87679231243837],[-159.45372104644778,21.872769941600623],[-159.45217609405518,21.866835742000745],[-159.44372177124023,21.864207091531895],[-159.43561077117923,21.86930503623256],[-159.44149017333984,21.877787931279187]]]}},{\"type\":\"OrFilter\",\"config\":[{\"type\":\"DateRangeFilter\",\"field_name\":\"acquired\",\"config\":{\"gte\":\"2019-05-22T16:36:32.254Z\",\"lte\":\"2019-08-22T16:36:32.254Z\"}}]}]},\"item_types\":[\"PSScene4Band\",\"REOrthoTile\",\"SkySatCollect\"]}";
+            //string asas = "{\"filter\":{\"type\":\"AndFilter\",\"config\":[{\"type\":\"GeometryFilter\",\"field_name\":\"geometry\",\"config\":{\"type\":\"Polygon\",\"coordinates\":[[[-159.44149017333984,21.877787931279187],[-159.44998741149902,21.87679231243837],[-159.45372104644778,21.872769941600623],[-159.45217609405518,21.866835742000745],[-159.44372177124023,21.864207091531895],[-159.43561077117923,21.86930503623256],[-159.44149017333984,21.877787931279187]]]}},{\"type\":\"OrFilter\",\"config\":[{\"type\":\"DateRangeFilter\",\"field_name\":\"acquired\",\"config\":{\"gte\":\"2019-05-22T16:36:32.254Z\",\"lte\":\"2019-08-22T16:36:32.254Z\"}}]}]},\"item_types\":[\"PSScene4Band\",\"REOrthoTile\",\"SkySatCollect\"]}";
             //var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.somewhere.com/v2/cases");
             HttpClientHandler handler = new HttpClientHandler()
             {
@@ -307,6 +387,9 @@ namespace Clean_Tool_and_MV
         }
     }
 
+    /// <summary>
+    /// Command Event Handler class
+    /// </summary>
     public class CommandHandler : ICommand
     {
         private Action _action;

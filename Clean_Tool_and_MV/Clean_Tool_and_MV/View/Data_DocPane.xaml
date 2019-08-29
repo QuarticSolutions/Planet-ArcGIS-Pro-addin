@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"    
              xmlns:ui="clr-namespace:Clean_Tool_and_MV"
+             xmlns:excd ="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
              xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"                       
              mc:Ignorable="d" 
@@ -37,9 +38,28 @@
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Command="{Binding SearchCommand}" Height="20" Width="40" Content="Search" />
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" >
+                <DatePicker Name="dtpDateFrom" HorizontalAlignment="Left" SelectedDate="{Binding DateFrom}"/>
+                <DatePicker Name="dtpDateTo" HorizontalAlignment="Left" SelectedDate="{Binding DateTo}"/>
+            </StackPanel>
+            <excd:RangeSlider Grid.Row="1" Name="sldCloudcover" LowerValue="{Binding CloudcoverLow}" 
+                                  HigherValue="{Binding CloudcoverHigh}" 
+                                  Step="1"
+                                  Minimum="0"
+                                  Maximum="100"
+                              TickPlacement="BottomRight"
+                              AutoToolTipPlacement="BottomRight"
+                              AutoToolTipPrecision="1"
+                              TickFrequency="1"
+                              IsSnapToTickEnabled="True"
+                              Background="{DynamicResource Esri_DockPaneClientAreaBackgroundBrush}"
+                                Foreground="{DynamicResource Esri_TextStyleDefaultBrush}"
+                              />
+
+            <Button Grid.Row="2" Command="{Binding SearchCommand}" Height="20" Width="40" Content="Search" Style="{DynamicResource Esri_Button}"/>
         </Grid>
     </Grid>
 </UserControl>
