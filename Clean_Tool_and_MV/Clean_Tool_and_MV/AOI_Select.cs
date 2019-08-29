@@ -39,13 +39,15 @@ namespace Clean_Tool_and_MV
             if (_graphic != null)
             {
                 _graphic.Dispose();
+                _graphic = null;
             }
+            
             addgraphic(geometry);
             DockPane pane = FrameworkApplication.DockPaneManager.Find("Clean_Tool_and_MV_Data_DocPane");
             Data_DocPaneViewModel data_DocPaneViewModel = (Data_DocPaneViewModel)pane;
             data_DocPaneViewModel.AOIGeometry = geometry;
             data_DocPaneViewModel.Activate(true);
-            addwmts("asdasd");
+            //addwmts("asdasd");
 
             return base.OnSketchCompleteAsync(geometry);
         }
@@ -68,7 +70,11 @@ namespace Clean_Tool_and_MV
         }
         private async void addgraphic(Geometry geometry)
         {
-            _graphic =  this.AddOverlayAsync(geometry, _polygonSymbol.MakeSymbolReference());
+            //_graphic =  this.AddOverlayAsync(geometry, _polygonSymbol.MakeSymbolReference());
+            await QueuedTask.Run(() =>
+            {
+                _graphic = MapView.Active.AddOverlay(geometry, _polygonSymbol.MakeSymbolReference());
+            });
         }
     }
 }

@@ -38,14 +38,23 @@
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" >
-                <DatePicker Name="dtpDateFrom" HorizontalAlignment="Left" SelectedDate="{Binding DateFrom}"/>
-                <DatePicker Name="dtpDateTo" HorizontalAlignment="Left" SelectedDate="{Binding DateTo}"/>
-            </StackPanel>
-            <excd:RangeSlider Grid.Row="1" Name="sldCloudcover" LowerValue="{Binding CloudcoverLow}" 
+            <TabControl Grid.Row="0" Background="{DynamicResource Esri_ControlBackgroundBrush}">
+                <TabItem Header="Aquired Dates">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                        <Label Content="Earliest Acquired"/>
+                        <DatePicker Name="dtpDateFrom" HorizontalAlignment="Left" SelectedDate="{Binding DateFrom}"/>
+                        <Label Content="Latest Acquired"/>
+                        <DatePicker Name="dtpDateTo" HorizontalAlignment="Left" SelectedDate="{Binding DateTo}"/>
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="Cloud cover">
+                    <StackPanel Orientation="Horizontal"  HorizontalAlignment="Left" Width="Auto" >
+                        <Label Content="Cloud cover"/>
+                        <excd:RangeSlider  Width="200" Name="sldCloudcover" LowerValue="{Binding CloudcoverLow}" 
                                   HigherValue="{Binding CloudcoverHigh}" 
                                   Step="1"
                                   Minimum="0"
@@ -58,8 +67,42 @@
                               Background="{DynamicResource Esri_DockPaneClientAreaBackgroundBrush}"
                                 Foreground="{DynamicResource Esri_TextStyleDefaultBrush}"
                               />
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Products">
+                    <!--<TabItem.Resources>
+                        <Style TargetType="{x:Type CheckBox}" >
+                            <Setter Property="Background" Value="{DynamicResource Esri_ControlBackgroundBrush}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource Esri_TextControlBrush}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource Esri_BorderHoverBrush}"/>
+                        </Style>
+                    </TabItem.Resources>-->
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,1,5,5" IsChecked="{Binding ProductPSScene3Band}" >PSScene3Band</CheckBox>
+                        <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,1,5,5" IsChecked="{Binding ProductPSScene4Band}" >PSScene4Band</CheckBox>
+                        <CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,1,5,5" IsChecked="{Binding ProductPSOrthoTile}" >PSOrthoTile</CheckBox>
+                        <CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,1,5,5" IsChecked="{Binding ProductREOrthoTile}" >REOrthoTile</CheckBox>
+                        <CheckBox Grid.Row="1" Grid.Column="1" Padding ="5,1,5,5" IsChecked="{Binding ProductREScene}" >REScene</CheckBox>
+                        <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,1,5,5" IsChecked="{Binding ProductSkySatScene}" >SkySatScene</CheckBox>
+                        <CheckBox Grid.Row="0" Grid.Column="2" Padding ="5,1,5,5" IsChecked="{Binding ProductSkySatCollect}" >SkySatCollect</CheckBox>
+                        <CheckBox Grid.Row="1" Grid.Column="2" Padding ="5,1,5,5" IsChecked="{Binding ProductLandsat8L1G}" >Landsat8L1G</CheckBox>
+                        <CheckBox Grid.Row="2" Grid.Column="2" Padding ="5,1,5,5" IsChecked="{Binding ProductSentinel2L1C}" Foreground="{DynamicResource Esri_TextControlBrush}" >Sentinel2L1C</CheckBox>
+                        
+                    </Grid>
+                </TabItem>
+            </TabControl>
 
-            <Button Grid.Row="2" Command="{Binding SearchCommand}" Height="20" Width="40" Content="Search" Style="{DynamicResource Esri_Button}"/>
+            <Button Grid.Row="2" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="20" Width="40" Content="Search" Style="{DynamicResource Esri_Button}"/>
         </Grid>
     </Grid>
 </UserControl>

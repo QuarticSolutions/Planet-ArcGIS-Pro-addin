@@ -37,8 +37,17 @@ namespace Clean_Tool_and_MV
         private int _CloudcoverHigh = 100;
         private DateTime _DateFrom = DateTime.Now.AddYears(-1);
         private DateTime _DateTo = DateTime.Now;
+        private bool _hasGeom = false;
 
-
+        public bool HasGeom
+        {
+            get { return _hasGeom; }
+            set
+            {
+                _hasGeom = value;
+                OnPropertyChanged("HasGeom");
+            }
+        }
         public DateTime DateFrom
         {
             get
@@ -141,6 +150,15 @@ namespace Clean_Tool_and_MV
             set
             {
                 _geometry = value;
+                if (_geometry.IsEmpty)
+                {
+                    HasGeom = false;
+                }
+                else
+                {
+                    HasGeom = true;
+                }
+                OnPropertyChanged("AOIGeometry");
             }
         }
 
@@ -288,9 +306,20 @@ namespace Clean_Tool_and_MV
 
             SearchFilter searchFilter = new SearchFilter();
             List<string> typoes = new List<string>();
-            typoes.Add("PSScene4Band");
-            typoes.Add("SkySatCollect");
-            typoes.Add("REOrthoTile");
+            //typoes.Add("PSScene4Band");
+            //typoes.Add("SkySatCollect");
+            //typoes.Add("REOrthoTile");
+            foreach (var prop in this.GetType().GetProperties())
+            {
+                if (prop.PropertyType.Name == "Boolean")
+                {
+                    if (((bool)prop.GetValue(this,null)) && (prop.Name.StartsWith("Product")))
+                    {
+                        typoes.Add(prop.Name.Substring(7));
+                    }
+                    //Console.WriteLine(prop.MemberType.ToString());
+                }
+            } 
 
 
             List<Config> mainconfigs = new List<Config>
@@ -362,6 +391,111 @@ namespace Clean_Tool_and_MV
                 }
             }
         }
+
+        #region ProductBooleans set get
+        private bool _PSScene3Band = false;
+        public bool ProductPSScene3Band
+        {
+            get { return _PSScene3Band; }
+            set
+            {
+                if (_PSScene3Band == value) return;
+                _PSScene3Band = value;
+                NotifyPropertyChanged(() => ProductPSScene3Band);
+            }
+        }
+        private bool _PSScene4Band = true;
+        public bool ProductPSScene4Band
+        {
+            get { return _PSScene4Band; }
+            set
+            {
+                if (_PSScene4Band == value) return;
+                _PSScene4Band = value;
+                NotifyPropertyChanged(() => ProductPSScene4Band);
+            }
+        }
+
+        private bool _PSOrthoTile = false;
+        public bool ProductPSOrthoTile
+        {
+            get { return _PSOrthoTile; }
+            set
+            {
+                if (_PSOrthoTile == value) return;
+                _PSOrthoTile = value;
+                NotifyPropertyChanged(() => ProductPSOrthoTile);
+            }
+        }
+
+        private bool _REOrthoTile = true;
+        public bool ProductREOrthoTile
+        {
+            get { return _REOrthoTile; }
+            set
+            {
+                if (_REOrthoTile == value) return;
+                _REOrthoTile = value;
+                NotifyPropertyChanged(() => ProductREOrthoTile);
+            }
+        }
+
+        private bool _REScene = false;
+        public bool ProductREScene
+        {
+            get { return _REScene; }
+            set
+            {
+                if (_REScene == value) return;
+                _REScene = value;
+                NotifyPropertyChanged(() => ProductREScene);
+            }
+        }
+        private bool _SkySatScene = false;
+        public bool ProductSkySatScene
+        {
+            get { return _SkySatScene; }
+            set
+            {
+                if (_SkySatScene == value) return;
+                _SkySatScene = value;
+                NotifyPropertyChanged(() => ProductSkySatScene);
+            }
+        }
+        private bool _SkySatCollect = true;
+        public bool ProductSkySatCollect
+        {
+            get { return _SkySatCollect; }
+            set
+            {
+                if (_SkySatCollect == value) return;
+                _SkySatCollect = value;
+                NotifyPropertyChanged(() => ProductSkySatCollect);
+            }
+        }
+        private bool _Landsat8L1G = false;
+        public bool ProductLandsat8L1G
+        {
+            get { return _Landsat8L1G; }
+            set
+            {
+                if (_Landsat8L1G == value) return;
+                _Landsat8L1G = value;
+                NotifyPropertyChanged(() => ProductLandsat8L1G);
+            }
+        }
+        private bool _Sentinel2L1C = false;
+        public bool ProductSentinel2L1C
+        {
+            get { return _Sentinel2L1C; }
+            set
+            {
+                if (_Sentinel2L1C == value) return;
+                _Sentinel2L1C = value;
+                NotifyPropertyChanged(() => ProductSentinel2L1C);
+            }
+        }
+        #endregion
     }
 
 
