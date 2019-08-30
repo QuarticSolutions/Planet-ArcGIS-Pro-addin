@@ -12,5 +12,30 @@ namespace Clean_Tool_and_MV.Model
         public string stripId { get; set; }
         public List<Asset> assets { get; set; }
         public DateTime acquired { get; set; }
+        public int imageCount
+        {
+            get
+            {
+                return assets.Count;
+            }
+        }
+        public string title
+        {
+            get
+            {
+                int count = imageCount;
+                return acquired.ToShortTimeString() + " (" + count + (count == 1 ? " image" : " images") + ")";
+            }
+        }
+        public IEnumerable<object> Items
+        {
+            get
+            {
+                foreach (var asset in assets)
+                {
+                    yield return asset;
+                }
+            }
+        }
     }
 }

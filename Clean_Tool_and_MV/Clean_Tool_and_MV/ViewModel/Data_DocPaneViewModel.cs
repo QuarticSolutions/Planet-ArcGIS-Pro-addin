@@ -24,6 +24,7 @@ using System.Net;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace Clean_Tool_and_MV
 {
@@ -33,13 +34,11 @@ namespace Clean_Tool_and_MV
         private const string _dockPaneID = "Clean_Tool_and_MV_Data_DocPane";
         private const string _menuID = "Clean_Tool_and_MV_Data_DocPane_Menu";
         private ObservableCollection<QuickSearchResult> _quickSearchResults = null;
-        private List<Model.Item> _items = null;
         private int _CloudcoverLow = 0;
         private int _CloudcoverHigh = 100;
         private DateTime _DateFrom = DateTime.Now.AddYears(-1);
         private DateTime _DateTo = DateTime.Now;
         private bool _hasGeom = false;
-
         public bool HasGeom
         {
             get { return _hasGeom; }
@@ -82,7 +81,6 @@ namespace Clean_Tool_and_MV
                 OnPropertyChanged("CloudcoverLow");
             }
         }
-
         public int CloudcoverHigh
         {
             get
@@ -95,10 +93,6 @@ namespace Clean_Tool_and_MV
                 OnPropertyChanged("CloudcoverHigh");
             }
         }
-
-
-
-
         public bool CanExecuteSearch { get; set; } = true;
         private ICommand _searchcommand;
         public ICommand SearchCommand
@@ -110,12 +104,28 @@ namespace Clean_Tool_and_MV
                 return _searchcommand;
             }
         }
-
+        private ObservableCollection<Model.AcquiredDateGroup> _items;
+        public ObservableCollection<Model.AcquiredDateGroup> Items
+        {
+            get
+            {
+                if (_items == null)
+                {
+                    _items = new ObservableCollection<Model.AcquiredDateGroup>();
+                }
+                return _items;
+            }
+            set
+            {
+                _items = value;
+                OnPropertyChanged("Items");
+            }
+        }
 
 
         protected Data_DocPaneViewModel()
         {
-
+            
         }
 
         /// <summary>
@@ -201,7 +211,7 @@ namespace Clean_Tool_and_MV
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name)
+        protected virtual void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -377,21 +387,29 @@ namespace Clean_Tool_and_MV
             //content.Headers.TryAddWithoutValidation("Authorization", "Basic " + Convert.ToBase64String(byteArray));
             //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "MWZlNTc1OTgwZTc4NDY3ZjljMjhiNTUyMjk0ZWE0MTA6");//Convert.ToBase64String(byteArray));
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
+            try
             {
-                using (HttpContent content2 = httpResponse.Content)
+                using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
                 {
-                    var json2 = content2.ReadAsStringAsync().Result;
-                    QuickSearchResult quickSearchResult = JsonConvert.DeserializeObject<QuickSearchResult>(json2);
-                    if (_quickSearchResults is null )
+                    using (HttpContent content2 = httpResponse.Content)
                     {
+                        var json2 = content2.ReadAsStringAsync().Result;
+                        QuickSearchResult quickSearchResult = JsonConvert.DeserializeObject<QuickSearchResult>(json2);
+                        //if (_quickSearchResults is null )
+                        //{
                         _quickSearchResults = new ObservableCollection<QuickSearchResult>();
+                        //}
+                        _quickSearchResults.Add(quickSearchResult);
+                        //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
                     }
-                    _quickSearchResults.Add(quickSearchResult);
-                    //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
                 }
+                processQuickSearchResults(_quickSearchResults);
             }
-            processQuickSearchResults(_quickSearchResults);
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message + Environment.NewLine + e.StackTrace);
+            }
+
         }
 
         /// <summary>
@@ -405,24 +423,42 @@ namespace Clean_Tool_and_MV
         private void processQuickSearchResults(ObservableCollection<QuickSearchResult> results)
         {
 
-            List<Model.Item> items = new List<Model.Item>();
+            //List<Model.Item> items = new List<Model.Item>();
+            List<Model.AcquiredDateGroup> groupedResults = new List<Model.AcquiredDateGroup>();
             foreach(QuickSearchResult result in results)
             {
                 test_docing_Panel.Models.Feature[] features = result.features;
                 foreach(test_docing_Panel.Models.Feature feature in features)
                 {
-                    Model.Item item = null;
+                    Model.AcquiredDateGroup acquiredDateGroup = null;
                     DateTime acquired = feature.properties.acquired;
                     DateTime acquired_day = acquired.Date;
+                    int acquiredDateIndex = groupedResults.FindIndex(i => i.acquired == acquired_day);
+                    if (acquiredDateIndex < 0)
+                    {
+                        acquiredDateGroup = new Model.AcquiredDateGroup
+                        {
+                            acquired = acquired_day,
+                            items = new List<Model.Item>()
+                        };
+                        groupedResults.Add(acquiredDateGroup);
+                    } else
+                    {
+                        acquiredDateGroup = groupedResults[acquiredDateIndex];
+                    }
+
                     string itemType = feature.properties.item_type;
-                    int index = items.FindIndex(i => i.acquired == acquired_day && i.itemType == itemType);
+                    Model.Item item = null;
+                    List<Model.Item> items = acquiredDateGroup.items;
+                    int index = items.FindIndex(i => i.itemType == itemType);
                     if (index < 0)
                     {
                         item = new Model.Item
                         {
                             itemType = itemType,
-                            acquired = acquired_day,
-                            strips = new List<Model.Strip>()
+                            acquired = acquired,
+                            strips = new List<Model.Strip>(),
+                            parent = acquiredDateGroup
                         };
                         items.Add(item);
                     } else
@@ -464,7 +500,12 @@ namespace Clean_Tool_and_MV
                 }
 
             }
-            //
+            foreach(Model.AcquiredDateGroup group in groupedResults)
+            {
+                group.items = group.items.OrderBy(itemGroup => itemGroup.itemType).ToList();
+            }
+            List<Model.AcquiredDateGroup>collection = groupedResults.OrderByDescending(group => group.acquired).ToList();
+            Items = new ObservableCollection<Model.AcquiredDateGroup>(collection);
         }
 
         #region ProductBooleans set get
