@@ -522,6 +522,13 @@ namespace Clean_Tool_and_MV
             Items = new ObservableCollection<Model.AcquiredDateGroup>(collection);
         }
 
+
+        /// <summary>
+        /// Gets the wmts url from the Planet api for a list of items.
+        /// The function accepts a string argument that must be in format
+        /// productName:itemID,productName:itemID, e.g. PSScene4Band:20190603_205042_1042,PSScene4Band:20190528_205949_43_1061
+        /// </summary>
+        /// <param name="param"></param>
         private async void DoAddToMap(Object param)
         {
             HttpClientHandler handler = new HttpClientHandler()
@@ -537,8 +544,6 @@ namespace Clean_Tool_and_MV
             //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
             request.Headers.Host = "tiles2.planet.com";
             request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-            //request.Headers.Remove("Content-Type");
-            //request.Headers.Add("Content-Type", "application/json");
             var nvc = new List<KeyValuePair<string, string>>();
             nvc.Add(new KeyValuePair<string, string>("ids", "PSScene4Band:20190603_205042_1042,PSScene4Band:20190528_205949_43_1061,PSScene4Band:20190818_205116_1009"));
             //var content = new StringContent(json, Encoding.UTF8, "application/json");

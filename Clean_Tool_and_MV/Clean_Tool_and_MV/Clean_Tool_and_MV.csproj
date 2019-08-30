@@ -137,10 +137,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AOI_Select.cs" />
-
     <Compile Include="Model\AcquiredDateGroup.cs" />
     <Compile Include="Model\Asset.cs" />
-    <Compile Include="Model\customwmts.cs" />
     <Compile Include="Model\customwmts.cs" />
     <Compile Include="Model\demomodel.cs" />
     <Compile Include="Model\Item.cs" />
