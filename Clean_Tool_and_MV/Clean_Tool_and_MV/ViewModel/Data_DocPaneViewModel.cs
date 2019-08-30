@@ -24,6 +24,7 @@ using System.Net;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using Clean_Tool_and_MV.Model;
 
 namespace Clean_Tool_and_MV
@@ -39,7 +40,6 @@ namespace Clean_Tool_and_MV
         private DateTime _DateFrom = DateTime.Now.AddYears(-1);
         private DateTime _DateTo = DateTime.Now;
         private bool _hasGeom = false;
-
         public bool HasGeom
         {
             get { return _hasGeom; }
@@ -82,7 +82,6 @@ namespace Clean_Tool_and_MV
                 OnPropertyChanged("CloudcoverLow");
             }
         }
-
         public int CloudcoverHigh
         {
             get
@@ -95,10 +94,6 @@ namespace Clean_Tool_and_MV
                 OnPropertyChanged("CloudcoverHigh");
             }
         }
-
-
-
-
         public bool CanExecuteSearch { get; set; } = true;
         private ICommand _searchcommand;
         public ICommand SearchCommand
@@ -111,6 +106,23 @@ namespace Clean_Tool_and_MV
             }
         }
 
+        private ObservableCollection<Model.AcquiredDateGroup> _items;
+        public ObservableCollection<Model.AcquiredDateGroup> Items
+        {
+            get
+            {
+                if (_items == null)
+                {
+                    _items = new ObservableCollection<Model.AcquiredDateGroup>();
+                }
+                return _items;
+            }
+            set
+            {
+                _items = value;
+                OnPropertyChanged("Items");
+            }
+        }
         public bool CanAddToMap { get; set; } = true;
         private ICommand _addToMapCommand;
         public  ICommand AddToMap
@@ -127,7 +139,7 @@ namespace Clean_Tool_and_MV
 
         protected Data_DocPaneViewModel()
         {
-
+            
         }
 
         /// <summary>
@@ -213,7 +225,7 @@ namespace Clean_Tool_and_MV
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name)
+        protected virtual void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -389,20 +401,125 @@ namespace Clean_Tool_and_MV
             //content.Headers.TryAddWithoutValidation("Authorization", "Basic " + Convert.ToBase64String(byteArray));
             //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "MWZlNTc1OTgwZTc4NDY3ZjljMjhiNTUyMjk0ZWE0MTA6");//Convert.ToBase64String(byteArray));
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
+            try
             {
-                using (HttpContent content2 = httpResponse.Content)
+                using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
                 {
-                    var json2 = content2.ReadAsStringAsync().Result;
-                    QuickSearchResult quickSearchResult = JsonConvert.DeserializeObject<QuickSearchResult>(json2);
-                    if (_quickSearchResults is null )
+                    using (HttpContent content2 = httpResponse.Content)
                     {
+                        var json2 = content2.ReadAsStringAsync().Result;
+                        QuickSearchResult quickSearchResult = JsonConvert.DeserializeObject<QuickSearchResult>(json2);
+                        //if (_quickSearchResults is null )
+                        //{
                         _quickSearchResults = new ObservableCollection<QuickSearchResult>();
+                        //}
+                        _quickSearchResults.Add(quickSearchResult);
+                        //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
                     }
-                    _quickSearchResults.Add(quickSearchResult);
-                    //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
                 }
+                processQuickSearchResults(_quickSearchResults);
             }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message + Environment.NewLine + e.StackTrace);
+            }
+
+        }
+
+        /// <summary>
+        /// Sort through quick search results and create list of items
+        /// Items are grouped by acquired date and item type
+        /// Each item contains a list of strips
+        /// Strips are grouped by strip id
+        /// Each strip contains a list of assets
+        /// Assets inherit from test_docing_Panel.Models.Feature 
+        /// </summary>
+        private void processQuickSearchResults(ObservableCollection<QuickSearchResult> results)
+        {
+
+            //List<Model.Item> items = new List<Model.Item>();
+            List<Model.AcquiredDateGroup> groupedResults = new List<Model.AcquiredDateGroup>();
+            foreach(QuickSearchResult result in results)
+            {
+                test_docing_Panel.Models.Feature[] features = result.features;
+                foreach(test_docing_Panel.Models.Feature feature in features)
+                {
+                    Model.AcquiredDateGroup acquiredDateGroup = null;
+                    DateTime acquired = feature.properties.acquired;
+                    DateTime acquired_day = acquired.Date;
+                    int acquiredDateIndex = groupedResults.FindIndex(i => i.acquired == acquired_day);
+                    if (acquiredDateIndex < 0)
+                    {
+                        acquiredDateGroup = new Model.AcquiredDateGroup
+                        {
+                            acquired = acquired_day,
+                            items = new List<Model.Item>()
+                        };
+                        groupedResults.Add(acquiredDateGroup);
+                    } else
+                    {
+                        acquiredDateGroup = groupedResults[acquiredDateIndex];
+                    }
+
+                    string itemType = feature.properties.item_type;
+                    Model.Item item = null;
+                    List<Model.Item> items = acquiredDateGroup.items;
+                    int index = items.FindIndex(i => i.itemType == itemType);
+                    if (index < 0)
+                    {
+                        item = new Model.Item
+                        {
+                            itemType = itemType,
+                            acquired = acquired,
+                            strips = new List<Model.Strip>(),
+                            parent = acquiredDateGroup
+                        };
+                        items.Add(item);
+                    } else
+                    {
+                        item = items[index];
+                    }
+
+                    Model.Strip strip = null;
+                    List<Model.Strip> strips = item.strips;
+                    string stripId = feature.properties.strip_id;
+                    int stripIndex = strips.FindIndex(s => s.stripId == stripId);
+                    if (stripIndex < 0)
+                    {
+                        strip = new Model.Strip
+                        {
+                            stripId = stripId,
+                            acquired = acquired,
+                            parent = item,
+                            assets = new List<Model.Asset>()
+                        };
+                        strips.Add(strip);
+                    } else
+                    {
+                        strip = strips[stripIndex];
+                    }
+
+                    List<Model.Asset> assets = strip.assets;
+                    Model.Asset asset = new Model.Asset
+                    {
+                        parent = strip,
+                        properties = feature.properties,
+                        id = feature.id,
+                        type = feature.type,
+                        _links = feature._links,
+                        _permissions = feature._permissions,
+                        geometry = feature.geometry
+                    };
+                    assets.Add(asset);
+                }
+
+            }
+            foreach(Model.AcquiredDateGroup group in groupedResults)
+            {
+                group.items = group.items.OrderBy(itemGroup => itemGroup.itemType).ToList();
+            }
+            List<Model.AcquiredDateGroup>collection = groupedResults.OrderByDescending(group => group.acquired).ToList();
+            Items = new ObservableCollection<Model.AcquiredDateGroup>(collection);
         }
 
         private async void DoAddToMap(Object param)

@@ -40,7 +40,7 @@
         </button>
       </controls>
       <dockPanes>
-        <dockPane id="Clean_Tool_and_MV_Data_DocPane" caption="Data _DocPane" className="Data_DocPaneViewModel" dock="group" dockWith="esri_core_contentsDockPane">
+        <dockPane id="Clean_Tool_and_MV_Data_DocPane" caption="Planet" className="Data_DocPaneViewModel" dock="group" dockWith="esri_core_contentsDockPane">
           <content className="Data_DocPaneView" />
         </dockPane>
       </dockPanes>

@@ -137,11 +137,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AOI_Select.cs" />
+
+    <Compile Include="Model\AcquiredDateGroup.cs" />
+    <Compile Include="Model\Asset.cs" />
+    <Compile Include="Model\customwmts.cs" />
     <Compile Include="Model\customwmts.cs" />
     <Compile Include="Model\demomodel.cs" />
+    <Compile Include="Model\Item.cs" />
     <Compile Include="Model\PlanetResultModel.cs" />
     <Compile Include="Model\QuickSearchResult.cs" />
     <Compile Include="Model\SearchFilter.cs" />
+    <Compile Include="Model\Strip.cs" />
     <Compile Include="View\Data_DocPane.xaml.cs">
       <DependentUpon>Data_DocPane.xaml</DependentUpon>
     </Compile>

@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"    
              xmlns:ui="clr-namespace:Clean_Tool_and_MV"
+             xmlns:models="clr-namespace:test_docing_Panel.Models"
+             xmlns:model="clr-namespace:Clean_Tool_and_MV.Model"
              xmlns:excd ="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
              xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"                       
@@ -23,7 +25,7 @@
 			<RowDefinition Height="*"/>
     </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0" LastChildFill="true" KeyboardNavigation.TabNavigation="Local" Height="30">
+        <!--<DockPanel Grid.Row="0" LastChildFill="true" KeyboardNavigation.TabNavigation="Local" Height="30">
             <controls:BurgerButton DockPanel.Dock="Right"
                 ToolTip="{Binding BurgerButtonTooltip}"
                 PopupMenu="{Binding BurgerButtonMenu}"/>
@@ -34,7 +36,7 @@
           </WrapPanel>
         </TextBlock.ToolTip>
       </TextBlock>
-    </DockPanel>
+    </DockPanel>-->
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -101,7 +103,38 @@
                     </Grid>
                 </TabItem>
             </TabControl>
-
+            <TreeView Name="SearchResults" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Items}">
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type model:AcquiredDateGroup}" ItemsSource="{Binding Items}">
+                        <TextBlock Text="{Binding Path=date, Mode=OneWay}" />
+                    </HierarchicalDataTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type model:Item}" ItemsSource="{Binding Items}">
+                        <TextBlock Text="{Binding Path=title, Mode=OneWay}" />
+                    </HierarchicalDataTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type model:Strip}" ItemsSource="{Binding Items}">
+                        <TextBlock Text="{Binding Path=title, Mode=OneWay}" />
+                    </HierarchicalDataTemplate>
+                    <DataTemplate DataType="{x:Type model:Asset}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Height="64" HorizontalAlignment="Left">
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Setter Property="Source" Value="{Binding Path=image}"/>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                            <Grid Margin="5,0,0,0" VerticalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="{Binding Path=title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="1" Text="{Binding Path=id, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            </Grid>
+                        </StackPanel>
+                    </DataTemplate>
+                </TreeView.Resources>
+            </TreeView>
             <Button Grid.Row="2" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="20" Width="40" Content="Search" Style="{DynamicResource Esri_Button}"/>
             <Button Grid.Row="2" Command="{Binding AddToMap}" CommandParameter="Testttt"  Height="20" Width="40" Content="Add To Map" Style="{DynamicResource Esri_Button}"/>
         </Grid>

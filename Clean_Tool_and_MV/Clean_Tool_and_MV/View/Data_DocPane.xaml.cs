@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArcGIS.Desktop.Mapping;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,9 +22,11 @@ namespace Clean_Tool_and_MV
     /// </summary>
     public partial class Data_DocPaneView : UserControl
     {
+
         public Data_DocPaneView()
         {
             InitializeComponent();
         }
+
     }
 }
