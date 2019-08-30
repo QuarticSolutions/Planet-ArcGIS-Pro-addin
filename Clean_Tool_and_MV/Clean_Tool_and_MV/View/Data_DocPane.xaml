@@ -136,6 +136,7 @@
                 </TreeView.Resources>
             </TreeView>
             <Button Grid.Row="2" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="20" Width="40" Content="Search" Style="{DynamicResource Esri_Button}"/>
+            <Button Grid.Row="2" Command="{Binding AddToMap}" CommandParameter="Testttt"  Height="20" Width="40" Content="Add To Map" Style="{DynamicResource Esri_Button}"/>
         </Grid>
     </Grid>
 </UserControl>

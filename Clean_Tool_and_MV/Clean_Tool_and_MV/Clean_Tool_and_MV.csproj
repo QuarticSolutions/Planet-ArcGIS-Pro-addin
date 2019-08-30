@@ -127,7 +127,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <AddInContent Include="Config.daml" />
+    <AddInContent Include="Config.daml">
+      <SubType>Designer</SubType>
+    </AddInContent>
     <AddInContent Include="Images\AddInDesktop16.png" />
     <AddInContent Include="Images\AddInDesktop32.png" />
     <AddInContent Include="DarkImages\AddInDesktop16.png" />
@@ -135,8 +137,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AOI_Select.cs" />
+
     <Compile Include="Model\AcquiredDateGroup.cs" />
     <Compile Include="Model\Asset.cs" />
+    <Compile Include="Model\customwmts.cs" />
+    <Compile Include="Model\customwmts.cs" />
     <Compile Include="Model\demomodel.cs" />
     <Compile Include="Model\Item.cs" />
     <Compile Include="Model\PlanetResultModel.cs" />
