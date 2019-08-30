@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"    
              xmlns:ui="clr-namespace:Clean_Tool_and_MV"
+             xmlns:model="clr-namespace:test_docing_Panel.Models"
              xmlns:excd ="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
              xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"                       
@@ -101,7 +102,9 @@
                     </Grid>
                 </TabItem>
             </TabControl>
+            <TreeView Grid.Row="1" Name="Items">
 
+            </TreeView>
             <Button Grid.Row="2" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="20" Width="40" Content="Search" Style="{DynamicResource Esri_Button}"/>
         </Grid>
     </Grid>

@@ -33,6 +33,7 @@ namespace Clean_Tool_and_MV
         private const string _dockPaneID = "Clean_Tool_and_MV_Data_DocPane";
         private const string _menuID = "Clean_Tool_and_MV_Data_DocPane_Menu";
         private ObservableCollection<QuickSearchResult> _quickSearchResults = null;
+        private List<Model.Item> _items = null;
         private int _CloudcoverLow = 0;
         private int _CloudcoverHigh = 100;
         private DateTime _DateFrom = DateTime.Now.AddYears(-1);
@@ -390,6 +391,80 @@ namespace Clean_Tool_and_MV
                     //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
                 }
             }
+            processQuickSearchResults(_quickSearchResults);
+        }
+
+        /// <summary>
+        /// Sort through quick search results and create list of items
+        /// Items are grouped by acquired date and item type
+        /// Each item contains a list of strips
+        /// Strips are grouped by strip id
+        /// Each strip contains a list of assets
+        /// Assets inherit from test_docing_Panel.Models.Feature 
+        /// </summary>
+        private void processQuickSearchResults(ObservableCollection<QuickSearchResult> results)
+        {
+
+            List<Model.Item> items = new List<Model.Item>();
+            foreach(QuickSearchResult result in results)
+            {
+                test_docing_Panel.Models.Feature[] features = result.features;
+                foreach(test_docing_Panel.Models.Feature feature in features)
+                {
+                    Model.Item item = null;
+                    DateTime acquired = feature.properties.acquired;
+                    DateTime acquired_day = acquired.Date;
+                    string itemType = feature.properties.item_type;
+                    int index = items.FindIndex(i => i.acquired == acquired_day && i.itemType == itemType);
+                    if (index < 0)
+                    {
+                        item = new Model.Item
+                        {
+                            itemType = itemType,
+                            acquired = acquired_day,
+                            strips = new List<Model.Strip>()
+                        };
+                        items.Add(item);
+                    } else
+                    {
+                        item = items[index];
+                    }
+
+                    Model.Strip strip = null;
+                    List<Model.Strip> strips = item.strips;
+                    string stripId = feature.properties.strip_id;
+                    int stripIndex = strips.FindIndex(s => s.stripId == stripId);
+                    if (stripIndex < 0)
+                    {
+                        strip = new Model.Strip
+                        {
+                            stripId = stripId,
+                            acquired = acquired,
+                            parent = item,
+                            assets = new List<Model.Asset>()
+                        };
+                        strips.Add(strip);
+                    } else
+                    {
+                        strip = strips[stripIndex];
+                    }
+
+                    List<Model.Asset> assets = strip.assets;
+                    Model.Asset asset = new Model.Asset
+                    {
+                        parent = strip,
+                        properties = feature.properties,
+                        id = feature.id,
+                        type = feature.type,
+                        _links = feature._links,
+                        _permissions = feature._permissions,
+                        geometry = feature.geometry
+                    };
+                    assets.Add(asset);
+                }
+
+            }
+            //
         }
 
         #region ProductBooleans set get
