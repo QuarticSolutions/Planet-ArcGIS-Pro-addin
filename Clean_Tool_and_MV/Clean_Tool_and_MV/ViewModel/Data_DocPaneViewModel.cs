@@ -25,6 +25,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace Clean_Tool_and_MV
 {
@@ -46,6 +47,16 @@ namespace Clean_Tool_and_MV
             {
                 _hasGeom = value;
                 OnPropertyChanged("HasGeom");
+            }
+        }
+        private Visibility _showCircularAnimation = Visibility.Collapsed;
+        public Visibility ShowCircularAnimation
+        {
+            get { return _showCircularAnimation; }
+            set
+            {
+                _showCircularAnimation = value;
+                OnPropertyChanged("ShowCircularAnimation");
             }
         }
         public DateTime DateFrom
@@ -120,6 +131,164 @@ namespace Clean_Tool_and_MV
                 _items = value;
                 OnPropertyChanged("Items");
             }
+        }
+        private Model.Asset FindAsset(string id)
+        {
+            foreach(Model.AcquiredDateGroup group in Items)
+            {
+                foreach(Model.Item item in group.items)
+                {
+                    foreach(Model.Strip strip in item.strips)
+                    {
+                        foreach(Model.Asset asset in strip.assets)
+                        {
+                            if (asset.id == id)
+                            {
+                                return asset;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        private Model.Asset GetAsset(object sender)
+        {
+            System.Windows.Controls.StackPanel stackPanel = sender as System.Windows.Controls.StackPanel;
+            var children = stackPanel.Children;
+            System.Windows.Controls.Grid grid = stackPanel.Children[1] as System.Windows.Controls.Grid;
+            var gridChildren = grid.Children;
+            System.Windows.Controls.TextBlock idTextBlock = gridChildren[1] as System.Windows.Controls.TextBlock;
+            string asset_id = idTextBlock.Text;
+            Model.Asset asset = FindAsset(asset_id);
+            return asset;
+        }
+        public void AddFootprint(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Model.Asset asset = GetAsset(sender);
+                asset.drawFootprint();
+            }
+            catch (Exception ex)
+            {
+                //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+            }
+        }
+
+        public void RemoveFootprint(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Model.Asset asset = GetAsset(sender);
+                asset.disposeFootprint();
+            }
+            catch (Exception ex)
+            {
+                //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// Sort through quick search results and create list of items
+        /// Items are grouped by acquired date and item type
+        /// Each item contains a list of strips
+        /// Strips are grouped by strip id
+        /// Each strip contains a list of assets
+        /// Assets inherit from test_docing_Panel.Models.Feature 
+        /// </summary>
+        private void processQuickSearchResults(ObservableCollection<QuickSearchResult> results)
+        {
+
+            //List<Model.Item> items = new List<Model.Item>();
+            List<Model.AcquiredDateGroup> groupedResults = new List<Model.AcquiredDateGroup>();
+            foreach (QuickSearchResult result in results)
+            {
+                test_docing_Panel.Models.Feature[] features = result.features;
+                foreach (test_docing_Panel.Models.Feature feature in features)
+                {
+                    Model.AcquiredDateGroup acquiredDateGroup = null;
+                    DateTime acquired = feature.properties.acquired;
+                    DateTime acquired_day = acquired.Date;
+                    int acquiredDateIndex = groupedResults.FindIndex(i => i.acquired == acquired_day);
+                    if (acquiredDateIndex < 0)
+                    {
+                        acquiredDateGroup = new Model.AcquiredDateGroup
+                        {
+                            acquired = acquired_day,
+                            items = new List<Model.Item>()
+                        };
+                        groupedResults.Add(acquiredDateGroup);
+                    }
+                    else
+                    {
+                        acquiredDateGroup = groupedResults[acquiredDateIndex];
+                    }
+
+                    string itemType = feature.properties.item_type;
+                    Model.Item item = null;
+                    List<Model.Item> items = acquiredDateGroup.items;
+                    int index = items.FindIndex(i => i.itemType == itemType);
+                    if (index < 0)
+                    {
+                        item = new Model.Item
+                        {
+                            itemType = itemType,
+                            acquired = acquired,
+                            strips = new List<Model.Strip>(),
+                            parent = acquiredDateGroup
+                        };
+                        items.Add(item);
+                    }
+                    else
+                    {
+                        item = items[index];
+                    }
+
+                    Model.Strip strip = null;
+                    List<Model.Strip> strips = item.strips;
+                    string stripId = feature.properties.strip_id;
+                    int stripIndex = strips.FindIndex(s => s.stripId == stripId);
+                    if (stripIndex < 0)
+                    {
+                        strip = new Model.Strip
+                        {
+                            stripId = stripId,
+                            acquired = acquired,
+                            parent = item,
+                            assets = new List<Model.Asset>()
+                        };
+                        strips.Add(strip);
+                    }
+                    else
+                    {
+                        strip = strips[stripIndex];
+                    }
+
+                    List<Model.Asset> assets = strip.assets;
+                    Model.Asset asset = new Model.Asset
+                    {
+                        parent = strip,
+                        properties = feature.properties,
+                        id = feature.id,
+                        type = feature.type,
+                        _links = feature._links,
+                        _permissions = feature._permissions,
+                        geometry = feature.geometry
+                    };
+                    asset.setFootprintVertices();
+                    asset.setFootprintSymbol();
+                    asset.setPolygon();
+                    assets.Add(asset);
+                }
+
+            }
+            foreach (Model.AcquiredDateGroup group in groupedResults)
+            {
+                group.items = group.items.OrderBy(itemGroup => itemGroup.itemType).ToList();
+            }
+            List<Model.AcquiredDateGroup> collection = groupedResults.OrderByDescending(group => group.acquired).ToList();
+            Items = new ObservableCollection<Model.AcquiredDateGroup>(collection);
         }
 
 
@@ -222,6 +391,7 @@ namespace Clean_Tool_and_MV
         /// </summary>
         private void DoSearch()
         {
+            ShowCircularAnimation = Visibility.Visible;
             Polygon poly = (Polygon)AOIGeometry;
             IReadOnlyList<Coordinate2D> coordinates = poly.Copy2DCoordinatesToList();
             ToGeoCoordinateParameter ddParam = new ToGeoCoordinateParameter(GeoCoordinateType.DD);
@@ -404,108 +574,13 @@ namespace Clean_Tool_and_MV
                     }
                 }
                 processQuickSearchResults(_quickSearchResults);
+                ShowCircularAnimation = Visibility.Hidden;
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message + Environment.NewLine + e.StackTrace);
+                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(e.Message + Environment.NewLine + e.StackTrace);
+                ShowCircularAnimation = Visibility.Hidden;
             }
-
-        }
-
-        /// <summary>
-        /// Sort through quick search results and create list of items
-        /// Items are grouped by acquired date and item type
-        /// Each item contains a list of strips
-        /// Strips are grouped by strip id
-        /// Each strip contains a list of assets
-        /// Assets inherit from test_docing_Panel.Models.Feature 
-        /// </summary>
-        private void processQuickSearchResults(ObservableCollection<QuickSearchResult> results)
-        {
-
-            //List<Model.Item> items = new List<Model.Item>();
-            List<Model.AcquiredDateGroup> groupedResults = new List<Model.AcquiredDateGroup>();
-            foreach(QuickSearchResult result in results)
-            {
-                test_docing_Panel.Models.Feature[] features = result.features;
-                foreach(test_docing_Panel.Models.Feature feature in features)
-                {
-                    Model.AcquiredDateGroup acquiredDateGroup = null;
-                    DateTime acquired = feature.properties.acquired;
-                    DateTime acquired_day = acquired.Date;
-                    int acquiredDateIndex = groupedResults.FindIndex(i => i.acquired == acquired_day);
-                    if (acquiredDateIndex < 0)
-                    {
-                        acquiredDateGroup = new Model.AcquiredDateGroup
-                        {
-                            acquired = acquired_day,
-                            items = new List<Model.Item>()
-                        };
-                        groupedResults.Add(acquiredDateGroup);
-                    } else
-                    {
-                        acquiredDateGroup = groupedResults[acquiredDateIndex];
-                    }
-
-                    string itemType = feature.properties.item_type;
-                    Model.Item item = null;
-                    List<Model.Item> items = acquiredDateGroup.items;
-                    int index = items.FindIndex(i => i.itemType == itemType);
-                    if (index < 0)
-                    {
-                        item = new Model.Item
-                        {
-                            itemType = itemType,
-                            acquired = acquired,
-                            strips = new List<Model.Strip>(),
-                            parent = acquiredDateGroup
-                        };
-                        items.Add(item);
-                    } else
-                    {
-                        item = items[index];
-                    }
-
-                    Model.Strip strip = null;
-                    List<Model.Strip> strips = item.strips;
-                    string stripId = feature.properties.strip_id;
-                    int stripIndex = strips.FindIndex(s => s.stripId == stripId);
-                    if (stripIndex < 0)
-                    {
-                        strip = new Model.Strip
-                        {
-                            stripId = stripId,
-                            acquired = acquired,
-                            parent = item,
-                            assets = new List<Model.Asset>()
-                        };
-                        strips.Add(strip);
-                    } else
-                    {
-                        strip = strips[stripIndex];
-                    }
-
-                    List<Model.Asset> assets = strip.assets;
-                    Model.Asset asset = new Model.Asset
-                    {
-                        parent = strip,
-                        properties = feature.properties,
-                        id = feature.id,
-                        type = feature.type,
-                        _links = feature._links,
-                        _permissions = feature._permissions,
-                        geometry = feature.geometry
-                    };
-                    assets.Add(asset);
-                }
-
-            }
-            foreach(Model.AcquiredDateGroup group in groupedResults)
-            {
-                group.items = group.items.OrderBy(itemGroup => itemGroup.itemType).ToList();
-            }
-            List<Model.AcquiredDateGroup>collection = groupedResults.OrderByDescending(group => group.acquired).ToList();
-            Items = new ObservableCollection<Model.AcquiredDateGroup>(collection);
         }
 
         #region ProductBooleans set get
@@ -662,4 +737,5 @@ namespace Clean_Tool_and_MV
             _action();
         }
     }
+    
 }
