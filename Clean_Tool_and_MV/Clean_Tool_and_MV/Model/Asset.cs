@@ -36,6 +36,9 @@ namespace Clean_Tool_and_MV.Model
             }
         }
         private bool _IsSelected = false;
+        /// <summary>
+        /// prprty to hanle selection in toc and add to map
+        /// </summary>
         public bool IsSelected
         {
             get { return _IsSelected; }
@@ -122,6 +125,9 @@ namespace Clean_Tool_and_MV.Model
         //    return result;
         //}
         private string _mapLayerName = "";
+        /// <summary>
+        /// adds the sected  item to the map. uses the _mapLayerName prperty to know what scene to use
+        /// </summary>
         private async void doAddToMap()
         {
 
