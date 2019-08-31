@@ -25,6 +25,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using Clean_Tool_and_MV.Model;
 using System.Windows;
 
 namespace Clean_Tool_and_MV
@@ -115,6 +116,21 @@ namespace Clean_Tool_and_MV
                 return _searchcommand;
             }
         }
+
+        public bool CanAddToMap { get; set; } = true;
+        private ICommand _addToMapCommand;
+        public ICommand AddToMap
+        {
+            get
+            {
+                if (_addToMapCommand == null)
+                {
+                    _addToMapCommand = new AddToMapCommandHandler(param => DoAddToMap(param), CanAddToMap);
+                }
+                return _addToMapCommand;
+            }
+        }
+
         private ObservableCollection<Model.AcquiredDateGroup> _items;
         public ObservableCollection<Model.AcquiredDateGroup> Items
         {
@@ -264,7 +280,7 @@ namespace Clean_Tool_and_MV
                     {
                         strip = strips[stripIndex];
                     }
-
+        
                     List<Model.Asset> assets = strip.assets;
                     Model.Asset asset = new Model.Asset
                     {
@@ -583,6 +599,54 @@ namespace Clean_Tool_and_MV
             }
         }
 
+        private async void DoAddToMap(Object param)
+        {
+            HttpClientHandler handler = new HttpClientHandler()
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+            HttpClient client = new HttpClient(handler)
+            {
+
+                BaseAddress = new Uri("https://api.planet.com")
+            };
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/layers");
+            //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+            request.Headers.Host = "tiles2.planet.com";
+            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+            //request.Headers.Remove("Content-Type");
+            //request.Headers.Add("Content-Type", "application/json");
+            var nvc = new List<KeyValuePair<string, string>>();
+            nvc.Add(new KeyValuePair<string, string>("ids", "PSScene4Band:20190603_205042_1042,PSScene4Band:20190528_205949_43_1061,PSScene4Band:20190818_205116_1009"));
+            //var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var content = new FormUrlEncodedContent(nvc);
+            request.Content = content;
+            var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:hgvhgv");
+            client.DefaultRequestHeaders.Host = "api.planet.com";
+            //_client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+            content.Headers.Remove("Content-Type");
+            content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+            client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            client.DefaultRequestHeaders.Add("User-Agent", "ArcGISProC#");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
+            {
+                using (HttpContent content2 = httpResponse.Content)
+                {
+                    var json2 = content2.ReadAsStringAsync().Result;
+                    customwmts customwmts = JsonConvert.DeserializeObject<customwmts>(json2);
+                    customwmts.wmtsURL = new Uri("https://tiles.planet.com/data/v1/layers/wmts/" + customwmts.name + "?api_key=1fe575980e78467f9c28b552294ea410");
+                    //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
+                    var serverConnection = new CIMProjectServerConnection { URL = customwmts.wmtsURL.ToString() };// "1fe575980e78467f9c28b552294ea410"
+                    var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
+                    await QueuedTask.Run(() =>
+                    {
+                        BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, MapView.Active.Map, 0, customwmts.name);
+                    });
+                }
+            }
+        }
         #region ProductBooleans set get
         private bool _PSScene3Band = false;
         public bool ProductPSScene3Band
@@ -713,7 +777,7 @@ namespace Clean_Tool_and_MV
     }
 
     /// <summary>
-    /// Command Event Handler class
+    /// Search Command Event Handler class
     /// </summary>
     public class CommandHandler : ICommand
     {
@@ -737,5 +801,29 @@ namespace Clean_Tool_and_MV
             _action();
         }
     }
+
+    public class AddToMapCommandHandler : ICommand
+    {
+        private Action<object> _action;
+        private bool _canExecute;
+        public AddToMapCommandHandler(Action<object> action, bool canExecute)
+        {
+            _action = action;
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return _canExecute;
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public void Execute(object parameter)
+        {
+            _action(parameter);
+        }
+    }
+
     
 }
