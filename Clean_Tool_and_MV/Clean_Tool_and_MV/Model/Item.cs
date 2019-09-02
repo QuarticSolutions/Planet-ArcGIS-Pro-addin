@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -8,7 +10,7 @@ using test_docing_Panel.Models;
 
 namespace Clean_Tool_and_MV.Model
 {
-    class Item
+    class Item : INotifyPropertyChanged
     {
         public List<Strip> strips { get; set; }
         public string itemType { get; set; }
@@ -45,6 +47,32 @@ namespace Clean_Tool_and_MV.Model
                     yield return strip;
                 }
             }
+        }
+
+        private bool? _IsChecked = false;
+
+        public bool? IsChecked
+        {
+            get { return _IsChecked; }
+            set { SetField(ref _IsChecked, value); }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            foreach (Strip strip in strips)
+            {
+                strip.IsChecked = Convert.ToBoolean(value);
+            }
+            OnPropertyChanged(propertyName);
+            return true;
         }
     }
 }

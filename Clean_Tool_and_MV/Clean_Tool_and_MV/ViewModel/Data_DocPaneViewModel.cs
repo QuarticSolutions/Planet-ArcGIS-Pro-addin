@@ -27,10 +27,11 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using Clean_Tool_and_MV.Model;
 using System.Windows;
+using ArcGIS.Desktop.Framework.DragDrop;
 
 namespace Clean_Tool_and_MV
 {
-    internal class Data_DocPaneViewModel : DockPane, INotifyPropertyChanged
+    internal class Data_DocPaneViewModel : DockPane, INotifyPropertyChanged, IDragSource
     {
         private Geometry _geometry = null;
         private const string _dockPaneID = "Clean_Tool_and_MV_Data_DocPane";
@@ -40,6 +41,7 @@ namespace Clean_Tool_and_MV
         private int _CloudcoverHigh = 100;
         private DateTime _DateFrom = DateTime.Now.AddYears(-1);
         private DateTime _DateTo = DateTime.Now;
+        public Data_DocPaneView View { get; set; }
         private bool _hasGeom = false;
         public bool HasGeom
         {
@@ -148,42 +150,14 @@ namespace Clean_Tool_and_MV
                 OnPropertyChanged("Items");
             }
         }
-        private Model.Asset FindAsset(string id)
-        {
-            foreach(Model.AcquiredDateGroup group in Items)
-            {
-                foreach(Model.Item item in group.items)
-                {
-                    foreach(Model.Strip strip in item.strips)
-                    {
-                        foreach(Model.Asset asset in strip.assets)
-                        {
-                            if (asset.id == id)
-                            {
-                                return asset;
-                            }
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-        private Model.Asset GetAsset(object sender)
-        {
-            System.Windows.Controls.StackPanel stackPanel = sender as System.Windows.Controls.StackPanel;
-            var children = stackPanel.Children;
-            System.Windows.Controls.Grid grid = stackPanel.Children[1] as System.Windows.Controls.Grid;
-            var gridChildren = grid.Children;
-            System.Windows.Controls.TextBlock idTextBlock = gridChildren[1] as System.Windows.Controls.TextBlock;
-            string asset_id = idTextBlock.Text;
-            Model.Asset asset = FindAsset(asset_id);
-            return asset;
-        }
+
         public void AddFootprint(object sender, RoutedEventArgs e)
         {
             try
             {
-                Model.Asset asset = GetAsset(sender);
+                System.Windows.Controls.StackPanel stackPanel = sender as System.Windows.Controls.StackPanel;
+                string id = stackPanel.Tag.ToString();
+                Model.Asset asset = Model.Asset.FindAsset(Items, id);
                 asset.drawFootprint();
             }
             catch (Exception ex)
@@ -196,7 +170,9 @@ namespace Clean_Tool_and_MV
         {
             try
             {
-                Model.Asset asset = GetAsset(sender);
+                System.Windows.Controls.StackPanel stackPanel = sender as System.Windows.Controls.StackPanel;
+                string id = stackPanel.Tag.ToString();
+                Model.Asset asset = Model.Asset.FindAsset(Items, id);
                 asset.disposeFootprint();
             }
             catch (Exception ex)
@@ -204,6 +180,114 @@ namespace Clean_Tool_and_MV
                 //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
             }
         }
+
+        //public void ShowAssetOnMap(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        System.Windows.Controls.CheckBox checkBox = sender as System.Windows.Controls.CheckBox;
+        //        string id = checkBox.Tag.ToString();
+        //        Model.Asset asset = Model.Asset.FindAsset(Items, id);
+        //        asset.doAddToMap();
+        //        checkBox.IsChecked = true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+        //    }
+        //}
+
+        //public void ShowStripOnMap(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        System.Windows.Controls.CheckBox checkBox = sender as System.Windows.Controls.CheckBox;
+        //        string id = checkBox.Tag.ToString();
+        //        Strip strip = Strip.FindStrip(Items, id);
+        //        checkBox.IsChecked = true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+        //    }
+        //}
+
+        //public void HideAssetOnMap(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        System.Windows.Controls.CheckBox checkBox = sender as System.Windows.Controls.CheckBox;
+        //        string id = checkBox.Tag.ToString();
+        //        Model.Asset asset = Model.Asset.FindAsset(Items, id);
+        //        asset.doRemoveFromMap();
+        //        checkBox.IsChecked = false;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+        //    }
+        //}
+
+        //public void AssetPanelClicked(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        System.Windows.Controls.StackPanel stackPanel = sender as System.Windows.Controls.StackPanel;
+        //        System.Windows.Controls.CheckBox checkBox = stackPanel.Children.OfType<System.Windows.Controls.CheckBox>().First();
+        //        string id = checkBox.Tag.ToString();
+        //        Model.Asset asset = Model.Asset.FindAsset(Items, id);
+        //        if (checkBox.IsChecked ?? false)
+        //        {
+        //            //checkBox.IsChecked = false;
+        //            //asset.doRemoveFromMap();
+        //            //asset.IsSelected = false;
+        //        } else
+        //        {
+        //            //checkBox.IsChecked = true;
+        //            //asset.doAddToMap();
+        //            //asset.IsSelected = true;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+        //    }
+        //}
+
+        //public void StripPanelClicked(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        System.Windows.Controls.StackPanel stackPanel = sender as System.Windows.Controls.StackPanel;
+        //        System.Windows.Controls.CheckBox checkBox = stackPanel.Children.OfType<System.Windows.Controls.CheckBox>().First();
+        //        string id = checkBox.Tag.ToString();
+        //        Model.Strip strip = Strip.FindStrip(Items, id);
+        //        if (checkBox.IsChecked ?? false)
+        //        {
+        //            checkBox.IsChecked = false;
+        //            //would be better if assets were grouped in ToC so that they could be toggled at group level
+        //            foreach(Asset asset in strip.assets)
+        //            {
+        //                //uncheck asset
+        //                asset.doRemoveFromMap();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            checkBox.IsChecked = true;
+        //            foreach (Asset asset in strip.assets)
+        //            {
+        //                //check asset
+                        
+        //                asset.doAddToMap();
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+        //    }
+        //}
 
         /// <summary>
         /// Sort through quick search results and create list of items
@@ -213,10 +297,9 @@ namespace Clean_Tool_and_MV
         /// Each strip contains a list of assets
         /// Assets inherit from test_docing_Panel.Models.Feature 
         /// </summary>
-        private void processQuickSearchResults(ObservableCollection<QuickSearchResult> results)
+        private void ProcessQuickSearchResults(ObservableCollection<QuickSearchResult> results)
         {
-
-            //List<Model.Item> items = new List<Model.Item>();
+            //group results
             List<Model.AcquiredDateGroup> groupedResults = new List<Model.AcquiredDateGroup>();
             foreach (QuickSearchResult result in results)
             {
@@ -240,7 +323,6 @@ namespace Clean_Tool_and_MV
                     {
                         acquiredDateGroup = groupedResults[acquiredDateIndex];
                     }
-
                     string itemType = feature.properties.item_type;
                     Model.Item item = null;
                     List<Model.Item> items = acquiredDateGroup.items;
@@ -260,7 +342,6 @@ namespace Clean_Tool_and_MV
                     {
                         item = items[index];
                     }
-
                     Model.Strip strip = null;
                     List<Model.Strip> strips = item.strips;
                     string stripId = feature.properties.strip_id;
@@ -280,7 +361,6 @@ namespace Clean_Tool_and_MV
                     {
                         strip = strips[stripIndex];
                     }
-        
                     List<Model.Asset> assets = strip.assets;
                     Model.Asset asset = new Model.Asset
                     {
@@ -299,14 +379,37 @@ namespace Clean_Tool_and_MV
                 }
 
             }
+            //sort the collections
             foreach (Model.AcquiredDateGroup group in groupedResults)
             {
                 group.items = group.items.OrderBy(itemGroup => itemGroup.itemType).ToList();
+                foreach (Model.Item item in group.items)
+                {
+                    item.strips = item.strips.OrderBy(strip => strip.acquired).ToList();
+                    foreach (Model.Strip strip in item.strips)
+                    {
+                        strip.assets = strip.assets.OrderBy(asset => asset.properties.acquired).ToList();
+                    }
+                }
             }
             List<Model.AcquiredDateGroup> collection = groupedResults.OrderByDescending(group => group.acquired).ToList();
+            //set Items
             Items = new ObservableCollection<Model.AcquiredDateGroup>(collection);
         }
 
+        public void StartDrag(DragInfo dragInfo)
+        {
+            var sourceItem = dragInfo.SourceItem;
+            if (sourceItem == null)
+                return;
+            List<ClipboardItem> clip_items = new List<ClipboardItem>();
+			clip_items.Add(new ClipboardItem()
+			{
+			});
+			dragInfo.Data = clip_items;
+            dragInfo.Data = sourceItem;
+            dragInfo.Effects = DragDropEffects.All;
+        }
 
         protected Data_DocPaneViewModel()
         {
@@ -589,7 +692,7 @@ namespace Clean_Tool_and_MV
                         //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
                     }
                 }
-                processQuickSearchResults(_quickSearchResults);
+                ProcessQuickSearchResults(_quickSearchResults);
                 ShowCircularAnimation = Visibility.Hidden;
             }
             catch (Exception e)

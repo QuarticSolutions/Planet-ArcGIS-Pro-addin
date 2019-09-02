@@ -27,6 +27,5 @@ namespace Clean_Tool_and_MV
         {
             InitializeComponent();
         }
-
     }
 }

@@ -8,7 +8,7 @@
              xmlns:model="clr-namespace:Clean_Tool_and_MV.Model"
              xmlns:excd ="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
-             xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"                       
+             xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"
              mc:Ignorable="d" 
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
@@ -23,9 +23,9 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
-    </Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
         <!--<DockPanel Grid.Row="0" LastChildFill="true" KeyboardNavigation.TabNavigation="Local" Height="30">
             <controls:BurgerButton DockPanel.Dock="Right"
@@ -63,13 +63,13 @@
                                   Step="1"
                                   Minimum="0"
                                   Maximum="100"
-                              TickPlacement="BottomRight"
-                              AutoToolTipPlacement="BottomRight"
-                              AutoToolTipPrecision="1"
-                              TickFrequency="1"
-                              IsSnapToTickEnabled="True"
-                              Background="{DynamicResource Esri_DockPaneClientAreaBackgroundBrush}"
-                                Foreground="{DynamicResource Esri_TextStyleDefaultBrush}"
+                                  TickPlacement="BottomRight"
+                                  AutoToolTipPlacement="BottomRight"
+                                  AutoToolTipPrecision="1"
+                                  TickFrequency="1"
+                                  IsSnapToTickEnabled="True"
+                                  Background="{DynamicResource Esri_DockPaneClientAreaBackgroundBrush}"
+                                  Foreground="{DynamicResource Esri_TextStyleDefaultBrush}"
                               />
                     </StackPanel>
                 </TabItem>
@@ -101,23 +101,49 @@
                         <CheckBox Grid.Row="0" Grid.Column="2" Padding ="5,1,5,5" IsChecked="{Binding ProductSkySatCollect}" >SkySatCollect</CheckBox>
                         <CheckBox Grid.Row="1" Grid.Column="2" Padding ="5,1,5,5" IsChecked="{Binding ProductLandsat8L1G}" >Landsat8L1G</CheckBox>
                         <CheckBox Grid.Row="2" Grid.Column="2" Padding ="5,1,5,5" IsChecked="{Binding ProductSentinel2L1C}" Foreground="{DynamicResource Esri_TextControlBrush}" >Sentinel2L1C</CheckBox>
-                        
+
                     </Grid>
                 </TabItem>
             </TabControl>
             <TreeView Name="SearchResults" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Items}">
+                <!--<i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <ei:CallMethodAction 
+                        TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}" 
+                        MethodName="TreeNodeSelected" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>-->
                 <TreeView.Resources>
+                    <ContextMenu x:Key="SubTypeContext" StaysOpen="true">
+                        <MenuItem Header="Add all images as single layer"/>
+                    </ContextMenu>
+                    <ContextMenu x:Key="StripContext" StaysOpen="true">
+                        <MenuItem Header="Add all images to Map"/>
+                        <MenuItem Header="Add selected images to Map"/>
+                    </ContextMenu>
+                    <ContextMenu x:Key="AssetContext" StaysOpen="true">
+                        <MenuItem Header="Add to Map"/>
+                        <MenuItem Header="Remove from Map"/>
+                        <MenuItem Header="View more info"/>
+                    </ContextMenu>
                     <HierarchicalDataTemplate DataType="{x:Type model:AcquiredDateGroup}" ItemsSource="{Binding Items}">
                         <TextBlock Text="{Binding Path=date, Mode=OneWay}" />
                     </HierarchicalDataTemplate>
                     <HierarchicalDataTemplate DataType="{x:Type model:Item}" ItemsSource="{Binding Items}">
-                        <TextBlock Text="{Binding Path=title, Mode=OneWay}" />
+                        <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource SubTypeContext}">
+                            <CheckBox IsChecked="{Binding IsChecked}" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Select All" />
+                            <TextBlock Margin="5,0,0,0" Text="{Binding Path=title, Mode=OneWay}" />
+                        </StackPanel>
                     </HierarchicalDataTemplate>
                     <HierarchicalDataTemplate DataType="{x:Type model:Strip}" ItemsSource="{Binding Items}">
-                        <TextBlock Text="{Binding Path=title, Mode=OneWay}" />
+                        <StackPanel Orientation="Horizontal" Tag="{Binding stripId}">
+                            <CheckBox IsChecked="{Binding IsChecked}" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Select All" Tag="{Binding Path=stripId}">
+                            </CheckBox>
+                            <TextBlock Margin="5,0,0,0" Text="{Binding title}" />
+                        </StackPanel>
                     </HierarchicalDataTemplate>
                     <DataTemplate DataType="{x:Type model:Asset}">
-                        <StackPanel Orientation="Horizontal" x:Name="AssetPanel" Margin="0" Background="Transparent">
+                        <StackPanel Orientation="Horizontal" Margin="0" Background="Transparent" Tag="{Binding Path=id}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseEnter">
                                     <ei:CallMethodAction 
@@ -130,9 +156,24 @@
                                         MethodName="RemoveFootprint" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
-                            <Grid VerticalAlignment="Center">
-                                <!--<controls:CircularAnimationControl SpeedRatio="0.5" Visibility="Visible"/>-->
-                                <Image Height="64" HorizontalAlignment="Left">
+                            <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="5,0,0,0" Focusable="False" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Select" Tag="{Binding Path=id}">
+                                <!--<i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Checked">
+                                        <ei:CallMethodAction 
+                                            TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}" 
+                                            MethodName="ShowAssetOnMap" />
+                                    </i:EventTrigger>
+                                    <i:EventTrigger EventName="Unchecked">
+                                        <ei:CallMethodAction 
+                                            TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}" 
+                                            MethodName="HideAssetOnMap" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>-->
+                            </CheckBox>
+
+                            <Grid Margin="5,0" VerticalAlignment="Center">
+                                <!--<controls:CircularAnimationControl SpeedRatio="0.5" Visibility="{Binding Path=spinnerVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>-->
+                                <Image Height="64" HorizontalAlignment="Left" Tag="{Binding Path=id}" OverridesDefaultStyle="True"  >
                                     <Image.Style>
                                         <Style TargetType="{x:Type Image}">
                                             <Setter Property="Source" Value="{Binding Path=image}"/>
@@ -140,11 +181,13 @@
                                     </Image.Style>
                                 </Image>
                             </Grid>
-                            <Grid Margin="5,0" VerticalAlignment="Center">
+                            <Grid Margin="0,0,5,0" VerticalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
                                     <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
                                 </Grid.RowDefinitions>
+                                
                                 <TextBlock Grid.Row="0" Text="{Binding Path=title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" />
                                 <TextBlock Grid.Row="1" Text="{Binding Path=id, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" />
                             </Grid>
@@ -153,8 +196,14 @@
                 </TreeView.Resources>
             </TreeView>
             <!--<controls:CircularAnimationControl Grid.Row="1" SpeedRatio="0.5" Visibility="{Binding ShowCircularAnimation}"/>-->
-            <Button Grid.Row="2" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="20" Width="40" Content="Search" Style="{DynamicResource Esri_Button}"/>
-            <Button Grid.Row="2" Command="{Binding AddToMap}" CommandParameter="Testttt"  Height="20" Width="40" Content="Add To Map" Style="{DynamicResource Esri_Button}"/>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="20" Content="Search" Style="{DynamicResource Esri_Button}" Margin="5"/>
+                <Button Grid.Column="1" Command="{Binding AddToMap}" CommandParameter="Testttt"  Height="20" Content="Add To Map" Style="{DynamicResource Esri_Button}" Margin="5"/>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
