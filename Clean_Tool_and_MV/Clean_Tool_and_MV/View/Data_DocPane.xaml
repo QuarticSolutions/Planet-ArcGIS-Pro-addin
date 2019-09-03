@@ -103,10 +103,20 @@
                     </Grid>
                 </TabItem>
             </TabControl>
-            <TreeView Name="SearchResults" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Items}">
+            <controls:CircularAnimationControl  Grid.Row="1" SpeedRatio="0.5" Visibility="{Binding IsShowCircularAnimation}"/>
+            <TreeView Name="SearchResults" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Items}" ui:TreeViewHelper.SelectedItem="{Binding Path=SelectedItem}"  >
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsSelected" Value="{Binding DataTemplate}" />
+                        <Setter Property="IsSelected" Value="{Binding TreeViewItem}" />
+                        <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleDefaultBrush}"/>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                
                 <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type model:AcquiredDateGroup}" ItemsSource="{Binding Items}">
+                    <HierarchicalDataTemplate DataType="{x:Type model:AcquiredDateGroup}" ItemsSource="{Binding Items}" >
                         <TextBlock Text="{Binding Path=date, Mode=OneWay}" />
+                        
                     </HierarchicalDataTemplate>
                     <HierarchicalDataTemplate DataType="{x:Type model:Item}" ItemsSource="{Binding Items}">
                         <TextBlock Text="{Binding Path=title, Mode=OneWay}" />
@@ -114,12 +124,13 @@
                     <HierarchicalDataTemplate DataType="{x:Type model:Strip}" ItemsSource="{Binding Items}">
                         <TextBlock Text="{Binding Path=title, Mode=OneWay}" />
                     </HierarchicalDataTemplate>
-                    <DataTemplate DataType="{x:Type model:Asset}">
+                    <DataTemplate DataType="{x:Type model:Asset}"    >
                         <StackPanel Orientation="Horizontal">
                             <Image Height="64" HorizontalAlignment="Left">
                                 <Image.Style>
                                     <Style TargetType="{x:Type Image}">
                                         <Setter Property="Source" Value="{Binding Path=image}"/>
+                                        
                                     </Style>
                                 </Image.Style>
                             </Image>
@@ -127,9 +138,11 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
                                     <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0" Text="{Binding Path=title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" />
                                 <TextBlock Grid.Row="1" Text="{Binding Path=id, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                <CheckBox Grid.Row="2" IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </Grid>
                         </StackPanel>
                     </DataTemplate>

@@ -73,11 +73,14 @@ namespace Clean_Tool_and_MV
                 OnPropertyChanged("DateTo");
             }
         }
-        public int CloudcoverLow {
-            get {
+        public int CloudcoverLow
+        {
+            get
+            {
                 return _CloudcoverLow;
             }
-            set {
+            set
+            {
                 _CloudcoverLow = value;
                 OnPropertyChanged("CloudcoverLow");
             }
@@ -125,7 +128,7 @@ namespace Clean_Tool_and_MV
         }
         public bool CanAddToMap { get; set; } = true;
         private ICommand _addToMapCommand;
-        public  ICommand AddToMap
+        public ICommand AddToMap
         {
             get
             {
@@ -139,7 +142,7 @@ namespace Clean_Tool_and_MV
 
         protected Data_DocPaneViewModel()
         {
-            
+
         }
 
         /// <summary>
@@ -191,7 +194,7 @@ namespace Clean_Tool_and_MV
         {
             get
             {
-                
+
                 if (_quickSearchResults == null)
                 {
                     _quickSearchResults = new ObservableCollection<QuickSearchResult>();
@@ -202,7 +205,7 @@ namespace Clean_Tool_and_MV
             {
                 _quickSearchResults = value;
                 OnPropertyChanged("QuickSearchResults");
-            } 
+            }
         }
 
         #region Burger Button
@@ -236,6 +239,7 @@ namespace Clean_Tool_and_MV
         /// </summary>
         private void DoSearch()
         {
+
             Polygon poly = (Polygon)AOIGeometry;
             IReadOnlyList<Coordinate2D> coordinates = poly.Copy2DCoordinatesToList();
             ToGeoCoordinateParameter ddParam = new ToGeoCoordinateParameter(GeoCoordinateType.DD);
@@ -295,10 +299,10 @@ namespace Clean_Tool_and_MV
             //cloudcoverfiler
             RangeFilterConfig cloudconfig = new RangeFilterConfig
             {
-                gte = _CloudcoverLow,
-                lte = _CloudcoverHigh
+                gte = _CloudcoverLow / 100,
+                lte = _CloudcoverHigh /100
             };
-            
+
             Config cloudCoverFilter = new Config
             {
                 type = "RangeFilter",
@@ -338,13 +342,13 @@ namespace Clean_Tool_and_MV
             {
                 if (prop.PropertyType.Name == "Boolean")
                 {
-                    if (((bool)prop.GetValue(this,null)) && (prop.Name.StartsWith("Product")))
+                    if (((bool)prop.GetValue(this, null)) && (prop.Name.StartsWith("Product")))
                     {
                         typoes.Add(prop.Name.Substring(7));
                     }
                     //Console.WriteLine(prop.MemberType.ToString());
                 }
-            } 
+            }
 
 
             List<Config> mainconfigs = new List<Config>
@@ -439,10 +443,10 @@ namespace Clean_Tool_and_MV
 
             //List<Model.Item> items = new List<Model.Item>();
             List<Model.AcquiredDateGroup> groupedResults = new List<Model.AcquiredDateGroup>();
-            foreach(QuickSearchResult result in results)
+            foreach (QuickSearchResult result in results)
             {
                 test_docing_Panel.Models.Feature[] features = result.features;
-                foreach(test_docing_Panel.Models.Feature feature in features)
+                foreach (test_docing_Panel.Models.Feature feature in features)
                 {
                     Model.AcquiredDateGroup acquiredDateGroup = null;
                     DateTime acquired = feature.properties.acquired;
@@ -456,7 +460,8 @@ namespace Clean_Tool_and_MV
                             items = new List<Model.Item>()
                         };
                         groupedResults.Add(acquiredDateGroup);
-                    } else
+                    }
+                    else
                     {
                         acquiredDateGroup = groupedResults[acquiredDateIndex];
                     }
@@ -475,13 +480,15 @@ namespace Clean_Tool_and_MV
                             parent = acquiredDateGroup
                         };
                         items.Add(item);
-                    } else
+                    }
+                    else
                     {
                         item = items[index];
                     }
 
                     Model.Strip strip = null;
-                    List<Model.Strip> strips = item.strips;
+                    List<Model.Strip> strips  = item.strips;
+
                     string stripId = feature.properties.strip_id;
                     int stripIndex = strips.FindIndex(s => s.stripId == stripId);
                     if (stripIndex < 0)
@@ -494,7 +501,8 @@ namespace Clean_Tool_and_MV
                             assets = new List<Model.Asset>()
                         };
                         strips.Add(strip);
-                    } else
+                    }
+                    else
                     {
                         strip = strips[stripIndex];
                     }
@@ -514,11 +522,11 @@ namespace Clean_Tool_and_MV
                 }
 
             }
-            foreach(Model.AcquiredDateGroup group in groupedResults)
+            foreach (Model.AcquiredDateGroup group in groupedResults)
             {
                 group.items = group.items.OrderBy(itemGroup => itemGroup.itemType).ToList();
             }
-            List<Model.AcquiredDateGroup>collection = groupedResults.OrderByDescending(group => group.acquired).ToList();
+            List<Model.AcquiredDateGroup> collection = groupedResults.OrderByDescending(group => group.acquired).ToList();
             Items = new ObservableCollection<Model.AcquiredDateGroup>(collection);
         }
 
@@ -531,6 +539,7 @@ namespace Clean_Tool_and_MV
         /// <param name="param"></param>
         private async void DoAddToMap(Object param)
         {
+            string targets = "";
             HttpClientHandler handler = new HttpClientHandler()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
@@ -540,12 +549,32 @@ namespace Clean_Tool_and_MV
 
                 BaseAddress = new Uri("https://api.planet.com")
             };
+            foreach (AcquiredDateGroup item in _items)
+            {
+                foreach (Model.Item item2 in item.Items)
+                {
+                    foreach (Strip strip  in item2.strips)
+                    {
+                        foreach (Asset asset in strip.assets)
+                        {
+                            if (asset.IsSelected)
+                            {
+                                targets = targets  + asset.properties.item_type + ":" + asset.id.ToString() + ",";
+                            }
+                        }
+                    }
+                    Console.WriteLine("asd");
+                }
+               
+            }
+            targets = targets.TrimEnd(',');
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/layers");
             //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
             request.Headers.Host = "tiles2.planet.com";
             request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
             var nvc = new List<KeyValuePair<string, string>>();
-            nvc.Add(new KeyValuePair<string, string>("ids", "PSScene4Band:20190603_205042_1042,PSScene4Band:20190528_205949_43_1061,PSScene4Band:20190818_205116_1009"));
+            //nvc.Add(new KeyValuePair<string, string>("ids", "PSScene4Band:20190603_205042_1042,PSScene4Band:20190528_205949_43_1061,PSScene4Band:20190818_205116_1009"));
+            nvc.Add(new KeyValuePair<string, string>("ids", targets));
             //var content = new StringContent(json, Encoding.UTF8, "application/json");
             var content = new FormUrlEncodedContent(nvc);
             request.Content = content;
@@ -679,6 +708,51 @@ namespace Clean_Tool_and_MV
             }
         }
         #endregion
+
+        #region treeviewselectionchanged
+
+        private static object _selectedItem = null;
+        // This is public get-only here but you could implement a public setter which
+        // also selects the item.
+        // Also this should be moved to an instance property on a VM for the whole tree, 
+        // otherwise there will be conflicts for more than one tree.
+        public static object SelectedItem
+        {
+            get { return _selectedItem; }
+            private set
+            {
+                if (_selectedItem != value)
+                {
+                    _selectedItem = value;
+                    OnSelectedItemChanged();
+                }
+            }
+        }
+
+        private static void OnSelectedItemChanged()
+        {
+            Console.WriteLine("ItemChanged");
+            // Raise event / do other things
+        }
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged("IsSelected");
+                    if (_isSelected)
+                    {
+                        SelectedItem = this;
+                    }
+                }
+            }
+        }
+        #endregion
     }
 
 
@@ -753,5 +827,50 @@ namespace Clean_Tool_and_MV
         }
     }
 
-    
+    public class TreeViewHelper
+    {
+        private static Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior> behaviors = new Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior>();
+
+        public static object GetSelectedItem(System.Windows.DependencyObject obj)
+        {
+            return (object)obj.GetValue(SelectedItemProperty);
+        }
+
+        public static void SetSelectedItem(System.Windows.DependencyObject obj, object value)
+        {
+            obj.SetValue(SelectedItemProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for SelectedItem.  This enables animation, styling, binding, etc...
+        public static readonly System.Windows.DependencyProperty SelectedItemProperty =
+            System.Windows.DependencyProperty.RegisterAttached("SelectedItem", typeof(object), typeof(TreeViewHelper), new System.Windows.UIPropertyMetadata(null, SelectedItemChanged));
+
+        private static void SelectedItemChanged(System.Windows.DependencyObject obj, System.Windows.DependencyPropertyChangedEventArgs e)
+        {
+            if (!(obj is System.Windows.Controls.TreeView))
+                return;
+
+            if (!behaviors.ContainsKey(obj))
+                behaviors.Add(obj, new TreeViewSelectedItemBehavior(obj as System.Windows.Controls.TreeView));
+
+            TreeViewSelectedItemBehavior view = behaviors[obj];
+            view.ChangeSelectedItem(e.NewValue);
+        }
+
+        private class TreeViewSelectedItemBehavior
+        {
+            System.Windows.Controls.TreeView view;
+            public TreeViewSelectedItemBehavior(System.Windows.Controls.TreeView view)
+            {
+                this.view = view;
+                view.SelectedItemChanged += (sender, e) => SetSelectedItem(view, e.NewValue);
+            }
+
+            internal void ChangeSelectedItem(object p)
+            {
+                System.Windows.Controls.TreeViewItem item = (System.Windows.Controls.TreeViewItem)view.ItemContainerGenerator.ContainerFromItem(p);
+                item.IsSelected = true;
+            }
+        }
+    }
 }
