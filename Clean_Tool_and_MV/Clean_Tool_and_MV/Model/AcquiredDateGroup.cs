@@ -18,6 +18,8 @@ namespace Clean_Tool_and_MV.Model
                 return acquired.Date.ToString("MMM dd, yyyy");
             }
         }
+
+        public string mapLayerName { get; set; }
         public IEnumerable<object> Items
         {
             get
