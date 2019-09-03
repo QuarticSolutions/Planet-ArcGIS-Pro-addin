@@ -123,18 +123,18 @@ namespace Clean_Tool_and_MV
         }
 
         public bool CanAddToMap { get; set; } = true;
-        private ICommand _addToMapCommand;
-        public ICommand AddToMap
-        {
-            get
-            {
-                if (_addToMapCommand == null)
-                {
-                    _addToMapCommand = new AddToMapCommandHandler(param => DoAddToMap(param), CanAddToMap);
-                }
-                return _addToMapCommand;
-            }
-        }
+        //private ICommand _addToMapCommand;
+        //public ICommand AddToMap
+        //{
+        //    get
+        //    {
+        //        if (_addToMapCommand == null)
+        //        {
+        //            _addToMapCommand = new AddToMapCommandHandler(param => DoAddToMap(param), CanAddToMap);
+        //        }
+        //        return _addToMapCommand;
+        //    }
+        //}
 
         private ObservableCollection<Model.AcquiredDateGroup> _items;
         public ObservableCollection<Model.AcquiredDateGroup> Items
@@ -577,79 +577,7 @@ namespace Clean_Tool_and_MV
             }
         }
 
-        /// <summary>
-        /// Gets the wmts url from the Planet api for a list of items.
-        /// The function accepts a string argument that must be in format
-        /// productName:itemID,productName:itemID, e.g. PSScene4Band:20190603_205042_1042,PSScene4Band:20190528_205949_43_1061
-        /// </summary>
-        /// <param name="param"></param>
-        private async void DoAddToMap(Object param)
-        {
-            string targets = "";
-            HttpClientHandler handler = new HttpClientHandler()
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-            HttpClient client = new HttpClient(handler)
-            {
-
-                BaseAddress = new Uri("https://api.planet.com")
-            };
-            foreach (AcquiredDateGroup item in _items)
-            {
-                foreach (Model.Item item2 in item.Items)
-                {
-                    foreach (Strip strip  in item2.strips)
-                    {
-                        foreach (Asset asset in strip.assets)
-                        {
-                            if (asset.IsSelected)
-                            {
-                                targets = targets  + asset.properties.item_type + ":" + asset.id.ToString() + ",";
-                            }
-                        }
-                    }
-                    Console.WriteLine("asd");
-                }
-               
-            }
-            targets = targets.TrimEnd(',');
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/layers");
-            //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-            request.Headers.Host = "tiles2.planet.com";
-            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-            var nvc = new List<KeyValuePair<string, string>>();
-            //nvc.Add(new KeyValuePair<string, string>("ids", "PSScene4Band:20190603_205042_1042,PSScene4Band:20190528_205949_43_1061,PSScene4Band:20190818_205116_1009"));
-            nvc.Add(new KeyValuePair<string, string>("ids", targets));
-            //var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var content = new FormUrlEncodedContent(nvc);
-            request.Content = content;
-            var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:hgvhgv");
-            client.DefaultRequestHeaders.Host = "api.planet.com";
-            //_client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-            content.Headers.Remove("Content-Type");
-            content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-            client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-            client.DefaultRequestHeaders.Add("User-Agent", "ArcGISProC#");
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
-            {
-                using (HttpContent content2 = httpResponse.Content)
-                {
-                    var json2 = content2.ReadAsStringAsync().Result;
-                    customwmts customwmts = JsonConvert.DeserializeObject<customwmts>(json2);
-                    customwmts.wmtsURL = new Uri("https://tiles.planet.com/data/v1/layers/wmts/" + customwmts.name + "?api_key=1fe575980e78467f9c28b552294ea410");
-                    //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
-                    var serverConnection = new CIMProjectServerConnection { URL = customwmts.wmtsURL.ToString() };// "1fe575980e78467f9c28b552294ea410"
-                    var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
-                    await QueuedTask.Run(() =>
-                    {
-                        BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, MapView.Active.Map, 0, customwmts.name);
-                    });
-                }
-            }
-        }
+ 
         #region ProductBooleans set get
         private bool _PSScene3Band = false;
         public bool ProductPSScene3Band
@@ -873,50 +801,5 @@ namespace Clean_Tool_and_MV
         }
     }
 
-    public class TreeViewHelper
-    {
-        private static Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior> behaviors = new Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior>();
-
-        public static object GetSelectedItem(System.Windows.DependencyObject obj)
-        {
-            return (object)obj.GetValue(SelectedItemProperty);
-        }
-
-        public static void SetSelectedItem(System.Windows.DependencyObject obj, object value)
-        {
-            obj.SetValue(SelectedItemProperty, value);
-        }
-
-        // Using a DependencyProperty as the backing store for SelectedItem.  This enables animation, styling, binding, etc...
-        public static readonly System.Windows.DependencyProperty SelectedItemProperty =
-            System.Windows.DependencyProperty.RegisterAttached("SelectedItem", typeof(object), typeof(TreeViewHelper), new System.Windows.UIPropertyMetadata(null, SelectedItemChanged));
-
-        private static void SelectedItemChanged(System.Windows.DependencyObject obj, System.Windows.DependencyPropertyChangedEventArgs e)
-        {
-            if (!(obj is System.Windows.Controls.TreeView))
-                return;
-
-            if (!behaviors.ContainsKey(obj))
-                behaviors.Add(obj, new TreeViewSelectedItemBehavior(obj as System.Windows.Controls.TreeView));
-
-            TreeViewSelectedItemBehavior view = behaviors[obj];
-            view.ChangeSelectedItem(e.NewValue);
-        }
-
-        private class TreeViewSelectedItemBehavior
-        {
-            System.Windows.Controls.TreeView view;
-            public TreeViewSelectedItemBehavior(System.Windows.Controls.TreeView view)
-            {
-                this.view = view;
-                view.SelectedItemChanged += (sender, e) => SetSelectedItem(view, e.NewValue);
-            }
-
-            internal void ChangeSelectedItem(object p)
-            {
-                System.Windows.Controls.TreeViewItem item = (System.Windows.Controls.TreeViewItem)view.ItemContainerGenerator.ContainerFromItem(p);
-                item.IsSelected = true;
-            }
-        }
-    }
+ 
 }
