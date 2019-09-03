@@ -40,38 +40,43 @@ namespace Clean_Tool_and_MV.Model
             }
         }
 
-        private string _mapLayerName = "";
+        public string mapLayerName = null;
         private bool canToggleExisting()
         {
-            Task<bool> task1 = Task.Run<bool>(() =>
+            if (mapLayerName == null)
             {
-                bool result = false;
-                if (_mapLayerName != "")
+                return false;
+            } else
+            {
+                Task<bool> task1 = Task.Run<bool>(() =>
                 {
-                    IReadOnlyList<Layer> layers = MapView.Active.Map.FindLayers(_mapLayerName, true);
-                    if (layers.Count > 0)
+                    bool result = false;
+                    if (mapLayerName != "")
                     {
-                        foreach (Layer layer in layers)
+                        IReadOnlyList<Layer> layers = MapView.Active.Map.FindLayers(mapLayerName, true);
+                        if (layers.Count > 0)
                         {
-                            Task<bool> task2 = QueuedTask.Run<bool>(() =>
+                            foreach (Layer layer in layers)
                             {
-                                layer.SetVisibility(true);
-                                result = true;
-                                return result;
-                            });
-                            result = task2.Result;
+                                Task<bool> task2 = QueuedTask.Run<bool>(() =>
+                                {
+                                    layer.SetVisibility(true);
+                                    result = true;
+                                    return result;
+                                });
+                                result = task2.Result;
+                            }
                         }
                     }
-
+                    return result;
+                });
+                bool i = task1.Result;
+                if (i)
+                {
+                    return true;
                 }
-                return result;
-            });
-            bool i = task1.Result;
-            if (i)
-            {
-                return true;
+                return false;
             }
-            return false;
         }
         /// <summary>
         /// adds the sected  item to the map. uses the _mapLayerName prperty to know what scene to use
@@ -83,22 +88,7 @@ namespace Clean_Tool_and_MV.Model
             {
                 return;
             }
-
             string targets = properties.item_type + ":" + id.ToString();
-            IReadOnlyList<Layer> layers = MapView.Active.Map.FindLayers(_mapLayerName, true);
-            if (layers.Count > 0)
-            {
-
-                foreach (Layer layer in layers)
-                {
-                    await QueuedTask.Run(() =>
-                    {
-                        layer.SetVisibility(true);
-                    });
-
-                }
-                return;
-            }
             HttpClientHandler handler = new HttpClientHandler()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
@@ -138,11 +128,114 @@ namespace Clean_Tool_and_MV.Model
                     //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
                     var serverConnection = new CIMProjectServerConnection { URL = customwmts.wmtsURL.ToString() };// "1fe575980e78467f9c28b552294ea410"
                     var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
+                    string layerName = title + " (" + id + ")";
                     await QueuedTask.Run(() =>
                     {
-                        BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, MapView.Active.Map, 0, customwmts.items[0]);
+                        GroupLayer group = GetGroupLayer();
+                        BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, group as ILayerContainerEdit, 0, layerName);
                     });
-                    _mapLayerName = customwmts.items[0];
+                    mapLayerName = layerName;
+                    CheckParents(true);
+                }
+            }
+        }
+
+        public void CheckParents(Boolean visible)
+        {
+            if (parent.IsChecked != visible)
+            {
+                parent.IsChecked = visible;
+            }
+            if (parent.parent.IsChecked != visible)
+            {
+                parent.parent.IsChecked = visible;
+            }
+        }
+
+        public static GroupLayer GetGroup(string name, string[] parents)
+        {
+            IReadOnlyList<Layer> layers = MapView.Active.Map.FindLayers(name, true);
+            if (layers.Count > 0)
+            {
+                foreach (Layer layer in layers)
+                {
+                    List<Layer> parentGroups = new List<Layer>();
+                    Layer currentLayer = layer.Parent as Layer;
+                    bool isGroup = true;
+                    for(int i = 0; i < parents.Length; i++)
+                    {
+                        if (currentLayer != null && currentLayer.Name != parents[i])
+                        {
+                            isGroup = false;
+                            break;
+                        }
+                        currentLayer = currentLayer.Parent as Layer;
+                    }
+                    if (isGroup)
+                    {
+                        return layer as GroupLayer;
+                    }
+                }
+            }
+            return null;
+        }
+        private GroupLayer GetGroupLayer()
+        {
+            //check strip, then check item, then check date, then check root
+            string rootGroup = "Planet API";
+            string dateGroup = parent.parent.parent.date;
+            string itemGroup = parent.parent.itemType;
+            string stripGroup = parent.acquired.ToShortTimeString() + " (" + parent.stripId + ")";
+            string[] stripParents = { itemGroup, dateGroup, rootGroup };
+            var stripLayerGroup = GetGroup(stripGroup, stripParents);
+            if (stripLayerGroup != null)
+            {
+                return stripLayerGroup;
+            } else
+            {
+                string[] itemParents = { dateGroup, rootGroup };
+                var itemLayerGroup = GetGroup(itemGroup, itemParents);
+                if (itemLayerGroup != null)
+                {
+                    GroupLayer stripGroupLayer = LayerFactory.Instance.CreateGroupLayer(itemLayerGroup as ILayerContainerEdit, 0, stripGroup);
+                    parent.mapLayerName = stripGroup;
+                    return stripGroupLayer;
+                } else
+                {
+                    string[] dateParents = { rootGroup };
+                    var dateLayerGroup = GetGroup(dateGroup, dateParents);
+                    if (dateLayerGroup != null)
+                    {
+                        GroupLayer itemGroupLayer = LayerFactory.Instance.CreateGroupLayer(dateLayerGroup as ILayerContainerEdit, 0, itemGroup);
+                        GroupLayer stripGroupLayer = LayerFactory.Instance.CreateGroupLayer(itemGroupLayer as ILayerContainerEdit, 0, stripGroup);
+                        parent.parent.mapLayerName = itemGroup;
+                        parent.mapLayerName = stripGroup;
+                        return stripGroupLayer;
+                    } else
+                    {
+                        string[] rootParents = { };
+                        var rootLayerGroup = GetGroup(rootGroup, rootParents);
+                        if (rootLayerGroup != null)
+                        {
+                            GroupLayer dateGroupLayer = LayerFactory.Instance.CreateGroupLayer(rootLayerGroup as ILayerContainerEdit, 0, dateGroup);
+                            GroupLayer itemGroupLayer = LayerFactory.Instance.CreateGroupLayer(dateGroupLayer as ILayerContainerEdit, 0, itemGroup);
+                            GroupLayer stripGroupLayer = LayerFactory.Instance.CreateGroupLayer(itemGroupLayer as ILayerContainerEdit, 0, stripGroup);
+                            parent.parent.parent.mapLayerName = dateGroup;
+                            parent.parent.mapLayerName = itemGroup;
+                            parent.mapLayerName = stripGroup;
+                            return stripGroupLayer;
+                        }
+                        else {
+                            GroupLayer rootGroupLayer = LayerFactory.Instance.CreateGroupLayer(MapView.Active.Map, 0, rootGroup);
+                            GroupLayer dateGroupLayer = LayerFactory.Instance.CreateGroupLayer(rootGroupLayer as ILayerContainerEdit, 0, dateGroup);
+                            GroupLayer itemGroupLayer = LayerFactory.Instance.CreateGroupLayer(dateGroupLayer as ILayerContainerEdit, 0, itemGroup);
+                            GroupLayer stripGroupLayer = LayerFactory.Instance.CreateGroupLayer(itemGroupLayer as ILayerContainerEdit, 0, stripGroup);
+                            parent.parent.parent.mapLayerName = dateGroup;
+                            parent.parent.mapLayerName = itemGroup;
+                            parent.mapLayerName = stripGroup;
+                            return stripGroupLayer;
+                        }
+                    }
                 }
             }
         }
@@ -152,7 +245,7 @@ namespace Clean_Tool_and_MV.Model
             //IsSelected = false;
             await QueuedTask.Run(() =>
             {
-                IReadOnlyList<Layer> layers = MapView.Active.Map.FindLayers(_mapLayerName, true);
+                IReadOnlyList<Layer> layers = MapView.Active.Map.FindLayers(mapLayerName, true);
                 foreach (Layer layer in layers)
                 {
                     layer.SetVisibility(false);

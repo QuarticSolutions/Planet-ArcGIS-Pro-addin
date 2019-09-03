@@ -31,7 +31,7 @@ using ArcGIS.Desktop.Framework.DragDrop;
 
 namespace Clean_Tool_and_MV
 {
-    internal class Data_DocPaneViewModel : DockPane, INotifyPropertyChanged, IDragSource
+    internal class Data_DocPaneViewModel : DockPane, INotifyPropertyChanged
     {
         private Geometry _geometry = null;
         private const string _dockPaneID = "Clean_Tool_and_MV_Data_DocPane";
@@ -181,114 +181,6 @@ namespace Clean_Tool_and_MV
             }
         }
 
-        //public void ShowAssetOnMap(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        System.Windows.Controls.CheckBox checkBox = sender as System.Windows.Controls.CheckBox;
-        //        string id = checkBox.Tag.ToString();
-        //        Model.Asset asset = Model.Asset.FindAsset(Items, id);
-        //        asset.doAddToMap();
-        //        checkBox.IsChecked = true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
-        //    }
-        //}
-
-        //public void ShowStripOnMap(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        System.Windows.Controls.CheckBox checkBox = sender as System.Windows.Controls.CheckBox;
-        //        string id = checkBox.Tag.ToString();
-        //        Strip strip = Strip.FindStrip(Items, id);
-        //        checkBox.IsChecked = true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
-        //    }
-        //}
-
-        //public void HideAssetOnMap(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        System.Windows.Controls.CheckBox checkBox = sender as System.Windows.Controls.CheckBox;
-        //        string id = checkBox.Tag.ToString();
-        //        Model.Asset asset = Model.Asset.FindAsset(Items, id);
-        //        asset.doRemoveFromMap();
-        //        checkBox.IsChecked = false;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
-        //    }
-        //}
-
-        //public void AssetPanelClicked(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        System.Windows.Controls.StackPanel stackPanel = sender as System.Windows.Controls.StackPanel;
-        //        System.Windows.Controls.CheckBox checkBox = stackPanel.Children.OfType<System.Windows.Controls.CheckBox>().First();
-        //        string id = checkBox.Tag.ToString();
-        //        Model.Asset asset = Model.Asset.FindAsset(Items, id);
-        //        if (checkBox.IsChecked ?? false)
-        //        {
-        //            //checkBox.IsChecked = false;
-        //            //asset.doRemoveFromMap();
-        //            //asset.IsSelected = false;
-        //        } else
-        //        {
-        //            //checkBox.IsChecked = true;
-        //            //asset.doAddToMap();
-        //            //asset.IsSelected = true;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
-        //    }
-        //}
-
-        //public void StripPanelClicked(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        System.Windows.Controls.StackPanel stackPanel = sender as System.Windows.Controls.StackPanel;
-        //        System.Windows.Controls.CheckBox checkBox = stackPanel.Children.OfType<System.Windows.Controls.CheckBox>().First();
-        //        string id = checkBox.Tag.ToString();
-        //        Model.Strip strip = Strip.FindStrip(Items, id);
-        //        if (checkBox.IsChecked ?? false)
-        //        {
-        //            checkBox.IsChecked = false;
-        //            //would be better if assets were grouped in ToC so that they could be toggled at group level
-        //            foreach(Asset asset in strip.assets)
-        //            {
-        //                //uncheck asset
-        //                asset.doRemoveFromMap();
-        //            }
-        //        }
-        //        else
-        //        {
-        //            checkBox.IsChecked = true;
-        //            foreach (Asset asset in strip.assets)
-        //            {
-        //                //check asset
-                        
-        //                asset.doAddToMap();
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
-        //    }
-        //}
-
         /// <summary>
         /// Sort through quick search results and create list of items
         /// Items are grouped by acquired date and item type
@@ -385,30 +277,16 @@ namespace Clean_Tool_and_MV
                 group.items = group.items.OrderBy(itemGroup => itemGroup.itemType).ToList();
                 foreach (Model.Item item in group.items)
                 {
-                    item.strips = item.strips.OrderBy(strip => strip.acquired).ToList();
+                    item.strips = item.strips.OrderByDescending(strip => strip.acquired).ToList();
                     foreach (Model.Strip strip in item.strips)
                     {
-                        strip.assets = strip.assets.OrderBy(asset => asset.properties.acquired).ToList();
+                        strip.assets = strip.assets.OrderByDescending(asset => asset.properties.acquired).ToList();
                     }
                 }
             }
             List<Model.AcquiredDateGroup> collection = groupedResults.OrderByDescending(group => group.acquired).ToList();
             //set Items
             Items = new ObservableCollection<Model.AcquiredDateGroup>(collection);
-        }
-
-        public void StartDrag(DragInfo dragInfo)
-        {
-            var sourceItem = dragInfo.SourceItem;
-            if (sourceItem == null)
-                return;
-            List<ClipboardItem> clip_items = new List<ClipboardItem>();
-			clip_items.Add(new ClipboardItem()
-			{
-			});
-			dragInfo.Data = clip_items;
-            dragInfo.Data = sourceItem;
-            dragInfo.Effects = DragDropEffects.All;
         }
 
         protected Data_DocPaneViewModel()
@@ -581,10 +459,6 @@ namespace Clean_Tool_and_MV
                 config = cloudconfig
 
             };
-
-
-
-
             //DateFilter
             Config dateconfigconfig2 = new Config
             {
@@ -621,7 +495,6 @@ namespace Clean_Tool_and_MV
                 }
             } 
 
-
             List<Config> mainconfigs = new List<Config>
             {
                 dateconfig,
@@ -634,7 +507,6 @@ namespace Clean_Tool_and_MV
             searchFilter.filter = topfilter;
             Config mainConfig = new Config();
             searchFilter.filter.config = mainconfigs.ToArray();
-
 
             //string json = JsonConvert.SerializeObject(searchFilter);
             string json = JsonConvert.SerializeObject(searchFilter, new JsonSerializerSettings()
