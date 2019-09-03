@@ -39,7 +39,6 @@ namespace Clean_Tool_and_MV.Model
                 return properties.acquired.ToLongTimeString();
             }
         }
-
         public string mapLayerName = null;
         private bool canToggleExisting()
         {
@@ -236,6 +235,7 @@ namespace Clean_Tool_and_MV.Model
                             return stripGroupLayer;
                         }
                     }
+
                 }
             }
         }
@@ -382,5 +382,6 @@ namespace Clean_Tool_and_MV.Model
             OnPropertyChanged(propertyName);
             return true;
         }
+
     }
 }

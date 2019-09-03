@@ -177,8 +177,9 @@
                IsSynchronizedWithCurrentItem="True"/>
             <TreeView Name="SearchResults" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Items}" Background="{x:Null}" BorderBrush="{x:Null}">
                 <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type model:AcquiredDateGroup}" ItemsSource="{Binding Items}">
+                    <HierarchicalDataTemplate DataType="{x:Type model:AcquiredDateGroup}" ItemsSource="{Binding Items}" >
                         <TextBlock Text="{Binding Path=date, Mode=OneWay}" />
+                        
                     </HierarchicalDataTemplate>
                     <HierarchicalDataTemplate DataType="{x:Type model:Item}" ItemsSource="{Binding Items}">
                         <StackPanel Orientation="Horizontal">
@@ -274,6 +275,7 @@
 
                                 <TextBlock Grid.Row="0" Text="{Binding Path=title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" />
                                 <TextBlock Grid.Row="1" Text="{Binding Path=id, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                <CheckBox Grid.Row="2" IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             </Grid>
                         </StackPanel>
                     </DataTemplate>
