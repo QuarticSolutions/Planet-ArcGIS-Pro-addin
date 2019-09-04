@@ -699,7 +699,7 @@ namespace Planet
             //request.Headers.Add("Content-Type", "application/json");
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             request.Content = content;
-            var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:hgvhgv");
+            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
             client.DefaultRequestHeaders.Host = "api.planet.com";
             //_client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

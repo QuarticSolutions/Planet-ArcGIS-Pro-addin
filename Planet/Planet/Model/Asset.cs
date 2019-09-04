@@ -28,7 +28,7 @@ namespace Planet.Model
         {
             get
             {
-                string url = _links.thumbnail + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value; //"1fe575980e78467f9c28b552294ea410";
+                string url = _links.thumbnail + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value;
                 return url;
             }
         }
@@ -39,7 +39,6 @@ namespace Planet.Model
                 return properties.acquired.ToLongTimeString();
             }
         }
-        public string mapLayerName = null;
         private bool canToggleExisting()
         {
             if (mapLayerName == null)
@@ -108,7 +107,7 @@ namespace Planet.Model
             //var content = new StringContent(json, Encoding.UTF8, "application/json");
             var content = new FormUrlEncodedContent(nvc);
             request.Content = content;
-            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
+            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value +":hgvhgv");
             client.DefaultRequestHeaders.Host = "api.planet.com";
             //_client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
@@ -123,7 +122,7 @@ namespace Planet.Model
                 {
                     var json2 = content2.ReadAsStringAsync().Result;
                     customwmts customwmts = JsonConvert.DeserializeObject<customwmts>(json2);
-                    customwmts.wmtsURL = new Uri("https://tiles.planet.com/data/v1/layers/wmts/" + customwmts.name + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value);//1fe575980e78467f9c28b552294ea410");
+                    customwmts.wmtsURL = new Uri("https://tiles.planet.com/data/v1/layers/wmts/" + customwmts.name + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value);
                     //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
                     var serverConnection = new CIMProjectServerConnection { URL = customwmts.wmtsURL.ToString() };// "1fe575980e78467f9c28b552294ea410"
                     var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
@@ -139,7 +138,7 @@ namespace Planet.Model
             }
         }
 
-        public void CheckParents(Boolean visible)
+        public void CheckParents(bool visible)
         {
             if (parent.IsChecked != visible)
             {
@@ -235,7 +234,6 @@ namespace Planet.Model
                             return stripGroupLayer;
                         }
                     }
-
                 }
             }
         }
@@ -352,21 +350,56 @@ namespace Planet.Model
             return null;
         }
 
-        private bool _IsChecked;
-
-        public bool IsChecked
-        {
-            get { return _IsChecked; }
-            set { SetField(ref _IsChecked, value); }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        private string _mapLayerName;
+        public string mapLayerName
+        {
+            get
+            {
+                return _mapLayerName;
+            }
+            set
+            {
+                _mapLayerName = value;
+                HasMapLayer = true;
+            }
+        }
+
+        private bool _HasMapLayer = false;
+        public bool HasMapLayer
+        {
+            get
+            {
+                return _HasMapLayer;
+            }
+            set
+            {
+                { SetHasMapLayer(ref _HasMapLayer, value); }
+            }
+        }
+
+        protected bool SetHasMapLayer<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        private bool _IsChecked;
+
+        public bool IsChecked
+        {
+            get { return _IsChecked; }
+            set { SetIsChecked(ref _IsChecked, value); }
+        }
+
+        protected bool SetIsChecked<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;
@@ -382,6 +415,5 @@ namespace Planet.Model
             OnPropertyChanged(propertyName);
             return true;
         }
-
     }
 }

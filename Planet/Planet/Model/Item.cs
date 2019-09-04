@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using test_docing_Panel.Models;
 
@@ -22,29 +23,35 @@ namespace Planet.Model
     {
         public List<Strip> strips { get; set; }
         public string itemType { get; set; }
-        public string mapLayerName { get; set; }
         public searchGeometry geometry { get; set; }
         public string thumbnail { get; set; }
         public DateTime acquired { get; set; }
         public AcquiredDateGroup parent { get; set; }
-        public int imageCount
+        public string imageCount
         {
             get
             {
                 int count = 0;
                 foreach(Strip strip in strips)
                 {
-                    count += strip.imageCount;
+                    count += strip.assets.Count;
                 }
-                return count;
+                return count + (count == 1 ? " image" : " images");
+            }
+        }
+        public string stripCount
+        {
+            get
+            {
+                int count = strips.Count;
+                return count + (count == 1 ? " strip" : " strips");
             }
         }
         public string title
         {
             get
             {
-                int count = imageCount;
-                return itemType + " (" + count + (count == 1 ? " image" : " images") + ")";
+                return itemType;
             }
         }
         public IEnumerable<object> Items
@@ -58,21 +65,56 @@ namespace Planet.Model
             }
         }
 
-        private bool? _IsChecked = false;
-
-        public bool? IsChecked
-        {
-            get { return _IsChecked; }
-            set { SetField(ref _IsChecked, value); }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        private string _mapLayerName;
+        public string mapLayerName
+        {
+            get
+            {
+                return _mapLayerName;
+            }
+            set
+            {
+                _mapLayerName = value;
+                HasMapLayer = true;
+            }
+        }
+
+        private bool _HasMapLayer = false;
+        public bool HasMapLayer 
+        {
+            get
+            {
+                return _HasMapLayer;
+            }
+            set
+            {
+                { SetHasMapLayer(ref _HasMapLayer, value); }
+            }
+        }
+
+        protected bool SetHasMapLayer<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        private bool? _IsChecked = false;
+
+        public bool? IsChecked
+        {
+            get { return _IsChecked; }
+            set { SetIsChecked(ref _IsChecked, value); }
+        }
+
+        protected bool SetIsChecked<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;
@@ -233,7 +275,7 @@ namespace Planet.Model
             //var content = new StringContent(json, Encoding.UTF8, "application/json");
             var content = new FormUrlEncodedContent(nvc);
             request.Content = content;
-            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
+            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value +":hgvhgv");
             client.DefaultRequestHeaders.Host = "api.planet.com";
             //_client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
@@ -248,7 +290,7 @@ namespace Planet.Model
                 {
                     var json2 = content2.ReadAsStringAsync().Result;
                     customwmts customwmts = JsonConvert.DeserializeObject<customwmts>(json2);
-                    customwmts.wmtsURL = new Uri("https://tiles.planet.com/data/v1/layers/wmts/" + customwmts.name + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value); //1fe575980e78467f9c28b552294ea410");
+                    customwmts.wmtsURL = new Uri("https://tiles.planet.com/data/v1/layers/wmts/" + customwmts.name + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value);// 1fe575980e78467f9c28b552294ea410");
                     //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
                     var serverConnection = new CIMProjectServerConnection { URL = customwmts.wmtsURL.ToString() };// "1fe575980e78467f9c28b552294ea410"
                     var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
