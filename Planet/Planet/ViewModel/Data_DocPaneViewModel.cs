@@ -609,8 +609,8 @@ namespace Planet
             //cloudcoverfiler
             RangeFilterConfig cloudconfig = new RangeFilterConfig
             {
-                gte = _CloudcoverLow / 100,
-                lte = _CloudcoverHigh / 100
+                gte = Convert.ToDouble( _CloudcoverLow) / 100,
+                lte = Convert.ToDouble(_CloudcoverHigh) / 100
             };
 
             Config cloudCoverFilter = new Config
@@ -688,7 +688,7 @@ namespace Planet
 
                 BaseAddress = new Uri("https://api.planet.com")
             };
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/quick-search");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/quick-search?_sort=acquired desc&_page_size=250");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Headers.CacheControl = new CacheControlHeaderValue();
 
