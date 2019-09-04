@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using test_docing_Panel.Models;
 
@@ -22,29 +23,35 @@ namespace Clean_Tool_and_MV.Model
     {
         public List<Strip> strips { get; set; }
         public string itemType { get; set; }
-        public string mapLayerName { get; set; }
         public searchGeometry geometry { get; set; }
         public string thumbnail { get; set; }
         public DateTime acquired { get; set; }
         public AcquiredDateGroup parent { get; set; }
-        public int imageCount
+        public string imageCount
         {
             get
             {
                 int count = 0;
                 foreach(Strip strip in strips)
                 {
-                    count += strip.imageCount;
+                    count += strip.assets.Count;
                 }
-                return count;
+                return count + (count == 1 ? " image" : " images");
+            }
+        }
+        public string stripCount
+        {
+            get
+            {
+                int count = strips.Count;
+                return count + (count == 1 ? " strip" : " strips");
             }
         }
         public string title
         {
             get
             {
-                int count = imageCount;
-                return itemType + " (" + count + (count == 1 ? " image" : " images") + ")";
+                return itemType;
             }
         }
         public IEnumerable<object> Items
@@ -58,21 +65,56 @@ namespace Clean_Tool_and_MV.Model
             }
         }
 
-        private bool? _IsChecked = false;
-
-        public bool? IsChecked
-        {
-            get { return _IsChecked; }
-            set { SetField(ref _IsChecked, value); }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        private string _mapLayerName;
+        public string mapLayerName
+        {
+            get
+            {
+                return _mapLayerName;
+            }
+            set
+            {
+                _mapLayerName = value;
+                HasMapLayer = true;
+            }
+        }
+
+        private bool _HasMapLayer = false;
+        public bool HasMapLayer 
+        {
+            get
+            {
+                return _HasMapLayer;
+            }
+            set
+            {
+                { SetHasMapLayer(ref _HasMapLayer, value); }
+            }
+        }
+
+        protected bool SetHasMapLayer<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        private bool? _IsChecked = false;
+
+        public bool? IsChecked
+        {
+            get { return _IsChecked; }
+            set { SetIsChecked(ref _IsChecked, value); }
+        }
+
+        protected bool SetIsChecked<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;
