@@ -24,6 +24,7 @@
       <tabs>
         <tab keytip="z1" id="Planet_Tab1" caption="Planet Imagery">
           <group refID="Planet_Group1" />
+          <group refID="Planet_Group2" />
         </tab>
       </tabs>
       <groups>
@@ -36,6 +37,10 @@
           <!--<button refID="Planet_LoginDetails_OpenButton" size="large" />-->
           <tool refID="Planet_DownloadData" size="large" />
           <!--<button refID="Planet_TrialWarning" size="large" />-->
+          <!--<button refID="Planet_Data_PocPane2_ShowButton" size="large" />-->
+        </group>
+        <group id="Planet_Group2" caption="Search for Scenes and Assets" appearsOnAddInTab="false">
+          <tool refID="Planet_AOI_Select" size="large" />
         </group>
       </groups>
       <controls>
@@ -54,6 +59,16 @@
         <!--<button id="Planet_TrialWarning" caption="TrialWarning" className="ShowTrialWarning" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
           <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
         </button>-->
+        <tool id="Planet_AOI_Select" categoryRefID="esri_editing_construction_point" caption="Search for Data" className="AOI_Select" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" condition="planet_condition_isconnected" largeImage="Images\AOI.png">
+          <!--note: use esri_editing_construction_polyline,  esri_editing_construction_polygon for categoryRefID as needed-->
+          <tooltip heading="Search">Search for Planet data by extent<disabledText /></tooltip>
+        </tool>
+        <button id="Planet_Data_DocPane_ShowButton" caption="Show Data DocPane" className="Data_DocPane_ShowButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Show Dockpane">Show Dockpane<disabledText /></tooltip>
+        </button>
+        <button id="Planet_Data_DocPane_MenuButton" caption="Burger Menu Button" className="Data_DocPane_MenuButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
+        </button>
       </controls>
       <galleries>
         <gallery id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Basemap Mosaics" className="PlanetGalleryInline" itemsInRow="4" dataTemplateFile="pack://application:,,,/Planet;component//PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
@@ -73,6 +88,16 @@
           <content className="LoginDetailsView" />
         </pane>-->
       </panes>
+      <dockPanes>
+        <dockPane id="Planet_Data_DocPane" caption="Planet Search" className="Data_DocPaneViewModel" dock="group" dockWith="esri_core_contentsDockPane">
+          <content className="Data_DocPaneView" />
+        </dockPane>
+      </dockPanes>
+      <menus>
+        <menu id="Planet_Data_DocPane_Menu" caption="Options" contextMenu="true">
+          <button refID="Planet_Data_DocPane_MenuButton" />
+        </menu>
+      </menus>
     </insertModule>
   </modules>
 </ArcGIS>
