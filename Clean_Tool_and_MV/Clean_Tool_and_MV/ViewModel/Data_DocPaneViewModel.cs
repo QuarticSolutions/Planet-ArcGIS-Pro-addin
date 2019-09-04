@@ -173,11 +173,14 @@ namespace Clean_Tool_and_MV
                 OnPropertyChanged("DateTo");
             }
         }
-        public int CloudcoverLow {
-            get {
+        public int CloudcoverLow
+        {
+            get
+            {
                 return _CloudcoverLow;
             }
-            set {
+            set
+            {
                 _CloudcoverLow = value;
                 OnPropertyChanged("CloudcoverLow");
             }
@@ -497,10 +500,10 @@ namespace Clean_Tool_and_MV
             //cloudcoverfiler
             RangeFilterConfig cloudconfig = new RangeFilterConfig
             {
-                gte = _CloudcoverLow,
-                lte = _CloudcoverHigh
+                gte = _CloudcoverLow / 100,
+                lte = _CloudcoverHigh /100
             };
-            
+
             Config cloudCoverFilter = new Config
             {
                 type = "RangeFilter",
@@ -538,13 +541,13 @@ namespace Clean_Tool_and_MV
             {
                 if (prop.PropertyType.Name == "Boolean")
                 {
-                    if (((bool)prop.GetValue(this,null)) && (prop.Name.StartsWith("Product")))
+                    if (((bool)prop.GetValue(this, null)) && (prop.Name.StartsWith("Product")))
                     {
                         types.Add(prop.Name.Substring(7));
                     }
                     //Console.WriteLine(prop.MemberType.ToString());
                 }
-            } 
+            }
 
             List<Config> mainconfigs = new List<Config>
             {
@@ -747,6 +750,51 @@ namespace Clean_Tool_and_MV
             }
         }
         #endregion
+
+        #region treeviewselectionchanged
+
+        private static object _selectedItem = null;
+        // This is public get-only here but you could implement a public setter which
+        // also selects the item.
+        // Also this should be moved to an instance property on a VM for the whole tree, 
+        // otherwise there will be conflicts for more than one tree.
+        public static object SelectedItem
+        {
+            get { return _selectedItem; }
+            private set
+            {
+                if (_selectedItem != value)
+                {
+                    _selectedItem = value;
+                    OnSelectedItemChanged();
+                }
+            }
+        }
+
+        private static void OnSelectedItemChanged()
+        {
+            Console.WriteLine("ItemChanged");
+            // Raise event / do other things
+        }
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged("IsSelected");
+                    if (_isSelected)
+                    {
+                        SelectedItem = this;
+                    }
+                }
+            }
+        }
+        #endregion
     }
 
     /// <summary>
@@ -796,5 +844,50 @@ namespace Clean_Tool_and_MV
         }
     }
 
-    
+    public class TreeViewHelper
+    {
+        private static Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior> behaviors = new Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior>();
+
+        public static object GetSelectedItem(System.Windows.DependencyObject obj)
+        {
+            return (object)obj.GetValue(SelectedItemProperty);
+        }
+
+        public static void SetSelectedItem(System.Windows.DependencyObject obj, object value)
+        {
+            obj.SetValue(SelectedItemProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for SelectedItem.  This enables animation, styling, binding, etc...
+        public static readonly System.Windows.DependencyProperty SelectedItemProperty =
+            System.Windows.DependencyProperty.RegisterAttached("SelectedItem", typeof(object), typeof(TreeViewHelper), new System.Windows.UIPropertyMetadata(null, SelectedItemChanged));
+
+        private static void SelectedItemChanged(System.Windows.DependencyObject obj, System.Windows.DependencyPropertyChangedEventArgs e)
+        {
+            if (!(obj is System.Windows.Controls.TreeView))
+                return;
+
+            if (!behaviors.ContainsKey(obj))
+                behaviors.Add(obj, new TreeViewSelectedItemBehavior(obj as System.Windows.Controls.TreeView));
+
+            TreeViewSelectedItemBehavior view = behaviors[obj];
+            view.ChangeSelectedItem(e.NewValue);
+        }
+
+        private class TreeViewSelectedItemBehavior
+        {
+            System.Windows.Controls.TreeView view;
+            public TreeViewSelectedItemBehavior(System.Windows.Controls.TreeView view)
+            {
+                this.view = view;
+                view.SelectedItemChanged += (sender, e) => SetSelectedItem(view, e.NewValue);
+            }
+
+            internal void ChangeSelectedItem(object p)
+            {
+                System.Windows.Controls.TreeViewItem item = (System.Windows.Controls.TreeViewItem)view.ItemContainerGenerator.ContainerFromItem(p);
+                item.IsSelected = true;
+            }
+        }
+    }
 }

@@ -48,7 +48,7 @@ namespace Clean_Tool_and_MV
             data_DocPaneViewModel.AOIGeometry = geometry;
             data_DocPaneViewModel.Activate(true);
             //addwmts("asdasd");
-
+            FrameworkApplication.SetCurrentToolAsync(null);
             return base.OnSketchCompleteAsync(geometry);
         }
 
