@@ -18,20 +18,19 @@ namespace Clean_Tool_and_MV.Model
         public string stripId { get; set; }
         public List<Asset> assets { get; set; }
         public DateTime acquired { get; set; }
-        public string mapLayerName { get; set; }
-        public int imageCount
+        public string imageCount
         {
             get
             {
-                return assets.Count;
+                int count = assets.Count;
+                return count + (count == 1 ? " image" : " images");
             }
         }
         public string title
         {
             get
             {
-                int count = imageCount;
-                return acquired.ToShortTimeString() + " (" + count + (count == 1 ? " image" : " images") + ")";
+                return acquired.ToShortTimeString();
             }
         }
         public IEnumerable<object> Items
@@ -63,21 +62,55 @@ namespace Clean_Tool_and_MV.Model
             return null;
         }
 
-        private bool? _IsChecked = false;
-
-        public bool? IsChecked
-        {
-            get { return _IsChecked; }
-            set { SetField(ref _IsChecked, value); }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        private string _mapLayerName;
+        public string mapLayerName
+        {
+            get
+            {
+                return _mapLayerName;
+            }
+            set
+            {
+                _mapLayerName = value;
+                HasMapLayer = true;
+            }
+        }
+
+        private bool _HasMapLayer = false;
+        public bool HasMapLayer
+        {
+            get
+            {
+                return _HasMapLayer;
+            }
+            set
+            {
+                { SetHasMapLayer(ref _HasMapLayer, value); }
+            }
+        }
+
+        protected bool SetHasMapLayer<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        private bool? _IsChecked = false;
+        public bool? IsChecked
+        {
+            get { return _IsChecked; }
+            set { SetIsChecked(ref _IsChecked, value); }
+        }
+
+        protected bool SetIsChecked<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;
@@ -179,7 +212,7 @@ namespace Clean_Tool_and_MV.Model
                     targets = targets + asset.properties.item_type + ":" + asset.id.ToString() + ",";
                 }
             }
-            if (targets == "")
+            if (targets == string.Empty)
             {
                 return;
             }

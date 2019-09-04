@@ -40,7 +40,6 @@ namespace Clean_Tool_and_MV.Model
             }
         }
 
-        public string mapLayerName = null;
         private bool canToggleExisting()
         {
             if (mapLayerName == null)
@@ -140,7 +139,7 @@ namespace Clean_Tool_and_MV.Model
             }
         }
 
-        public void CheckParents(Boolean visible)
+        public void CheckParents(bool visible)
         {
             if (parent.IsChecked != visible)
             {
@@ -352,21 +351,56 @@ namespace Clean_Tool_and_MV.Model
             return null;
         }
 
-        private bool _IsChecked;
-
-        public bool IsChecked
-        {
-            get { return _IsChecked; }
-            set { SetField(ref _IsChecked, value); }
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        private string _mapLayerName;
+        public string mapLayerName
+        {
+            get
+            {
+                return _mapLayerName;
+            }
+            set
+            {
+                _mapLayerName = value;
+                HasMapLayer = true;
+            }
+        }
+
+        private bool _HasMapLayer = false;
+        public bool HasMapLayer
+        {
+            get
+            {
+                return _HasMapLayer;
+            }
+            set
+            {
+                { SetHasMapLayer(ref _HasMapLayer, value); }
+            }
+        }
+
+        protected bool SetHasMapLayer<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        private bool _IsChecked;
+
+        public bool IsChecked
+        {
+            get { return _IsChecked; }
+            set { SetIsChecked(ref _IsChecked, value); }
+        }
+
+        protected bool SetIsChecked<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;

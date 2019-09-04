@@ -144,6 +144,7 @@
     <Compile Include="Model\customwmts.cs" />
     <Compile Include="Model\demomodel.cs" />
     <Compile Include="Model\Item.cs" />
+    <Compile Include="Model\Page.cs" />
     <Compile Include="Model\PlanetResultModel.cs" />
     <Compile Include="Model\QuickSearchResult.cs" />
     <Compile Include="Model\SearchFilter.cs" />
