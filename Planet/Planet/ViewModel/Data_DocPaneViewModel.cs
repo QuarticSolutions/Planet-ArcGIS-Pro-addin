@@ -52,6 +52,93 @@ namespace Planet
                 OnPropertyChanged("HasGeom");
             }
         }
+        private Visibility _paginatorVisibility = Visibility.Collapsed;
+        public Visibility PaginatorVisibility
+        {
+            get { return _paginatorVisibility; }
+            set
+            {
+                _paginatorVisibility = value;
+                OnPropertyChanged("PaginatorVisibility");
+            }
+        }
+
+        private Model.Page _currentPage;
+        public Model.Page CurrentPage
+        {
+            get { return _currentPage; }
+            set
+            {
+                _currentPage = value;
+                OnPropertyChanged("CurrentPage");
+            }
+        }
+
+        private bool _hasPages = false;
+        public bool HasPages
+        {
+            get { return _hasPages; }
+            set
+            {
+                _hasPages = value;
+                OnPropertyChanged("HasPages");
+            }
+        }
+
+        private bool _treeEnabled = true;
+        public bool TreeEnabled
+        {
+            get { return _treeEnabled; }
+            set
+            {
+                _treeEnabled = value;
+                OnPropertyChanged("TreeEnabled");
+            }
+        }
+
+        private bool _hasNextPage = false;
+        public bool HasNextPage
+        {
+            get { return _hasNextPage; }
+            set
+            {
+                _hasNextPage = value;
+                OnPropertyChanged("HasNextPage");
+            }
+        }
+        private bool _isNotFirstPage = false;
+        public bool IsNotFirstPage
+        {
+            get { return _isNotFirstPage; }
+            set
+            {
+                _isNotFirstPage = value;
+                OnPropertyChanged("IsNotFirstPage");
+            }
+        }
+
+        private int _pageNumber = 0;
+        public int PageNumber
+        {
+            get { return _pageNumber; }
+            set
+            {
+                _pageNumber = value;
+                OnPropertyChanged("PageNumber");
+            }
+        }
+
+        private string _pageTotal = "many";
+        public string PageTotal
+        {
+            get { return _pageTotal; }
+            set
+            {
+                _pageTotal = value;
+                OnPropertyChanged("PageTotal");
+            }
+        }
+
         private Visibility _showCircularAnimation = Visibility.Collapsed;
         public Visibility ShowCircularAnimation
         {
@@ -122,19 +209,87 @@ namespace Planet
             }
         }
 
-        //public bool CanAddToMap { get; set; } = true;
-        //private ICommand _addToMapCommand;
-        //public ICommand AddToMap
-        //{
-        //    get
-        //    {
-        //        if (_addToMapCommand == null)
-        //        {
-        //            _addToMapCommand = new AddToMapCommandHandler(param => DoAddToMap(param), CanAddToMap);
-        //        }
-        //        return _addToMapCommand;
-        //    }
-        //}
+        public bool CanExecuteGoToNext { get; set; } = true;
+        private ICommand _goToPrevPage;
+        public ICommand GoToPrevPage
+        {
+            get
+            {
+                if (_goToPrevPage == null)
+                    _goToPrevPage = new ArcGIS.Desktop.Framework.RelayCommand(() => doGoToPrevPage());
+                return _goToPrevPage;
+            }
+        }
+
+        public bool CanExecuteGoToPrev { get; set; } = true;
+        private void doGoToPrevPage()
+        {
+            ShowCircularAnimation = Visibility.Visible;
+            TreeEnabled = false;
+            HasNextPage = false;
+            IsNotFirstPage = false;
+            PageNumber -= 1;
+            Items = Pages[PageNumber - 1].Items;
+            CurrentPage = Pages[PageNumber - 1];
+            IsNotFirstPage = PageNumber == 1 ? false : true;
+            HasNextPage = true;
+            ShowCircularAnimation = Visibility.Hidden;
+            TreeEnabled = true;
+        }
+
+        private ICommand _goToNextPage;
+        public ICommand GoToNextPage
+        {
+            get
+            {
+                if (_goToNextPage == null)
+                    _goToNextPage = new ArcGIS.Desktop.Framework.RelayCommand(() => doGoToNextPage());
+                return _goToNextPage;
+            }
+        }
+
+        private async void doGoToNextPage()
+        {
+            ShowCircularAnimation = Visibility.Visible;
+            TreeEnabled = false;
+            HasNextPage = false;
+            IsNotFirstPage = false;
+            Model.Page nextPage = null;
+            if (Pages.Count >= PageNumber + 1)
+            {
+                nextPage = Pages[PageNumber];
+            }
+            else
+            {
+                nextPage = await Model.Page.GetNextPage(CurrentPage);
+                Pages.Add(nextPage);
+            }
+            CurrentPage = nextPage;
+            Items = nextPage.Items;
+            PageNumber += 1;
+            IsNotFirstPage = true;
+            HasNextPage = nextPage.QuickSearchResult._links._next != null;
+            PageTotal = HasNextPage ? "many" : Pages.Count.ToString();
+            ShowCircularAnimation = Visibility.Hidden;
+            TreeEnabled = true;
+        }
+
+        private List<Model.Page> _Pages;
+        public List<Model.Page> Pages
+        {
+            get
+            {
+                if (_Pages == null)
+                {
+                    _Pages = new List<Model.Page>();
+                }
+                return _Pages;
+            }
+            set
+            {
+                _Pages = value;
+            }
+        }
 
         private ObservableCollection<Model.AcquiredDateGroup> _items;
         public ObservableCollection<Model.AcquiredDateGroup> Items
@@ -182,114 +337,114 @@ namespace Planet
             {
                 //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
             }
-        }
 
-        /// <summary>
-        /// Sort through quick search results and create list of items
-        /// Items are grouped by acquired date and item type
-        /// Each item contains a list of strips
-        /// Strips are grouped by strip id
-        /// Each strip contains a list of assets
-        /// Assets inherit from test_docing_Panel.Models.Feature 
-        /// </summary>
-        private void ProcessQuickSearchResults(ObservableCollection<QuickSearchResult> results)
-        {
-            //group results
-            List<Model.AcquiredDateGroup> groupedResults = new List<Model.AcquiredDateGroup>();
-            foreach (QuickSearchResult result in results)
-            {
-                test_docing_Panel.Models.Feature[] features = result.features;
-                foreach (test_docing_Panel.Models.Feature feature in features)
-                {
-                    Model.AcquiredDateGroup acquiredDateGroup = null;
-                    DateTime acquired = feature.properties.acquired;
-                    DateTime acquired_day = acquired.Date;
-                    int acquiredDateIndex = groupedResults.FindIndex(i => i.acquired == acquired_day);
-                    if (acquiredDateIndex < 0)
-                    {
-                        acquiredDateGroup = new Model.AcquiredDateGroup
-                        {
-                            acquired = acquired_day,
-                            items = new List<Model.Item>()
-                        };
-                        groupedResults.Add(acquiredDateGroup);
-                    }
-                    else
-                    {
-                        acquiredDateGroup = groupedResults[acquiredDateIndex];
-                    }
-                    string itemType = feature.properties.item_type;
-                    Model.Item item = null;
-                    List<Model.Item> items = acquiredDateGroup.items;
-                    int index = items.FindIndex(i => i.itemType == itemType);
-                    if (index < 0)
-                    {
-                        item = new Model.Item
-                        {
-                            itemType = itemType,
-                            acquired = acquired,
-                            strips = new List<Model.Strip>(),
-                            parent = acquiredDateGroup
-                        };
-                        items.Add(item);
-                    }
-                    else
-                    {
-                        item = items[index];
-                    }
-                    Model.Strip strip = null;
-                    List<Model.Strip> strips = item.strips;
-                    string stripId = feature.properties.strip_id;
-                    int stripIndex = strips.FindIndex(s => s.stripId == stripId);
-                    if (stripIndex < 0)
-                    {
-                        strip = new Model.Strip
-                        {
-                            stripId = stripId,
-                            acquired = acquired,
-                            parent = item,
-                            assets = new List<Model.Asset>()
-                        };
-                        strips.Add(strip);
-                    }
-                    else
-                    {
-                        strip = strips[stripIndex];
-                    }
-                    List<Model.Asset> assets = strip.assets;
-                    Model.Asset asset = new Model.Asset
-                    {
-                        parent = strip,
-                        properties = feature.properties,
-                        id = feature.id,
-                        type = feature.type,
-                        _links = feature._links,
-                        _permissions = feature._permissions,
-                        geometry = feature.geometry
-                    };
-                    asset.setFootprintVertices();
-                    asset.setFootprintSymbol();
-                    asset.setPolygon();
-                    assets.Add(asset);
-                }
 
-            }
-            //sort the collections
-            foreach (Model.AcquiredDateGroup group in groupedResults)
-            {
-                group.items = group.items.OrderBy(itemGroup => itemGroup.itemType).ToList();
-                foreach (Model.Item item in group.items)
-                {
-                    item.strips = item.strips.OrderByDescending(strip => strip.acquired).ToList();
-                    foreach (Model.Strip strip in item.strips)
-                    {
-                        strip.assets = strip.assets.OrderByDescending(asset => asset.properties.acquired).ToList();
-                    }
-                }
-            }
-            List<Model.AcquiredDateGroup> collection = groupedResults.OrderByDescending(group => group.acquired).ToList();
-            //set Items
-            Items = new ObservableCollection<Model.AcquiredDateGroup>(collection);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
 
         protected Data_DocPaneViewModel()
@@ -321,6 +476,7 @@ namespace Planet
                 SetProperty(ref _heading, value, () => Heading);
             }
         }
+
         public Geometry AOIGeometry
         {
             get
@@ -392,6 +548,8 @@ namespace Planet
         private void DoSearch()
         {
             ShowCircularAnimation = Visibility.Visible;
+            TreeEnabled = false;
+
             Polygon poly = (Polygon)AOIGeometry;
             IReadOnlyList<Coordinate2D> coordinates = poly.Copy2DCoordinatesToList();
             ToGeoCoordinateParameter ddParam = new ToGeoCoordinateParameter(GeoCoordinateType.DD);
@@ -452,7 +610,7 @@ namespace Planet
             RangeFilterConfig cloudconfig = new RangeFilterConfig
             {
                 gte = _CloudcoverLow / 100,
-                lte = _CloudcoverHigh /100
+                lte = _CloudcoverHigh / 100
             };
 
             Config cloudCoverFilter = new Config
@@ -462,6 +620,7 @@ namespace Planet
                 config = cloudconfig
 
             };
+
             //DateFilter
             Config dateconfigconfig2 = new Config
             {
@@ -475,6 +634,7 @@ namespace Planet
                 field_name = "acquired",
                 config = dateconfigconfig2
             };
+
             Config dateconfig = new Config
             {
                 type = "OrFilter",
@@ -482,7 +642,7 @@ namespace Planet
             };
 
             SearchFilter searchFilter = new SearchFilter();
-            List<string> typoes = new List<string>();
+            List<string> types = new List<string>();
             //typoes.Add("PSScene4Band");
             //typoes.Add("SkySatCollect");
             //typoes.Add("REOrthoTile");
@@ -492,7 +652,7 @@ namespace Planet
                 {
                     if (((bool)prop.GetValue(this, null)) && (prop.Name.StartsWith("Product")))
                     {
-                        typoes.Add(prop.Name.Substring(7));
+                        types.Add(prop.Name.Substring(7));
                     }
                     //Console.WriteLine(prop.MemberType.ToString());
                 }
@@ -504,7 +664,7 @@ namespace Planet
                 cloudCoverFilter,
                 configGeom
             };
-            searchFilter.item_types = typoes.ToArray();
+            searchFilter.item_types = types.ToArray();
             Filter topfilter = new Filter();
             topfilter.type = "AndFilter";
             searchFilter.filter = topfilter;
@@ -528,7 +688,7 @@ namespace Planet
 
                 BaseAddress = new Uri("https://api.planet.com")
             };
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/quick-search?_sort=acquired%20desc&_page_size=250");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/quick-search");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Headers.CacheControl = new CacheControlHeaderValue();
 
@@ -539,7 +699,7 @@ namespace Planet
             //request.Headers.Add("Content-Type", "application/json");
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             request.Content = content;
-            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
+            var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:hgvhgv");
             client.DefaultRequestHeaders.Host = "api.planet.com";
             //_client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -562,94 +722,115 @@ namespace Planet
                         //if (_quickSearchResults is null )
                         //{
                         _quickSearchResults = new ObservableCollection<QuickSearchResult>();
+                        Items = new ObservableCollection<AcquiredDateGroup>();
+                        Pages = new List<Model.Page>();
                         //}
                         _quickSearchResults.Add(quickSearchResult);
-                        //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
+                        Model.Page page = new Model.Page
+                        {
+                            QuickSearchResult = quickSearchResult
+                        };
+                        List<AcquiredDateGroup> groupedItems = Model.Page.ProcessQuickSearchResults(quickSearchResult);
+                        page.Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
+                        Pages.Add(page);
+                        CurrentPage = page;
+                        Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
+                        //ProcessQuickSearchResults(quickSearchResult, page);
+                        HasPages = true;
+                        HasNextPage = quickSearchResult._links._next != null;
+                        IsNotFirstPage = false;
+                        PageNumber = 1;
+                        PageTotal = HasNextPage ? "many" : "1";
+                        PaginatorVisibility = Visibility.Visible;
+                        //Pages.AddRange(await Model.Page.GetAllPages(quickSearchResult));
                     }
                 }
-                ProcessQuickSearchResults(_quickSearchResults);
-                ShowCircularAnimation = Visibility.Hidden;
+
+
             }
             catch (Exception e)
             {
                 ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(e.Message + Environment.NewLine + e.StackTrace);
-                ShowCircularAnimation = Visibility.Hidden;
+
             }
+
+            ShowCircularAnimation = Visibility.Hidden;
+            TreeEnabled = true;
         }
 
-        ///// <summary>
-        ///// Gets the wmts url from the Planet api for a list of items.
-        ///// The function accepts a string argument that must be in format
-        ///// productName:itemID,productName:itemID, e.g. PSScene4Band:20190603_205042_1042,PSScene4Band:20190528_205949_43_1061
-        ///// </summary>
-        ///// <param name="param"></param>
-        //private async void DoAddToMap(Object param)
-        //{
-        //    string targets = "";
-        //    HttpClientHandler handler = new HttpClientHandler()
-        //    {
-        //        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-        //    };
-        //    HttpClient client = new HttpClient(handler)
-        //    {
 
-        //        BaseAddress = new Uri("https://api.planet.com")
-        //    };
-        //    foreach (AcquiredDateGroup item in _items)
-        //    {
-        //        foreach (Model.Item item2 in item.Items)
-        //        {
-        //            foreach (Strip strip  in item2.strips)
-        //            {
-        //                foreach (Asset asset in strip.assets)
-        //                {
-        //                    if (asset.IsSelected)
-        //                    {
-        //                        targets = targets  + asset.properties.item_type + ":" + asset.id.ToString() + ",";
-        //                    }
-        //                }
-        //            }
-        //            Console.WriteLine("asd");
-        //        }
-               
-        //    }
-        //    targets = targets.TrimEnd(',');
-        //    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/layers");
-        //    //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-        //    request.Headers.Host = "tiles2.planet.com";
-        //    request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-        //    var nvc = new List<KeyValuePair<string, string>>();
-        //    //nvc.Add(new KeyValuePair<string, string>("ids", "PSScene4Band:20190603_205042_1042,PSScene4Band:20190528_205949_43_1061,PSScene4Band:20190818_205116_1009"));
-        //    nvc.Add(new KeyValuePair<string, string>("ids", targets));
-        //    //var content = new StringContent(json, Encoding.UTF8, "application/json");
-        //    var content = new FormUrlEncodedContent(nvc);
-        //    request.Content = content;
-        //    var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:hgvhgv");
-        //    client.DefaultRequestHeaders.Host = "api.planet.com";
-        //    //_client.DefaultRequestHeaders.Accept.Clear();
-        //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-        //    content.Headers.Remove("Content-Type");
-        //    content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-        //    client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-        //    client.DefaultRequestHeaders.Add("User-Agent", "ArcGISProC#");
-        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-        //    using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
-        //    {
-        //        using (HttpContent content2 = httpResponse.Content)
-        //        {
-        //            var json2 = content2.ReadAsStringAsync().Result;
-        //            customwmts customwmts = JsonConvert.DeserializeObject<customwmts>(json2);
-        //            customwmts.wmtsURL = new Uri("https://tiles.planet.com/data/v1/layers/wmts/" + customwmts.name + "?api_key=1fe575980e78467f9c28b552294ea410");
-        //            //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
-        //            var serverConnection = new CIMProjectServerConnection { URL = customwmts.wmtsURL.ToString() };// "1fe575980e78467f9c28b552294ea410"
-        //            var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
-        //            await QueuedTask.Run(() =>
-        //            {
-        //                BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, MapView.Active.Map, 0, customwmts.name);
-        //            });
-        //        }
-        //    }
-        //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         #region ProductBooleans set get
         private bool _PSScene3Band = false;
         public bool ProductPSScene3Band
@@ -850,28 +1031,28 @@ namespace Planet
         }
     }
 
-    public class AddToMapCommandHandler : ICommand
-    {
-        private Action<object> _action;
-        private bool _canExecute;
-        public AddToMapCommandHandler(Action<object> action, bool canExecute)
-        {
-            _action = action;
-            _canExecute = canExecute;
-        }
 
-        public bool CanExecute(object parameter)
-        {
-            return _canExecute;
-        }
 
-        public event EventHandler CanExecuteChanged;
 
-        public void Execute(object parameter)
-        {
-            _action(parameter);
-        }
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public class TreeViewHelper
     {
@@ -919,4 +1100,5 @@ namespace Planet
             }
         }
     }
+
 }
