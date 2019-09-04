@@ -39,7 +39,6 @@ namespace Clean_Tool_and_MV.Model
                 return properties.acquired.ToLongTimeString();
             }
         }
-        public string mapLayerName = null;
         private bool canToggleExisting()
         {
             if (mapLayerName == null)
