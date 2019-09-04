@@ -39,6 +39,8 @@ namespace Planet
         private ObservableCollection<QuickSearchResult> _quickSearchResults = null;
         private int _CloudcoverLow = 0;
         private int _CloudcoverHigh = 100;
+        private int _AreaCoverLow = 0;
+        private int _AreaCoverHigh = 0;
         private DateTime _DateFrom = DateTime.Now.AddYears(-1);
         private DateTime _DateTo = DateTime.Now;
         public Data_DocPaneView View { get; set; }
@@ -197,6 +199,32 @@ namespace Planet
                 OnPropertyChanged("CloudcoverHigh");
             }
         }
+        
+        public int AreaCoverLow
+        {
+            get
+            {
+                return _AreaCoverLow;
+            }
+            set
+            {
+                _AreaCoverLow = value;
+                OnPropertyChanged("AreaCoverLow");
+            }
+        }
+        public int AreaCoverHigh
+        {
+            get
+            {
+                return _AreaCoverHigh;
+            }
+            set
+            {
+                _AreaCoverHigh = value;
+                OnPropertyChanged("AreaCoverHigh");
+            }
+        }
+
         public bool CanExecuteSearch { get; set; } = true;
         private ICommand _searchcommand;
         public ICommand SearchCommand
@@ -337,114 +365,6 @@ namespace Planet
             {
                 //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
 
         protected Data_DocPaneViewModel()
@@ -605,6 +525,17 @@ namespace Planet
                 config = configPoints
             };
 
+            //areacovered filter
+            RangeFilterConfig areaconfig = new RangeFilterConfig()
+            {
+                gte = _AreaCoverLow,
+                lte = _AreaCoverHigh
+            };
+            Config areacoverfilter = new Config()
+            {
+                type = "RangeFilter",
+                field_name = "visible_percent"
+            };
 
             //cloudcoverfiler
             RangeFilterConfig cloudconfig = new RangeFilterConfig
@@ -662,13 +593,14 @@ namespace Planet
             {
                 dateconfig,
                 cloudCoverFilter,
+                areacoverfilter,
                 configGeom
             };
             searchFilter.item_types = types.ToArray();
             Filter topfilter = new Filter();
             topfilter.type = "AndFilter";
             searchFilter.filter = topfilter;
-            Config mainConfig = new Config();
+            //Config mainConfig = new Config();
             searchFilter.filter.config = mainconfigs.ToArray();
 
             //string json = JsonConvert.SerializeObject(searchFilter);

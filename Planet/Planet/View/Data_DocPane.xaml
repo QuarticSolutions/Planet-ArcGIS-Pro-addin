@@ -427,6 +427,40 @@
                         </Grid>
                     </Expander>
                     <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="3" Header="Area coverage" IsExpanded="False">
+                        <Grid VerticalAlignment="Center" Margin="15,5,5,5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}">
+                                <Run Text="{Binding AreaCoverLow}"/>
+                                <Run Text="-"/>
+                                <Run Text="{Binding AreaCoverHigh}"/>
+                                <Run Text="%"/>
+                            </TextBlock>
+                            <excd:RangeSlider Grid.Row="1" 
+                                    LowerValue="{Binding AreaCoverLow}" 
+                                    HigherValue="{Binding AreaCoverHigh}" 
+                                    Step="1"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    AutoToolTipPlacement="BottomRight"
+                                    AutoToolTipPrecision="1"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Background="Transparent"
+                                    Foreground="Transparent" 
+                                    Margin="0,5,0,0" 
+                                    Height="22"
+                                    TickPlacement="None"             
+                                    LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    RangeBackground="Transparent"
+                                    HigherRangeBackground="Transparent"
+                                    LowerRangeBackground="Transparent"
+                                    VerticalAlignment="Center">
+                            </excd:RangeSlider>
+                        </Grid>
                     </Expander>
                     <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="4" Header="Ground sample distance" IsExpanded="False">
                     </Expander>
