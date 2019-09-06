@@ -593,7 +593,6 @@ namespace Planet
             {
                 dateconfig,
                 cloudCoverFilter,
-                areacoverfilter,
                 configGeom
             };
             searchFilter.item_types = types.ToArray();

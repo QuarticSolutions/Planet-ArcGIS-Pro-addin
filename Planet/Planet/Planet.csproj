@@ -155,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AOI_Select.cs" />
+    <Compile Include="AOI_Selected.cs" />
     <Compile Include="Data\AsyncObservableCollection.cs" />
     <Compile Include="Data\BaseItem.cs" />
     <Compile Include="Data\payload.cs" />
