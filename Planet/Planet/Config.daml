@@ -41,6 +41,7 @@
         </group>
         <group id="Planet_Group2" caption="Search for Scenes and Assets" appearsOnAddInTab="false">
           <tool refID="Planet_AOI_Select" size="large" />
+          <tool refID="Planet_AOI_Selected" size="large" />
         </group>
       </groups>
       <controls>
@@ -68,6 +69,9 @@
         </button>
         <button id="Planet_Data_DocPane_MenuButton" caption="Burger Menu Button" className="Data_DocPane_MenuButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
           <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
+        </button>
+        <button id="Planet_AOI_Selected" caption="Search by Selected Feature" className="AOI_Selected" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue32.png" condition="planet_condition_isconnected">
+          <tooltip heading="Search by Selected Feature">Search for planet data by the selected map polygons<disabledText /></tooltip>
         </button>
       </controls>
       <galleries>
