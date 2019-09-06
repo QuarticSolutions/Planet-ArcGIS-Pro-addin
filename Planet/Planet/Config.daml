@@ -17,6 +17,16 @@
     <insertCondition id="planet_condition_mappanelvisible" caption="Map Visible">
       <state id="esri_mapping_mapPane" />
     </insertCondition>
+    <insertCondition id="esri_mapping_activeMapView_hasFeatureSelectionCondition" caption="The active map view has selected features." xmlns="http://schemas.esri.com/DADF/Registry">
+      <state id="esri_mapping_activeMapView_hasFeatureSelectionState" />
+    </insertCondition>
+  <insertCondition id="planet_condition_isconnected_and_Selection" caption="Planet Connection and Se;ected">
+    <and>
+      <state id="planet_state_connection"/>
+      <state id="esri_mapping_activeMapView_hasFeatureSelectionState" />
+      <state id ="planet_state_ispolyselected"/>
+    </and>
+  </insertCondition>
   </conditions>
   <modules>
     <insertModule id="Planet_Module" className="Module1" autoLoad="true" caption="Planet Module">
@@ -52,7 +62,7 @@
         <!--<button keytip="asdf" id="Planet_LoginDetails_OpenButton" caption="Open Login Details" className="LoginDetails_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="Images\Clouddata.png">
           <tooltip heading="Open Pane">Open Pane<disabledText /></tooltip>
         </button>-->
-        <tool id="Planet_DownloadData" categoryRefID="esri_editing_construction_point" caption="Download Data" className="DownloadData" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" largeImage="Images\Download.png" condition="planet_condition_isconnected">
+        <tool id="Planet_DownloadData" categoryRefID="esri_editing_construction_point" caption="Download basemap data" className="DownloadData" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" largeImage="Images\Download.png" condition="planet_condition_isconnected">
           <!--note: use esri_editing_construction_polyline,  esri_editing_construction_polygon for categoryRefID as needed-->
           <tooltip heading="Download">Download basemap quads as .tif files
             <disabledText>You must connect with a valid API_Key first</disabledText></tooltip>
@@ -70,7 +80,7 @@
         <button id="Planet_Data_DocPane_MenuButton" caption="Burger Menu Button" className="Data_DocPane_MenuButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
           <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
         </button>
-        <button id="Planet_AOI_Selected" caption="Search by Selected Feature" className="AOI_Selected" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue32.png" condition="planet_condition_isconnected">
+        <button id="Planet_AOI_Selected" caption="Search by Selected Feature" className="AOI_Selected" loadOnClick="false" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue32.png" condition="planet_condition_isconnected_and_Selection">
           <tooltip heading="Search by Selected Feature">Search for planet data by the selected map polygons<disabledText /></tooltip>
         </button>
       </controls>
