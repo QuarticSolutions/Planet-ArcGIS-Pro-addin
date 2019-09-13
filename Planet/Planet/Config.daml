@@ -1,11 +1,11 @@
 ﻿<ArcGIS defaultAssembly="Planet.dll" defaultNamespace="Planet" xmlns="http://schemas.esri.com/DADF/Registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
-  <AddInInfo id="{232431fe-6db9-4d83-84bc-2ee7d7f55205}" version="1.0" desktopVersion="2.2.12813">
+  <AddInInfo id="{232431fe-6db9-4d83-84bc-2ee7d7f55205}" version="2.0" desktopVersion="2.2.12813">
     <Name>Planet Basemap Explorer</Name>
     <Description>Toolbar to display and download Planet basmaps</Description>
     <Image>Images\Planet_logo-dark.png</Image>
     <Author>Quartic Solutions</Author>
     <Company>Quartic Solutions</Company>
-    <Date>5/13/2019 7:55:48 AM, 2019</Date>
+    <Date>9/6/2019 7:55:48 AM, 2019</Date>
     <Subject>Framework</Subject>
     <!-- Note subject can be one or more of these topics:
                     Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
@@ -17,6 +17,16 @@
     <insertCondition id="planet_condition_mappanelvisible" caption="Map Visible">
       <state id="esri_mapping_mapPane" />
     </insertCondition>
+    <insertCondition id="esri_mapping_activeMapView_hasFeatureSelectionCondition" caption="The active map view has selected features." xmlns="http://schemas.esri.com/DADF/Registry">
+      <state id="esri_mapping_activeMapView_hasFeatureSelectionState" />
+    </insertCondition>
+    <insertCondition id="planet_condition_isconnected_and_Selection" caption="Planet Connection and Se;ected">
+      <and>
+        <state id="planet_state_connection" />
+        <state id="esri_mapping_activeMapView_hasFeatureSelectionState" />
+        <state id="planet_state_ispolyselected" />
+      </and>
+    </insertCondition>
   </conditions>
   <modules>
     <insertModule id="Planet_Module" className="Module1" autoLoad="true" caption="Planet Module">
@@ -24,6 +34,7 @@
       <tabs>
         <tab keytip="z1" id="Planet_Tab1" caption="Planet Imagery">
           <group refID="Planet_Group1" />
+          <group refID="Planet_Group2" />
         </tab>
       </tabs>
       <groups>
@@ -36,6 +47,12 @@
           <!--<button refID="Planet_LoginDetails_OpenButton" size="large" />-->
           <tool refID="Planet_DownloadData" size="large" />
           <!--<button refID="Planet_TrialWarning" size="large" />-->
+          <!--<button refID="Planet_Data_PocPane2_ShowButton" size="large" />-->
+          <!--<button refID="Planet_OrderWindow" size="large" />-->
+        </group>
+        <group id="Planet_Group2" caption="Search for Scenes and Assets" appearsOnAddInTab="false">
+          <tool refID="Planet_AOI_Select" size="large" />
+          <tool refID="Planet_AOI_Selected" size="large" />
         </group>
       </groups>
       <controls>
@@ -46,7 +63,7 @@
         <!--<button keytip="asdf" id="Planet_LoginDetails_OpenButton" caption="Open Login Details" className="LoginDetails_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="Images\Clouddata.png">
           <tooltip heading="Open Pane">Open Pane<disabledText /></tooltip>
         </button>-->
-        <tool id="Planet_DownloadData" categoryRefID="esri_editing_construction_point" caption="Download Data" className="DownloadData" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" largeImage="Images\Download.png" condition="planet_condition_isconnected">
+        <tool id="Planet_DownloadData" categoryRefID="esri_editing_construction_point" caption="Download basemap data" className="DownloadData" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" largeImage="Images\Download.png" condition="planet_condition_isconnected">
           <!--note: use esri_editing_construction_polyline,  esri_editing_construction_polygon for categoryRefID as needed-->
           <tooltip heading="Download">Download basemap quads as .tif files
             <disabledText>You must connect with a valid API_Key first</disabledText></tooltip>
@@ -54,6 +71,22 @@
         <!--<button id="Planet_TrialWarning" caption="TrialWarning" className="ShowTrialWarning" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
           <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
         </button>-->
+        <tool id="Planet_AOI_Select" categoryRefID="esri_editing_construction_point" caption="Search for Data" className="AOI_Select" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" condition="planet_condition_isconnected" largeImage="Images\AOI.png">
+          <!--note: use esri_editing_construction_polyline,  esri_editing_construction_polygon for categoryRefID as needed-->
+          <tooltip heading="Search">Search for Planet data by extent<disabledText /></tooltip>
+        </tool>
+        <button id="Planet_Data_DocPane_ShowButton" caption="Show Data DocPane" className="Data_DocPane_ShowButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Show Dockpane">Show Dockpane<disabledText /></tooltip>
+        </button>
+        <button id="Planet_Data_DocPane_MenuButton" caption="Burger Menu Button" className="Data_DocPane_MenuButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
+        </button>
+        <button id="Planet_AOI_Selected" caption="Search by Selected Feature" className="AOI_Selected" loadOnClick="false" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue32.png" condition="planet_condition_isconnected_and_Selection">
+          <tooltip heading="Search by Selected Feature">Search for planet data by the selected map polygons<disabledText /></tooltip>
+        </button>
+        <button id="Planet_OrderWindow" caption="OrderWindow" className="ShowOrderWindow" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
+        </button>
       </controls>
       <galleries>
         <gallery id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Basemap Mosaics" className="PlanetGalleryInline" itemsInRow="4" dataTemplateFile="pack://application:,,,/Planet;component//PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
@@ -73,6 +106,16 @@
           <content className="LoginDetailsView" />
         </pane>-->
       </panes>
+      <dockPanes>
+        <dockPane id="Planet_Data_DocPane" caption="Planet Search" className="Data_DocPaneViewModel" dock="group" dockWith="esri_core_contentsDockPane">
+          <content className="Data_DocPaneView" />
+        </dockPane>
+      </dockPanes>
+      <menus>
+        <menu id="Planet_Data_DocPane_Menu" caption="Options" contextMenu="true">
+          <button refID="Planet_Data_DocPane_MenuButton" />
+        </menu>
+      </menus>
     </insertModule>
   </modules>
 </ArcGIS>
