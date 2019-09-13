@@ -1,5 +1,7 @@
 ﻿using ArcGIS.Core.CIM;
 using ArcGIS.Core.Geometry;
+using ArcGIS.Desktop.Framework;
+using ArcGIS.Desktop.Framework.Contracts;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
 using Newtonsoft.Json;
@@ -24,12 +26,17 @@ namespace Planet.Model
     class Asset : Feature, INotifyPropertyChanged
     {
         public Strip parent { get; set; }
+        private string _image;
         public string image
         {
             get
             {
                 string url = _links.thumbnail + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value;
                 return url;
+            }
+            set
+            {
+                _image = value + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value; ;
             }
         }
         public string title
@@ -404,13 +411,18 @@ namespace Planet.Model
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;
             bool isChecked = Convert.ToBoolean(value);
+            DockPane pane = FrameworkApplication.DockPaneManager.Find("Planet_Data_DocPane");
+            Data_DocPaneViewModel data_DocPaneViewModel = (Data_DocPaneViewModel)pane;
             if (isChecked)
             {
                 doAddToMap();
+
+                data_DocPaneViewModel.SelectAssets.Add(this);
             }
             else
             {
                 doRemoveFromMap();
+                data_DocPaneViewModel.SelectAssets.Remove(this);
             }
             OnPropertyChanged(propertyName);
             return true;

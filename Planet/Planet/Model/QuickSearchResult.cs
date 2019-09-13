@@ -24,12 +24,14 @@ namespace test_docing_Panel.Models
 
         public class Feature
         {
+
             public _Links1 _links { get; set; }
             public object[] _permissions { get; set; }
             public searchGeometry geometry { get; set; }
             public string id { get; set; }
             public Properties properties { get; set; }
             public string type { get; set; }
+            public bool IsSelected { get; set; } = false;
         }
 
         public class _Links1
