@@ -5,12 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"    
              xmlns:ui="clr-namespace:Planet"
              xmlns:model="clr-namespace:Planet.Model"
+             xmlns:orders="clr-namespace:Planet.Model.Item_assets"
              xmlns:excd ="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
              xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"
              mc:Ignorable="d" 
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{Binding Path=ui.Data_DocPaneViewModel}">
     <UserControl.Resources>
@@ -109,7 +111,6 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -129,7 +130,7 @@
               </TextBlock>
             </DockPanel>-->
         <TabControl x:Name="MainTabs" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}">
-            <TabItem Header="Browse" Style="{DynamicResource MainTabItemStyle}" Padding="0,0,5,0">
+            <TabItem Header="Browse"  Padding="5,0,5,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
@@ -159,6 +160,7 @@
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0" Width="auto" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="22" Content="Search" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center"/>
+                        <Button Grid.Column="1" Width="auto" Command="{Binding OrderCommand}" Content="Order"  IsEnabled="{Binding HasSelectedAssets}" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center"  />
                         <!--<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="False">
                             <Label Content="Page Size:" Margin="5,0,0,0" VerticalAlignment="Center" />
                             <ComboBox Width="48" Margin="5,0,0,0" VerticalAlignment="Center" SelectedIndex="0" IsEditable="True" >
@@ -276,13 +278,13 @@
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseEnter">
                                             <ei:CallMethodAction 
-                                        TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}" 
-                                        MethodName="AddFootprint" />
+                                                TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}" 
+                                                MethodName="AddFootprint" />
                                         </i:EventTrigger>
                                         <i:EventTrigger EventName="MouseLeave">
                                             <ei:CallMethodAction 
-                                        TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}" 
-                                        MethodName="RemoveFootprint" />
+                                                TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}" 
+                                                MethodName="RemoveFootprint" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                     <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="5,0,0,0" Focusable="False" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Select" Tag="{Binding Path=id}">
@@ -462,7 +464,7 @@
                             </excd:RangeSlider>
                         </Grid>
                     </Expander>
-                    <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="4" Header="Ground sample distance" IsExpanded="False">
+                    <!--<Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="4" Header="Ground sample distance" IsExpanded="False">
                     </Expander>
                     <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="5" Header="Off-nadir angle" IsExpanded="False">
                     </Expander>
@@ -473,72 +475,58 @@
                     <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="8" Header="Ground control" IsExpanded="False">
                     </Expander>
                     <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="9" Header="Access Filter" IsExpanded="False">
-                    </Expander>
+                    </Expander>-->
 
                     <Grid Grid.Row="10" VerticalAlignment="Bottom" Margin="5">
-                        <Button Grid.Column="0" Width="auto" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="22" Content="Search" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center" VerticalContentAlignment="Center">
-
-                        </Button>
-
+                        <StackPanel Orientation="Horizontal">
+                            <Button Grid.Column="0" Width="auto" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="22" Content="Search" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center" VerticalContentAlignment="Center">
+                            </Button>
+                            
+                        </StackPanel>
                     </Grid>
                 </Grid>
 
 
             </TabItem>
-            <!--<TabItem Header="Cloud Cover" Style="{DynamicResource MainTabItemStyle}">
-                <Grid VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Cloud Cover:" Margin="0,0,5,0"/>
-                    <excd:RangeSlider Grid.Column="1" Name="sldCloudcover" 
-                        LowerValue="{Binding CloudcoverLow}" 
-                        HigherValue="{Binding CloudcoverHigh}" 
-                        Step="1"
-                        Minimum="0"
-                        Maximum="100"
-                        AutoToolTipPlacement="BottomRight"
-                        AutoToolTipPrecision="1"
-                        TickFrequency="1"
-                        IsSnapToTickEnabled="True"
-                        Background="Transparent"
-                        Foreground="Transparent" 
-                        Margin="0,5,0,0" 
-                        Height="22"
-                        TickPlacement="None"             
-                        LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
-                        HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
-                        RangeBackground="Transparent"
-                        HigherRangeBackground="Transparent"
-                        LowerRangeBackground="Transparent"
-                        VerticalAlignment="Center">
-                    </excd:RangeSlider>
-                </Grid>
-            </TabItem>-->
-            <!--<TabItem Header="Products" Style="{DynamicResource LastTabItemStyle}">
-                <Grid Margin="0,5,0,0" VerticalAlignment="Center">
+            
+            <TabItem Header="Orders" Style="{DynamicResource MainTabItemStyle}" Padding="5,0,0,0" >
+                <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,1,5,5" IsChecked="{Binding ProductPSScene3Band}" VerticalAlignment="Center" Height="22" >PSScene3Band</CheckBox>
-                    <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,1,5,5" IsChecked="{Binding ProductPSScene4Band}" VerticalAlignment="Center" Height="22" >PSScene4Band</CheckBox>
-                    <CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,1,5,5" IsChecked="{Binding ProductPSOrthoTile}" VerticalAlignment="Center" Height="22" >PSOrthoTile</CheckBox>
-                    <CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,1,5,5" IsChecked="{Binding ProductREOrthoTile}" VerticalAlignment="Center" Height="22" >REOrthoTile</CheckBox>
-                    <CheckBox Grid.Row="1" Grid.Column="1" Padding ="5,1,5,5" IsChecked="{Binding ProductREScene}" VerticalAlignment="Center" Height="22" >REScene</CheckBox>
-                    <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,1,5,5" IsChecked="{Binding ProductSkySatScene}" VerticalAlignment="Center" Height="22" >SkySatScene</CheckBox>
-                    <CheckBox Grid.Row="0" Grid.Column="2" Padding ="5,1,5,5" IsChecked="{Binding ProductSkySatCollect}" VerticalAlignment="Center" Height="22" >SkySatCollect</CheckBox>
-                    <CheckBox Grid.Row="1" Grid.Column="2" Padding ="5,1,5,5" IsChecked="{Binding ProductLandsat8L1G}" VerticalAlignment="Center" Height="22" >Landsat8L1G</CheckBox>
-                    <CheckBox Grid.Row="2" Grid.Column="2" Padding ="5,1,5,5" IsChecked="{Binding ProductSentinel2L1C}" Foreground="{DynamicResource Esri_TextControlBrush}" VerticalAlignment="Center" Height="22" >Sentinel2L1C</CheckBox>
+                    <!--<ListBox Name="lbOrders" Grid.Row="0" HorizontalContentAlignment="Stretch" ItemsSource="{Binding PastOrders}" IsEnabled="{Binding OrdersEnabled}" >
+                        <ListBox.ItemTemplate >
+                            <DataTemplate DataType="{x:Type orders:PastOrder}">
+                                <StackPanel Orientation="Horizontal" Margin="1,3,1,1" Background="Transparent"  >
+                                    <TextBlock Grid.Row="0" Text="{Binding Path=name, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Row="0" Text="{Binding Path=status, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>-->
+                    <DataGrid ItemsSource="{Binding PastOrders}" Style="{DynamicResource Esri_DataGrid}" ScrollViewer.CanContentScroll="True" HeadersVisibility="Column" HorizontalAlignment="Stretch"  AutoGenerateColumns="False" >
+                        <DataGrid.Resources>
+                            <System:String x:Key="edit">Download</System:String>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Status" Binding="{Binding status}"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding name}"/>
+                            <DataGridTextColumn Header="ID" Binding="{Binding id}"/>
+                            <DataGridHyperlinkColumn Header="Download" TargetName="{Binding download_url}" ContentBinding="{Binding Source={StaticResource edit}}" Binding="{Binding download_url}">
+                                <DataGridHyperlinkColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <EventSetter Event="Hyperlink.Click" Handler="DG_Hyperlink_Click"/>
+                                    </Style>
+                                </DataGridHyperlinkColumn.ElementStyle>
+                            </DataGridHyperlinkColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button  Grid.Row="2" Content="Refresh" Style="{DynamicResource Esri_Button}"/>
                 </Grid>
-            </TabItem>-->
+            </TabItem>
+            
         </TabControl>
     </Grid>
 </UserControl>

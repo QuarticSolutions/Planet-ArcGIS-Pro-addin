@@ -24,10 +24,10 @@ namespace Planet
     internal class AOI_Selected : Button
     {
         private SubscriptionToken _eventToken = null;
-        protected override void OnClick()
+        protected override async void OnClick()
         {
             Polygon polygone = null;
-            QueuedTask.Run(() =>
+            await QueuedTask.Run(() =>
            {
                 //Get the active map view.
                 var mapView = MapView.Active;
@@ -64,13 +64,14 @@ namespace Planet
                    polygone = (Polygon)row.GetShape();
 
                }
-               DockPane pane = FrameworkApplication.DockPaneManager.Find("Planet_Data_DocPane");
-               Data_DocPaneViewModel data_DocPaneViewModel = (Data_DocPaneViewModel)pane;
-               data_DocPaneViewModel.AOIGeometry = (Geometry)polygone;
-               data_DocPaneViewModel.Activate(true);
-                //Flash the collection of features.
-                mapView.FlashFeature(selectedFeatures);
+
+
            });
+            DockPane pane = FrameworkApplication.DockPaneManager.Find("Planet_Data_DocPane");
+            Data_DocPaneViewModel data_DocPaneViewModel = (Data_DocPaneViewModel)pane;
+            data_DocPaneViewModel.AOIGeometry = (Geometry)polygone;
+            pane.IsVisible = true;
+            data_DocPaneViewModel.Activate(true);
         }
 
         public AOI_Selected()

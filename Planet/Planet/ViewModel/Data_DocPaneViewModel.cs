@@ -28,23 +28,134 @@ using System.Runtime.CompilerServices;
 using Planet.Model;
 using System.Windows;
 using ArcGIS.Desktop.Framework.DragDrop;
+using Planet.ViewModel;
+using Planet.Model.Item_assets;
+using System.IO;
 
 namespace Planet
 {
     internal class Data_DocPaneViewModel : DockPane, INotifyPropertyChanged
     {
         private Geometry _geometry = null;
+        private ObservableCollection<Asset> _selectedAssets = new ObservableCollection<Asset>();
+        //private ObservableCollection<PastOrder> _pastOrders = new ObservableCollection<PastOrder>();
+        
         private const string _dockPaneID = "Planet_Data_DocPane";
         private const string _menuID = "Planet_Data_DocPane_Menu";
         private ObservableCollection<QuickSearchResult> _quickSearchResults = null;
         private int _CloudcoverLow = 0;
         private int _CloudcoverHigh = 100;
         private int _AreaCoverLow = 0;
-        private int _AreaCoverHigh = 0;
-        private DateTime _DateFrom = DateTime.Now.AddYears(-1);
+        private int _AreaCoverHigh = 100;
+        private DateTime _DateFrom = DateTime.Now.AddMonths(-6);
         private DateTime _DateTo = DateTime.Now;
         public Data_DocPaneView View { get; set; }
         private bool _hasGeom = false;
+
+        public  Data_DocPaneViewModel()
+        {
+            _selectedAssets.CollectionChanged += _selectedAssets_CollectionChanged;
+            GetPastOrders();
+        }
+
+
+        #region OrderLoadLogic
+        private ObservableCollection<PastOrder> _pastOrders;
+        public ObservableCollection<PastOrder> PastOrders
+        {
+            get {
+                if (_pastOrders == null)
+                {
+                    _pastOrders = new ObservableCollection<PastOrder>();
+                }
+                return _pastOrders;
+            }
+            set
+            {
+                _pastOrders = value;
+                OnPropertyChanged("PastOrders");
+            }
+        }
+        private Task GetPastOrders()
+        {
+            HttpClientHandler _handler = new HttpClientHandler()
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+
+            HttpClient _client = new HttpClient(_handler)
+            {
+                BaseAddress = new Uri("https://api.planet.com")
+
+            };
+            var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:");
+            _client.DefaultRequestHeaders.Host = "api.planet.com";
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+            _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            _client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.16.3");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            //_client.DefaultRequestHeaders.ExpectContinue = false;
+            //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "compute/ops/orders/v2");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "v0/orders/");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+            request.Headers.CacheControl = new CacheControlHeaderValue
+            {
+                NoCache = true
+            };
+            request.Headers.Host = "api.planet.com";
+            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+            request.Headers.CacheControl = new CacheControlHeaderValue();
+            request.Headers.CacheControl.NoCache = true;
+            string json = "{\"name\":\"Pro1\",\"products\":[{\"item_ids\":[\"20190910_205244_101b\",\"20190908_195741_1048\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            content.Headers.Remove("Content-Type");
+            content.Headers.Add("Content-Type", "application/json");
+
+            //request.Content = content;
+            try
+            {
+                using (HttpResponseMessage httpResponse = _client.SendAsync(request).Result)
+                {
+                    using (HttpContent content2 = httpResponse.Content)
+                    {
+                        var json2 = content2.ReadAsStringAsync().Result;
+                        List<PastOrder> quickSearchResult = JsonConvert.DeserializeObject<List<PastOrder>>(json2);
+                        PastOrders = new ObservableCollection<PastOrder>(quickSearchResult);
+
+                    }
+                    //using (System.Net.Http.StreamContent sr = new System.Net.Http.StreamContent(httpResponse.Content.ReadAsStringAsync))
+                    //{
+                    //    string resps = sr.ReadAsStringAsync().Result();
+                    //    //Response.Write(sr.ReadToEnd());
+
+                    //}
+                }
+
+            }
+            catch (WebException e)
+            {
+                if (e.Status == WebExceptionStatus.ProtocolError)
+                {
+                    WebResponse resp = e.Response;
+                    using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                    {
+                        string resps = sr.ReadToEnd();
+                        //Response.Write(sr.ReadToEnd());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+            }
+            return Task.FromResult<bool>(true);
+
+        }
+        #endregion
+
+
         public bool HasGeom
         {
             get { return _hasGeom; }
@@ -65,6 +176,8 @@ namespace Planet
             }
         }
 
+
+
         private Model.Page _currentPage;
         public Model.Page CurrentPage
         {
@@ -84,8 +197,11 @@ namespace Planet
             {
                 _hasPages = value;
                 OnPropertyChanged("HasPages");
+                
             }
         }
+
+
 
         private bool _treeEnabled = true;
         public bool TreeEnabled
@@ -223,6 +339,64 @@ namespace Planet
                 _AreaCoverHigh = value;
                 OnPropertyChanged("AreaCoverHigh");
             }
+        }
+
+        public ObservableCollection<Asset> SelectAssets
+        {
+            get { return _selectedAssets; }
+            set
+            {
+                _selectedAssets = value;
+                //OnPropertyChanged("SelectAssets");
+                //OnPropertyChanged("HasSelectedAssets");
+            }
+        }
+
+
+        private void _selectedAssets_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            //_selectedAssets = value;
+            OnPropertyChanged("SelectAssets");
+            OnPropertyChanged("HasSelectedAssets");
+        }
+        private bool _hasSelectedAssets = false;
+        public bool HasSelectedAssets
+        {
+            get
+            {
+                if (_selectedAssets.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            
+
+        }
+        
+        public bool CanExecuteOrder { get; set; } = true;
+        private ICommand _ordercommand;
+        public ICommand OrderCommand
+        {
+            get
+            {
+                if (_ordercommand == null)
+                    _ordercommand = new CommandHandler3(() => DoOrder(), CanExecuteOrder);
+                return _ordercommand;
+            }
+        }
+
+        private void DoOrder()
+        {
+
+            OrderWindow orderWindow = new OrderWindow();
+            OrderWindowViewModel orderWindowViewModel = new OrderWindowViewModel();
+            orderWindowViewModel.SelectAssets = SelectAssets;
+            orderWindow.DataContext = orderWindowViewModel;
+            orderWindow.Show();
         }
 
         public bool CanExecuteSearch { get; set; } = true;
@@ -367,10 +541,7 @@ namespace Planet
             }
         }
 
-        protected Data_DocPaneViewModel()
-        {
 
-        }
 
         /// <summary>
         /// Show the DockPane.
@@ -405,15 +576,23 @@ namespace Planet
             }
             set
             {
-                _geometry = value;
-                if (_geometry.IsEmpty)
+                if (value != null)
                 {
-                    HasGeom = false;
+                    _geometry = value;
+                    if (_geometry.IsEmpty)
+                    {
+                        HasGeom = false;
+                    }
+                    else
+                    {
+                        HasGeom = true;
+                    }
                 }
                 else
                 {
-                    HasGeom = true;
+                    HasGeom = false;
                 }
+
                 OnPropertyChanged("AOIGeometry");
             }
         }
@@ -468,8 +647,8 @@ namespace Planet
         private void DoSearch()
         {
             ShowCircularAnimation = Visibility.Visible;
+            SelectAssets.Clear();
             TreeEnabled = false;
-
             Polygon poly = (Polygon)AOIGeometry;
             IReadOnlyList<Coordinate2D> coordinates = poly.Copy2DCoordinatesToList();
             ToGeoCoordinateParameter ddParam = new ToGeoCoordinateParameter(GeoCoordinateType.DD);
@@ -690,78 +869,6 @@ namespace Planet
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         #region ProductBooleans set get
         private bool _PSScene3Band = false;
         public bool ProductPSScene3Band
@@ -964,72 +1071,51 @@ namespace Planet
 
 
 
+    //public class TreeViewHelper
+    //{
+    //    private static Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior> behaviors = new Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior>();
 
+    //    public static object GetSelectedItem(System.Windows.DependencyObject obj)
+    //    {
+    //        return (object)obj.GetValue(SelectedItemProperty);
+    //    }
 
+    //    public static void SetSelectedItem(System.Windows.DependencyObject obj, object value)
+    //    {
+    //        obj.SetValue(SelectedItemProperty, value);
+    //    }
 
+    //    // Using a DependencyProperty as the backing store for SelectedItem.  This enables animation, styling, binding, etc...
+    //    public static readonly System.Windows.DependencyProperty SelectedItemProperty =
+    //        System.Windows.DependencyProperty.RegisterAttached("SelectedItem", typeof(object), typeof(TreeViewHelper), new System.Windows.UIPropertyMetadata(null, SelectedItemChanged));
 
+    //    private static void SelectedItemChanged(System.Windows.DependencyObject obj, System.Windows.DependencyPropertyChangedEventArgs e)
+    //    {
+    //        if (!(obj is System.Windows.Controls.TreeView))
+    //            return;
 
+    //        if (!behaviors.ContainsKey(obj))
+    //            behaviors.Add(obj, new TreeViewSelectedItemBehavior(obj as System.Windows.Controls.TreeView));
 
+    //        TreeViewSelectedItemBehavior view = behaviors[obj];
+    //        view.ChangeSelectedItem(e.NewValue);
+    //    }
 
+    //    private class TreeViewSelectedItemBehavior
+    //    {
+    //        System.Windows.Controls.TreeView view;
+    //        public TreeViewSelectedItemBehavior(System.Windows.Controls.TreeView view)
+    //        {
+    //            this.view = view;
+    //            view.SelectedItemChanged += (sender, e) => SetSelectedItem(view, e.NewValue);
+    //        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public class TreeViewHelper
-    {
-        private static Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior> behaviors = new Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior>();
-
-        public static object GetSelectedItem(System.Windows.DependencyObject obj)
-        {
-            return (object)obj.GetValue(SelectedItemProperty);
-        }
-
-        public static void SetSelectedItem(System.Windows.DependencyObject obj, object value)
-        {
-            obj.SetValue(SelectedItemProperty, value);
-        }
-
-        // Using a DependencyProperty as the backing store for SelectedItem.  This enables animation, styling, binding, etc...
-        public static readonly System.Windows.DependencyProperty SelectedItemProperty =
-            System.Windows.DependencyProperty.RegisterAttached("SelectedItem", typeof(object), typeof(TreeViewHelper), new System.Windows.UIPropertyMetadata(null, SelectedItemChanged));
-
-        private static void SelectedItemChanged(System.Windows.DependencyObject obj, System.Windows.DependencyPropertyChangedEventArgs e)
-        {
-            if (!(obj is System.Windows.Controls.TreeView))
-                return;
-
-            if (!behaviors.ContainsKey(obj))
-                behaviors.Add(obj, new TreeViewSelectedItemBehavior(obj as System.Windows.Controls.TreeView));
-
-            TreeViewSelectedItemBehavior view = behaviors[obj];
-            view.ChangeSelectedItem(e.NewValue);
-        }
-
-        private class TreeViewSelectedItemBehavior
-        {
-            System.Windows.Controls.TreeView view;
-            public TreeViewSelectedItemBehavior(System.Windows.Controls.TreeView view)
-            {
-                this.view = view;
-                view.SelectedItemChanged += (sender, e) => SetSelectedItem(view, e.NewValue);
-            }
-
-            internal void ChangeSelectedItem(object p)
-            {
-                System.Windows.Controls.TreeViewItem item = (System.Windows.Controls.TreeViewItem)view.ItemContainerGenerator.ContainerFromItem(p);
-                item.IsSelected = true;
-            }
-        }
-    }
+    //        internal void ChangeSelectedItem(object p)
+    //        {
+    //            System.Windows.Controls.TreeViewItem item = (System.Windows.Controls.TreeViewItem)view.ItemContainerGenerator.ContainerFromItem(p);
+    //            item.IsSelected = true;
+    //        }
+    //    }
+    //}
 
 }

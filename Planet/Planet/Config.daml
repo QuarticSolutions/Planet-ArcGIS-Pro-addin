@@ -20,13 +20,13 @@
     <insertCondition id="esri_mapping_activeMapView_hasFeatureSelectionCondition" caption="The active map view has selected features." xmlns="http://schemas.esri.com/DADF/Registry">
       <state id="esri_mapping_activeMapView_hasFeatureSelectionState" />
     </insertCondition>
-  <insertCondition id="planet_condition_isconnected_and_Selection" caption="Planet Connection and Se;ected">
-    <and>
-      <state id="planet_state_connection"/>
-      <state id="esri_mapping_activeMapView_hasFeatureSelectionState" />
-      <state id ="planet_state_ispolyselected"/>
-    </and>
-  </insertCondition>
+    <insertCondition id="planet_condition_isconnected_and_Selection" caption="Planet Connection and Se;ected">
+      <and>
+        <state id="planet_state_connection" />
+        <state id="esri_mapping_activeMapView_hasFeatureSelectionState" />
+        <state id="planet_state_ispolyselected" />
+      </and>
+    </insertCondition>
   </conditions>
   <modules>
     <insertModule id="Planet_Module" className="Module1" autoLoad="true" caption="Planet Module">
@@ -48,6 +48,7 @@
           <tool refID="Planet_DownloadData" size="large" />
           <!--<button refID="Planet_TrialWarning" size="large" />-->
           <!--<button refID="Planet_Data_PocPane2_ShowButton" size="large" />-->
+          <!--<button refID="Planet_OrderWindow" size="large" />-->
         </group>
         <group id="Planet_Group2" caption="Search for Scenes and Assets" appearsOnAddInTab="false">
           <tool refID="Planet_AOI_Select" size="large" />
@@ -82,6 +83,9 @@
         </button>
         <button id="Planet_AOI_Selected" caption="Search by Selected Feature" className="AOI_Selected" loadOnClick="false" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue32.png" condition="planet_condition_isconnected_and_Selection">
           <tooltip heading="Search by Selected Feature">Search for planet data by the selected map polygons<disabledText /></tooltip>
+        </button>
+        <button id="Planet_OrderWindow" caption="OrderWindow" className="ShowOrderWindow" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
         </button>
       </controls>
       <galleries>
