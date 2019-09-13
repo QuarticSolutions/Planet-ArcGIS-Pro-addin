@@ -33,7 +33,7 @@ namespace Planet
         public bool IsTrial = false;
         private Module1()
         {
-            FrameworkApplication.State.Deactivate("planet_state_connection"); 
+            FrameworkApplication.State.Deactivate("planet_state_connection");
             ProjectOpenedEvent.Subscribe(OnProjectOpen);
             ProjectClosedEvent.Subscribe(OnProjectClose);
         }
