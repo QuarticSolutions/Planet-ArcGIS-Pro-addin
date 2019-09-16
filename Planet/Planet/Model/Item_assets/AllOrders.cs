@@ -32,6 +32,47 @@ namespace Planet.Model.Item_assets
         public string asset_type { get; set; }
     }
 
+
+
+
+
+    public class AllOrders2
+    {
+        //public _Links2 _links { get; set; }
+        public Order2[] orders { get; set; }
+    }
+
+    public class _Links2
+    {
+        public string _self { get; set; }
+    }
+
+    public class Order2
+    {
+        public _Links1 _links { get; set; }
+        public DateTime created_on { get; set; }
+        public Delivery2 delivery { get; set; }
+        public object[] error_hints { get; set; }
+        public string id { get; set; }
+        public string last_message { get; set; }
+        public DateTime last_modified { get; set; }
+        public string name { get; set; }
+        public string order_type { get; set; }
+        public Product[] products { get; set; }
+        public string state { get; set; }
+    }
+
+    public class _Links1
+    {
+        public string _self { get; set; }
+    }
+
+    public class Delivery2
+    {
+        public string archive_filename { get; set; }
+        public string archive_type { get; set; }
+        public bool single_archive { get; set; }
+    }
 }
 
 

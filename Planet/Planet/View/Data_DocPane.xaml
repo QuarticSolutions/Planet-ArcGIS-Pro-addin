@@ -511,19 +511,20 @@
                             <System:String x:Key="edit">Download</System:String>
                         </DataGrid.Resources>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Status" Binding="{Binding status}"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding state}"/>
                             <DataGridTextColumn Header="Name" Binding="{Binding name}"/>
-                            <DataGridTextColumn Header="ID" Binding="{Binding id}"/>
-                            <DataGridHyperlinkColumn Header="Download" TargetName="{Binding download_url}" ContentBinding="{Binding Source={StaticResource edit}}" Binding="{Binding download_url}">
+                            <DataGridTextColumn Header="Created" Binding="{Binding created_on}" SortDirection="Descending"/>
+                            <DataGridHyperlinkColumn Header="Download" TargetName="{Binding _links._self}" ContentBinding="{Binding Source={StaticResource edit}}" Binding="{Binding _links._self}">
                                 <DataGridHyperlinkColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <EventSetter Event="Hyperlink.Click" Handler="DG_Hyperlink_Click"/>
                                     </Style>
                                 </DataGridHyperlinkColumn.ElementStyle>
                             </DataGridHyperlinkColumn>
+                            <DataGridTextColumn Header="ID" Binding="{Binding id}"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Button  Grid.Row="2" Content="Refresh" Style="{DynamicResource Esri_Button}"/>
+                    <Button  Grid.Row="2" Content="Refresh" Command="{Binding ViewOrderCommand}" Style="{DynamicResource Esri_Button}"/>
                 </Grid>
             </TabItem>
             

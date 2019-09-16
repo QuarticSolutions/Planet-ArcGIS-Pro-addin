@@ -55,18 +55,18 @@ namespace Planet
         public  Data_DocPaneViewModel()
         {
             _selectedAssets.CollectionChanged += _selectedAssets_CollectionChanged;
-            GetPastOrders();
+            //GetPastOrders();
         }
 
 
         #region OrderLoadLogic
-        private ObservableCollection<PastOrder> _pastOrders;
-        public ObservableCollection<PastOrder> PastOrders
+        private ObservableCollection<Order2> _pastOrders;
+        public ObservableCollection<Order2> PastOrders
         {
             get {
                 if (_pastOrders == null)
                 {
-                    _pastOrders = new ObservableCollection<PastOrder>();
+                    _pastOrders = new ObservableCollection<Order2>();
                 }
                 return _pastOrders;
             }
@@ -88,7 +88,7 @@ namespace Planet
                 BaseAddress = new Uri("https://api.planet.com")
 
             };
-            var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:");
+            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":");
             _client.DefaultRequestHeaders.Host = "api.planet.com";
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
             _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
@@ -96,7 +96,7 @@ namespace Planet
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
             //_client.DefaultRequestHeaders.ExpectContinue = false;
             //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "compute/ops/orders/v2");
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "v0/orders/");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "compute/ops/orders/v2");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
             request.Headers.CacheControl = new CacheControlHeaderValue
             {
@@ -120,16 +120,10 @@ namespace Planet
                     using (HttpContent content2 = httpResponse.Content)
                     {
                         var json2 = content2.ReadAsStringAsync().Result;
-                        List<PastOrder> quickSearchResult = JsonConvert.DeserializeObject<List<PastOrder>>(json2);
-                        PastOrders = new ObservableCollection<PastOrder>(quickSearchResult);
-
+                        AllOrders2 allOrders2 = JsonConvert.DeserializeObject<AllOrders2>(json2);
+                        List<Order2> quickSearchResult =  allOrders2.orders.ToList();
+                        PastOrders = new ObservableCollection<Order2>(quickSearchResult);
                     }
-                    //using (System.Net.Http.StreamContent sr = new System.Net.Http.StreamContent(httpResponse.Content.ReadAsStringAsync))
-                    //{
-                    //    string resps = sr.ReadAsStringAsync().Result();
-                    //    //Response.Write(sr.ReadToEnd());
-
-                    //}
                 }
 
             }
@@ -389,6 +383,17 @@ namespace Planet
             }
         }
 
+        public bool CanViewOrders { get; set; } = true;
+        private ICommand _viewordercommand;
+        public ICommand ViewOrderCommand
+        {
+            get
+            {
+                if (_viewordercommand == null)
+                    _viewordercommand = new CommandHandler3(() => GetPastOrders(), CanExecuteOrder);
+                return _viewordercommand;
+            }
+        }
         private void DoOrder()
         {
 

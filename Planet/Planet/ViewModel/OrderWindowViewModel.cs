@@ -283,76 +283,31 @@ namespace Planet.ViewModel
             order.products = productlist.ToArray();
 
 
-            //foreach (PSScene4Band pSScene4Band in PSScene4Band)
-            //{
-            //    if (pSScene4Band.oAnalytic)
-            //    {
-            //        Product productanalytic = new Product
-            //        {
-            //            asset_type = "analytic",
-            //            item_id = pSScene4Band.id,
-            //            item_type = pSScene4Band.properties.item_type
-            //        };
-
-            //        Product product_sr = new Product
-            //        {
-            //            asset_type = "analytic_sr",
-            //            item_id = pSScene4Band.id,
-            //            item_type = pSScene4Band.properties.item_type
-            //        };
-
-            //        productlist.Add(product_sr);
-            //        productlist.Add(productanalytic);
-            //    }
-            //    if (pSScene4Band.oBasic)
-            //    {
-            //        Product basic_analytic_dn = new Product
-            //        {
-            //            asset_type = "basic_analytic_dn",
-            //            item_id = pSScene4Band.id,
-            //            item_type = pSScene4Band.properties.item_type
-            //        };
-
-            //        Product basic_analytic_xml = new Product
-            //        {
-            //            asset_type = "basic_analytic_xml",
-            //            item_id = pSScene4Band.id,
-            //            item_type = pSScene4Band.properties.item_type
-            //        };
-            //        Product basic_analytic_rpc = new Product
-            //        {
-            //            asset_type = "basic_analytic_rpc",
-            //            item_id = pSScene4Band.id,
-            //            item_type = pSScene4Band.properties.item_type
-            //        };
-            //        Product basic_udm = new Product
-            //        {
-            //            asset_type = "basic_udm",
-            //            item_id = pSScene4Band.id,
-            //            item_type = pSScene4Band.properties.item_type
-            //        };
-            //        Product basic_analytic = new Product
-            //        {
-            //            asset_type = "basic_analytic",
-            //            item_id = pSScene4Band.id,
-            //            item_type = pSScene4Band.properties.item_type
-            //        };
-
-            //        productlist.Add(basic_analytic_dn);
-            //        productlist.Add(basic_analytic_xml);
-            //        productlist.Add(basic_analytic_rpc);
-            //        productlist.Add(basic_udm);
-            //        productlist.Add(basic_analytic);
-            //    }
-            //    order.products = productlist.ToArray();
-            //}
+   
             string json = JsonConvert.SerializeObject(order, new JsonSerializerSettings()
             {
                 NullValueHandling = NullValueHandling.Ignore
 
             });
+            HttpClientHandler _handler = new HttpClientHandler()
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
 
+            HttpClient _client = new HttpClient(_handler)
+            {
+                BaseAddress = new Uri("https://api.planet.com")
+
+            };
+            var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:");
+            _client.DefaultRequestHeaders.Host = "api.planet.com";
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+            _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            _client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.16.3");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            //_client.DefaultRequestHeaders.ExpectContinue = false;
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "compute/ops/orders/v2");
+            //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "v0/orders/");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
             request.Headers.CacheControl = new CacheControlHeaderValue
             {
@@ -363,14 +318,13 @@ namespace Planet.ViewModel
             request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
             request.Headers.CacheControl = new CacheControlHeaderValue();
             request.Headers.CacheControl.NoCache = true;
-            
+            //string json = "{ \"name\":\"Prod5\",\"products\":[{\"item_ids\":[\"20190914_195736_0f2b\",\"20190914_195737_0f2b\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
+            //string json = "{\"name\":\"Pro4\",\"products\":[{\"item_ids\":[\"20190910_205244_101b\",\"20190908_195741_1048\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             content.Headers.Remove("Content-Type");
             content.Headers.Add("Content-Type", "application/json");
-            //request.Headers.Remove("Content-Type");
-            //request.Headers.Add("Content-Type", "application/json");
-            request.Content = content;
 
+            request.Content = content;
             try
             {
                 using (HttpResponseMessage httpResponse = _client.SendAsync(request).Result)
@@ -378,22 +332,16 @@ namespace Planet.ViewModel
                     using (HttpContent content2 = httpResponse.Content)
                     {
                         var json2 = content2.ReadAsStringAsync().Result;
-                        var ff = content2.ReadAsStreamAsync().Result;
-                        StreamReader theStreamReader = new StreamReader(ff);
-                        string theLine = null;
-
-                        while ((theLine = theStreamReader.ReadLine()) != null)
+                        OrderResponse2 orderResponse2 = JsonConvert.DeserializeObject<OrderResponse2>(json2);
+                        if (orderResponse2.state == "failed")
                         {
-                            Console.WriteLine(theLine);
+                            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString());
                         }
-                        PastOrder quickSearchResult = JsonConvert.DeserializeObject<PastOrder>(json2);
+                        else if (orderResponse2.state == "initializing")
+                        {
+                            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("The order has been placed and is being processed." + Environment.NewLine + "Please saee the Orders tab for details." + Environment.NewLine + "Order Name:" + orderResponse2.name.ToString(),"Order Success",System.Windows.MessageBoxButton.OK);
+                        }
                     }
-                    //using (System.Net.Http.StreamContent sr = new System.Net.Http.StreamContent(httpResponse.Content.ReadAsStringAsync))
-                    //{
-                    //    string resps = sr.ReadAsStringAsync().Result();
-                    //    //Response.Write(sr.ReadToEnd());
-
-                    //}
                 }
             }
             catch (WebException e)
@@ -410,8 +358,70 @@ namespace Planet.ViewModel
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
             }
+
+            //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "compute/ops/orders/v2");
+            //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+            //request.Headers.CacheControl = new CacheControlHeaderValue
+            //{
+            //    NoCache = true
+            //};
+            //request.Headers.Host = "api.planet.com";
+            //request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+            //request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+            //request.Headers.CacheControl = new CacheControlHeaderValue();
+            //request.Headers.CacheControl.NoCache = true;
+            
+            //var content = new StringContent(json, Encoding.UTF8, "application/json");
+            //content.Headers.Remove("Content-Type");
+            //content.Headers.Add("Content-Type", "application/json");
+            ////request.Headers.Remove("Content-Type");
+            ////request.Headers.Add("Content-Type", "application/json");
+            //request.Content = content;
+
+            //try
+            //{
+            //    using (HttpResponseMessage httpResponse = _client.SendAsync(request).Result)
+            //    {
+            //        using (HttpContent content2 = httpResponse.Content)
+            //        {
+            //            var json2 = content2.ReadAsStringAsync().Result;
+            //            var ff = content2.ReadAsStreamAsync().Result;
+            //            StreamReader theStreamReader = new StreamReader(ff);
+            //            string theLine = null;
+
+            //            while ((theLine = theStreamReader.ReadLine()) != null)
+            //            {
+            //                Console.WriteLine(theLine);
+            //            }
+            //            PastOrder quickSearchResult = JsonConvert.DeserializeObject<PastOrder>(json2);
+            //        }
+            //        //using (System.Net.Http.StreamContent sr = new System.Net.Http.StreamContent(httpResponse.Content.ReadAsStringAsync))
+            //        //{
+            //        //    string resps = sr.ReadAsStringAsync().Result();
+            //        //    //Response.Write(sr.ReadToEnd());
+
+            //        //}
+            //    }
+            //}
+            //catch (WebException e)
+            //{
+            //    if (e.Status == WebExceptionStatus.ProtocolError)
+            //    {
+            //        WebResponse resp = e.Response;
+            //        using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+            //        {
+            //            string resps = sr.ReadToEnd();
+            //            //Response.Write(sr.ReadToEnd());
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+            //}
         }
 
         private ICollectionView _SkySatSceneListView;
