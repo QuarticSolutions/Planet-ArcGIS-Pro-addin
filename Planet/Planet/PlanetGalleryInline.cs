@@ -159,6 +159,7 @@ namespace Planet
                                     {
                                         z = z * -1;
                                     }
+                                    //z = z - 6;
                                     //double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
                                     //double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
                                     var centerProjected = GeometryEngine.Instance.Project(extent.Center, SpatialReferences.WGS84) as MapPoint;

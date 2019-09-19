@@ -22,6 +22,7 @@ namespace Planet
     {
         protected override void OnClick()
         {
+            
         }
     }
 }

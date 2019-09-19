@@ -72,9 +72,9 @@
         <!--<button id="Planet_TrialWarning" caption="TrialWarning" className="ShowTrialWarning" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
           <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
         </button>-->
-        <tool id="Planet_AOI_Select" categoryRefID="esri_editing_construction_point" caption="Search for Data" className="AOI_Select" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" condition="planet_condition_isconnected" largeImage="Images\AOI.png">
+        <tool id="Planet_AOI_Select" categoryRefID="esri_editing_construction_point" caption="Search for Daily Imagery " className="AOI_Select" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" condition="planet_condition_isconnected" largeImage="Images\AOI.png">
           <!--note: use esri_editing_construction_polyline,  esri_editing_construction_polygon for categoryRefID as needed-->
-          <tooltip heading="Search">Search for Planet data by extent<disabledText /></tooltip>
+          <tooltip heading="Search">Search for Planet Daily Data by drawing a polygon<disabledText /></tooltip>
         </tool>
         <button id="Planet_Data_DocPane_ShowButton" caption="Show Data DocPane" className="Data_DocPane_ShowButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
           <tooltip heading="Show Dockpane">Show Dockpane<disabledText /></tooltip>
@@ -82,8 +82,8 @@
         <button id="Planet_Data_DocPane_MenuButton" caption="Burger Menu Button" className="Data_DocPane_MenuButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
           <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
         </button>
-        <button id="Planet_AOI_Selected" caption="Search by Selected Feature" className="AOI_Selected" loadOnClick="false" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue32.png" condition="planet_condition_isconnected_and_Selection">
-          <tooltip heading="Search by Selected Feature">Search for planet data by the selected map polygons<disabledText /></tooltip>
+        <button id="Planet_AOI_Selected" caption="Search Daily Imagery Selected Feature" className="AOI_Selected" loadOnClick="false" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonBlue32.png" condition="planet_condition_isconnected_and_Selection">
+          <tooltip heading="Search by Selected Feature">Search for Planet Daily Imagery by the selected map polygons<disabledText /></tooltip>
         </button>
         <button id="Planet_OrderWindow" caption="OrderWindow" className="ShowOrderWindow" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
           <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
@@ -116,7 +116,7 @@
         </pane>-->
       </panes>
       <dockPanes>
-        <dockPane id="Planet_Data_DocPane" caption="Planet Search" className="Data_DocPaneViewModel" dock="group" dockWith="esri_core_contentsDockPane">
+        <dockPane id="Planet_Data_DocPane" caption="Planet Daily Imagery Search" className="Data_DocPaneViewModel" dock="group" dockWith="esri_core_contentsDockPane">
           <content className="Data_DocPaneView" />
         </dockPane>
       </dockPanes>
