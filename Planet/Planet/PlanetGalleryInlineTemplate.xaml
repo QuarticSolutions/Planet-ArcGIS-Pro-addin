@@ -6,29 +6,32 @@
                 <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml"/>
     </ResourceDictionary.MergedDictionaries>
     <DataTemplate x:Key="PlanetGalleryInlineItemTemplate" >
-        <Grid Margin="0,0,0,0" Width="100" Height="86">
+        <Grid Margin="0,0,0,0" Width="100">
             <Grid.RowDefinitions>
                 <RowDefinition Height="56"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <!--Source="pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"-->
-            <Image Grid.Row="0" StretchDirection="DownOnly"  Stretch="Fill" VerticalAlignment="Bottom" HorizontalAlignment="Center"  >
-                <Image.Source>
-                    <BitmapImage UriCachePolicy="CacheIfAvailable"  UriSource="{Binding Path=Thumbnail}"/>
-                    
-                </Image.Source>
-                <Image.Effect>
-                    <DropShadowEffect Color="{DynamicResource Esri_Color_Gray145}" Opacity="0.4" />
-                </Image.Effect>
-                <!--<Image.Style>
+            <StackPanel Grid.Row="0" Orientation="Vertical" Background="#7F000000">
+                <Image StretchDirection="DownOnly" Stretch="Fill" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                    <Image.Source>
+                        <BitmapImage UriCachePolicy="CacheIfAvailable" UriSource="{Binding Path=Thumbnail}" />
+                    </Image.Source>
+                    <Image.Effect>
+                        <DropShadowEffect Color="{DynamicResource Esri_Color_Gray145}" Opacity="0.4" />
+                    </Image.Effect>
+                    <!--<Image.Style>
                     <Style TargetType="{x:Type  Image}">
-                        --><!--<Setter Property="Source"  Value="{Binding Thumbnail}"/>-->
-                        <!--<Setter Property="Source" Value="/Images/Planet_logo-dark.png"/>-->
-                        <!--<Setter Property="Source"  Value="Images\Planet_logo-dark.png"/>--><!--
+                        -->
+                    <!--<Setter Property="Source"  Value="{Binding Thumbnail}"/>-->
+                    <!--<Setter Property="Source" Value="/Images/Planet_logo-dark.png"/>-->
+                    <!--<Setter Property="Source"  Value="Images\Planet_logo-dark.png"/>-->
+                    <!--
                     </Style>
                 </Image.Style>-->
-            </Image>
-            <TextBlock Grid.Row="1" MaxWidth="100" Text="{Binding name}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" />
+                </Image>
+            </StackPanel>
+            <TextBlock Margin="0,2,0,2" Grid.Row="1" MaxWidth="100" Text="{Binding name}" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
         </Grid>
     </DataTemplate>
   
