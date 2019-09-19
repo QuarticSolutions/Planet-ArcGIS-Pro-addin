@@ -21,7 +21,9 @@ namespace Planet.Model.Item_assets
                     "REScene",
                     "Sentinel1",
                     "Sentinel2L1C",
-                    "SkySatScene" } },
+                    "SkySatScene"
+                }
+             },
                 new BundelItem()
                 { BundleName = "all",bundleassets= new List<string>(){
                     "Landsat8L1G",
@@ -37,7 +39,9 @@ namespace Planet.Model.Item_assets
                     "Sentinel1",
                     "Sentinel2L1C",
                     "SkySatCollect",
-                    "SkySatScene" } },
+                    "SkySatScene"
+                }
+                },
                 new BundelItem()
                 { BundleName = "all_udm2",bundleassets= new List<string>(){
                     "PSOrthoTile",
@@ -45,7 +49,9 @@ namespace Planet.Model.Item_assets
                 new BundelItem()
                 { BundleName = "analytic_udm2",bundleassets= new List<string>(){
                     "PSOrthoTile",
-                    "PSScene4Band" } },
+                    "PSScene4Band"
+                }
+                },
                 new BundelItem()
                 { BundleName = "visual",bundleassets= new List<string>(){
                     "Landsat8L1G",
@@ -54,17 +60,18 @@ namespace Planet.Model.Item_assets
                     "REOrthoTile",
                     "Sentinel2L1C",
                     "SkySatCollect",
-                    "SkySatScene",
-                    "Sentinel2L1C",
-                    "SkySatCollect",
-                    "SkySatScene" } },
+                    "SkySatScene"
+                }
+                },
                 new BundelItem()
                 { BundleName = "uncalibrated_dn",bundleassets= new List<string>(){
                     "PSOrthoTile",
                     "PSScene3Band",
                     "PSScene4Band",
                     "SkySatCollect",
-                    "SkySatScene"  } },
+                    "SkySatScene"
+                }
+                },
                 new BundelItem()
                 { BundleName = "uncalibrated_dn_udm2",bundleassets= new List<string>(){
                     "PSOrthoTile",
@@ -82,35 +89,154 @@ namespace Planet.Model.Item_assets
                     "SkySatScene",
                     "PSScene3Band",
                     "PSScene4Band" } },
-                 new BundelItem()
-                { BundleName = "basic_uncalibrated_dn",bundleassets= new List<string>(){
-                    "SkySatScene",
-                    "PSScene3Band",
-                    "PSScene4Band" } },
-        //AnalyticList ,
-        ////"analytic_udm2" ,
-        ////"visual" ,
-        ////"uncalibrated_dn" ,
-        ////"uncalibrated_dn_udm2" ,
-        ////"basic_analytic" ,
-        ////"basic_analytic_udm2" ,
-        ////"basic_uncalibrated_dn" ,
-        ////"basic_uncalibrated_dn_udm2" ,
-        ////"analytic_sr" ,
-        ////"analytic_sr_udm2" ,
-        ////"basic_uncalibrated_dn_nitf" ,
-        ////"basic_uncalibrated_dn_nitf_udm2" ,
-        ////"basic_analytic_nitf" ,
-        ////"basic_analytic_nitf_udm2" ,
-        ////"basic_panchromatic_dn" ,
-        ////"panchromatic_dn" ,
-        ////"pansharpened" ,
-        ////"analytic_without_metadata" ,
-        ////"basic_analytic_without_metadata" ,
-        ////"visual_without_metadata" ,
-
-
-    };
+                new BundelItem()
+                {
+                    BundleName = "basic_uncalibrated_dn",bundleassets= new List<string>()
+                    {
+                        "SkySatScene",
+                        "PSScene3Band",
+                        "PSScene4Band"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "basic_uncalibrated_dn_udm2",bundleassets= new List<string>()
+                    {
+                        "PSScene4Band"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "analytic_sr",bundleassets= new List<string>()
+                    {
+                        "PSScene4Band"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "analytic_sr_udm2",bundleassets= new List<string>()
+                    {
+                        "PSScene4Band"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "basic_uncalibrated_dn_nitf",bundleassets= new List<string>()
+                    {
+                        "PSScene4Band"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "basic_uncalibrated_dn_nitf_udm2",bundleassets= new List<string>()
+                    {
+                        "PSScene4Band"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "basic_analytic_nitf",bundleassets= new List<string>()
+                    {
+                        "PSScene4Band",
+                        "REScene"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "basic_analytic_nitf_udm2",bundleassets= new List<string>()
+                    {
+                        "PSScene4Band"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "basic_panchromatic_dn",bundleassets= new List<string>()
+                    {
+                        "SkySatScene"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "ortho_analytic_dn",bundleassets= new List<string>()
+                    {
+                        "SkySatScene"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "ortho_pansharpened",bundleassets= new List<string>()
+                    {
+                        "SkySatScene"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "ortho_visual",bundleassets= new List<string>()
+                    {
+                        "SkySatScene"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "ortho_panchromatic_dn",bundleassets= new List<string>()
+                    {
+                        "SkySatScene"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "panchromatic_dn",bundleassets= new List<string>()
+                    {
+                        "SkySatCollect",
+                        "SkySatScene"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "pansharpened",bundleassets= new List<string>()
+                    {
+                        "SkySatCollect",
+                        "SkySatScene"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "analytic_without_metadata",bundleassets= new List<string>()
+                    {
+                        "Landsat8L1G",
+                        "PSOrthoTile",
+                        "PSScene3Band",
+                        "PSScene4Band",
+                        "REOrthoTile",
+                        "REScene",
+                        "Sentinel1",
+                        "Sentinel2L1C",
+                        "SkySatScene"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "basic_analytic_without_metadata",bundleassets= new List<string>()
+                    {
+                        "REScene",
+                        "PSScene3Band",
+                        "PSScene4Band"
+                    }
+                },
+                new BundelItem()
+                {
+                    BundleName = "visual_without_metadata",bundleassets= new List<string>()
+                    {
+                        "Landsat8L1G",
+                        "PSOrthoTile",
+                        "PSScene3Band",
+                        "REOrthoTile",
+                        "Sentinel2L1C",
+                        "SkySatCollect",
+                        "SkySatScene"
+                    }
+                }
+        };
 
 
         public class BundelItem
@@ -175,8 +301,6 @@ namespace Planet.Model.Item_assets
             "PSOrthoTile",
             "PSScene4Band"
         };
-
-
     }
     public class BundlesClass
     {

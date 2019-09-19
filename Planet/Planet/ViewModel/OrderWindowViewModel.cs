@@ -547,7 +547,7 @@ namespace Planet.ViewModel
             List<string> selecttedproduct_bundles = new List<string>();
             //Dictionary<string, string> pppp = new Dictionary<string, string>;
             List<Tuple<string, string>> pppp = new List<Tuple<string, string>>();
-            var combined = PSScene4Band.Concat(PSScene3Band);
+            var combined = PSScene4Band.Concat(PSScene3Band).Concat(PSOrthoTile).Concat(REOrthoTile).Concat(REScene).Concat(SkySatScene).Concat(SkySatCollect).Concat(Landsat8L1G).Concat(Sentinel2L1C) ;
             foreach (PSScene4Band pSScene4Band in combined)
             {
                 Tuple<string, string> tuple = Tuple.Create(pSScene4Band.properties.item_type, pSScene4Band.selectedBundle);

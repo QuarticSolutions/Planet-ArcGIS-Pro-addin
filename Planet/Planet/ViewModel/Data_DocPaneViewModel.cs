@@ -399,7 +399,15 @@ namespace Planet
 
             OrderWindow orderWindow = new OrderWindow();
             OrderWindowViewModel orderWindowViewModel = new OrderWindowViewModel();
-            orderWindowViewModel.SelectAssets = SelectAssets;
+            ObservableCollection<Asset> permittedassets = new ObservableCollection<Asset>();
+            foreach (Asset ass in SelectAssets)
+            {
+                if (ass._permissions.Length > 0)
+                {
+                    permittedassets.Add(ass);
+                }
+            }
+            orderWindowViewModel.SelectAssets = permittedassets;
             orderWindow.DataContext = orderWindowViewModel;
             orderWindow.Show();
         }

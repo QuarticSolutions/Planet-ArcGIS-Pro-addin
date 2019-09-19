@@ -40,7 +40,7 @@
       <groups>
         <!-- comment this out if you have no controls on the Addin tab to avoid
               an empty group-->
-        <group id="Planet_Group1" caption="Show and Download Planet Basemaps" appearsOnAddInTab="false">
+        <group id="Planet_Group1" caption="Stream and Download Planet Basemaps" appearsOnAddInTab="false">
           <!-- host controls within groups -->
           <gallery refID="Planet_PlanetLogin" inline="false" size="large" />
           <gallery refID="Planet_PlanetGalleryInline" inline="true" size="large" />
@@ -50,7 +50,7 @@
           <!--<button refID="Planet_Data_PocPane2_ShowButton" size="large" />-->
           <!--<button refID="Planet_OrderWindow" size="large" />-->
         </group>
-        <group id="Planet_Group2" caption="Search for Scenes and Assets" appearsOnAddInTab="false">
+        <group id="Planet_Group2" caption="Search for Daily Imagery" appearsOnAddInTab="false">
           <tool refID="Planet_AOI_Select" size="large" />
           <tool refID="Planet_AOI_Selected" size="large" />
         </group>
