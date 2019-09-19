@@ -579,7 +579,7 @@ namespace Planet.ViewModel
                 product.product_bundle = item.Item1;
                 product.item_type = item.Item2;
                 List<string> ids = new List<string>();
-                foreach (PSScene4Band pSScene4Band in PSScene4Band)
+                foreach (PSScene4Band pSScene4Band in combined)
                 {
                     if (pSScene4Band.properties.item_type == item.Item2 && pSScene4Band.selectedBundle == item.Item1)
                     {
@@ -587,8 +587,12 @@ namespace Planet.ViewModel
                         ids.Add(pSScene4Band.id);
                     }
                 }
-                product.item_ids = ids.ToArray();
-                productlist.Add(product);
+                if (ids.Count > 0)
+                {
+                    product.item_ids = ids.ToArray();
+                    productlist.Add(product);
+                }
+
             }
 
             //foreach (PSScene4Band pSScene4Band in PSScene4Band)

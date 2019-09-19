@@ -37,8 +37,10 @@ namespace Planet
         private async void DG_Hyperlink_Click(object sender, RoutedEventArgs e)
         {
             Hyperlink link = (Hyperlink)e.OriginalSource;
+            TextBlock textBlock = (TextBlock)sender;
             //Process.Start(link.NavigateUri.AbsoluteUri);
             FolderSelector folderSelector = new FolderSelector();
+            Order2 order2 = (Order2)textBlock.DataContext;
             folderSelector.lbxGrids.ItemsSource = null;
             folderSelector.ShowNewFolderButton = false;
             folderSelector.ShowActivated = true;
@@ -62,7 +64,8 @@ namespace Planet
             if ((bool)folderSelector.DialogResult)
             {
                 string savelocation = folderSelector.SelectedPath;
-                await LoadImage(link.NavigateUri.AbsoluteUri, savelocation );
+                //await LoadImage(link.NavigateUri.AbsoluteUri, savelocation );
+               await LoadImage(order2._links._self, savelocation);
             }
                 
         }
