@@ -27,7 +27,6 @@ namespace Planet
     internal class PlanetGalleryInline : Gallery 
     {
         private bool _isInitialized;
-        
 
         /// <summary>
         /// Initial load but also
@@ -42,7 +41,23 @@ namespace Planet
                 _isInitialized = false;
                 Initialize();
             });
+            MapViewCameraChangedEvent.Subscribe(OnCameraChanged);
             Initialize();
+        }
+
+        private void OnCameraChanged(MapViewCameraChangedEventArgs obj)
+        {
+            if (obj.MapView == MapView.Active)
+            {
+                var camera = obj.CurrentCamera;
+                if (ItemCollection.Count > 0)
+                {
+                    //foreach(Mosaic item in ItemCollection)
+                    //{
+                    //    SetThumbnail(item);
+                    //}
+                }
+            }
         }
 
         /// <summary>
@@ -123,14 +138,18 @@ namespace Planet
                                 string x = "0";
                                 string y = "0";
                                 int z = 7;
-                                
-                                 
+
+                                var extent = MapView.Active.Extent;
                                 TilePointConvert tilePointConvert = new TilePointConvert();
                                 foreach (Mosaic item in result.mosaics)
-                                
                                 {
-                                    MapPoint sw = MapPointBuilder.CreateMapPoint(item.bbox[0], item.bbox[1], MapView.Active.Extent.SpatialReference);
-                                    MapPoint ne = MapPointBuilder.CreateMapPoint(item.bbox[2], item.bbox[3], MapView.Active.Extent.SpatialReference);
+                                    //MapPoint sw = MapPointBuilder.CreateMapPoint(item.bbox[0], item.bbox[1], MapView.Active.Extent.SpatialReference);
+                                    //MapPoint ne = MapPointBuilder.CreateMapPoint(item.bbox[2], item.bbox[3], MapView.Active.Extent.SpatialReference);
+                                    MapPoint sw = MapPointBuilder.CreateMapPoint(extent.XMin, extent.YMin, extent.SpatialReference);
+                                    sw = GeometryEngine.Instance.Project(sw, SpatialReferences.WGS84) as MapPoint;
+                                    MapPoint ne = MapPointBuilder.CreateMapPoint(extent.XMax, extent.YMax, SpatialReferences.WGS84);
+                                    ne = GeometryEngine.Instance.Project(ne, SpatialReferences.WGS84) as MapPoint;
+
                                     IList<MapPoint> mapPoints = new List<MapPoint>();
                                     mapPoints.Add(sw);
                                     mapPoints.Add(ne);
@@ -140,8 +159,11 @@ namespace Planet
                                     {
                                         z = z * -1;
                                     }
-                                    double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
-                                    double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
+                                    //double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
+                                    //double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
+                                    var centerProjected = GeometryEngine.Instance.Project(extent.Center, SpatialReferences.WGS84) as MapPoint;
+                                    double centerlong = centerProjected.X;
+                                    double centerlat = centerProjected.Y;
                                     //z=4;
                                     PointF point = tilePointConvert.WorldToTilePos(centerlong, centerlat, z);
                                     //item.Thumbnail = item._links.tiles.Replace("{x}", x).Replace("{y}", y).Replace("{z}", "0");
@@ -172,6 +194,31 @@ namespace Planet
                 return lstMosaics;
             }
            
+        }
+
+        private void SetThumbnail(Mosaic item)
+        {
+            TilePointConvert tilePointConvert = new TilePointConvert();
+            var extent = MapView.Active.Extent;
+            int z = 7;
+            MapPoint sw = MapPointBuilder.CreateMapPoint(extent.XMin, extent.YMin, extent.SpatialReference);
+            sw = GeometryEngine.Instance.Project(sw, SpatialReferences.WGS84) as MapPoint;
+            MapPoint ne = MapPointBuilder.CreateMapPoint(extent.XMax, extent.YMax, SpatialReferences.WGS84);
+            ne = GeometryEngine.Instance.Project(ne, SpatialReferences.WGS84) as MapPoint;
+            IList<MapPoint> mapPoints = new List<MapPoint>();
+            mapPoints.Add(sw);
+            mapPoints.Add(ne);
+            double zz = TilePointConvert.BestMapView(mapPoints, 100, 56, 2);
+            z = (int)Math.Floor(zz);
+            if (z < 0)
+            {
+                z = z * -1;
+            }
+            var centerProjected = GeometryEngine.Instance.Project(extent.Center, SpatialReferences.WGS84) as MapPoint;
+            double centerlong = centerProjected.X;
+            double centerlat = centerProjected.Y;
+            PointF point = tilePointConvert.WorldToTilePos(centerlong, centerlat, z);
+            item.Thumbnail = item._links.tiles.Replace("{x}", Math.Floor(point.X).ToString()).Replace("{y}", Math.Floor(point.Y).ToString()).Replace("{z}", z.ToString());
         }
         /// <summary>
         /// call back to access results of a page while inside the pagination loop
@@ -222,7 +269,9 @@ namespace Planet
                 var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
                 await QueuedTask.Run(() =>
                 {
+                    var extent = MapView.Active.Extent;
                     BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, MapView.Active.Map, 0, mosaic.name);
+                    MapView.Active.ZoomTo(extent, TimeSpan.Zero);
                 });
 
             }

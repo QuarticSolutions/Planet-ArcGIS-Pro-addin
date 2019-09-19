@@ -3,33 +3,98 @@
                     xmlns:ribbon="http://schemas.actiprosoftware.com/winfx/xaml/ribbon"
                     xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"  >
     <ResourceDictionary.MergedDictionaries>
-                <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml"/>
+        <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml"/>
     </ResourceDictionary.MergedDictionaries>
     <DataTemplate x:Key="PlanetLoginItemTemplate">
-        <Grid Margin="2,0,0,0" Width="500" >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <!--<TextBlock Grid.Row="0" TextWrapping="Wrap">Please enter you API_Key below. 
-                    <LineBreak/> This can be found by logging into 
-                    <Hyperlink  xml:space="preserve" 
-                        NavigateUri="https://www.planet.com/account/#/"
-                        Command="{Binding OpenHyperlinkCommand}">https://www.planet.com/account/#/
-                    </Hyperlink>
+        <Grid>
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding LoginVisible}" Value="False">
+                                <Setter Property="Visibility" Value="Visible"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Margin="5,0,0,0" Grid.Row="0" Text="You are currently logged in as:" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{DynamicResource Esri_TextBlockDialogHeader}"/>
+                <TextBlock Grid.Row="1" Text="{Binding Path=UserName}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{DynamicResource Esri_TextBlockH1}" />
+                <Button Width="75" Grid.Row="2" Content="Log Out" HorizontalAlignment="Right" Command="{Binding Path=LogOut}"  Style="{DynamicResource Esri_Button}" VerticalAlignment="Center"/>
+            </Grid>
+            <Grid Margin="2,0,0,0" Width="500">
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility" Value="Visible"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding LoginVisible}" Value="False">
+                                <Setter Property="Visibility" Value="Hidden"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <!--<TextBlock Grid.Row="0" TextWrapping="Wrap">Please enter you API_Key below. 
+                        <LineBreak/> This can be found by logging into 
+                        <Hyperlink  xml:space="preserve" 
+                            NavigateUri="https://www.planet.com/account/#/"
+                            Command="{Binding OpenHyperlinkCommand}">https://www.planet.com/account/#/
+                        </Hyperlink>
+                        <LineBreak/>
+                        Once you login to this site you should see your api_key.
                     <LineBreak/>
-                    Once you login to this site you should see your api_key.
-                <LineBreak/>
-                    Copy and paste it into the box below and click the connect button to view your Raster Map Services
-            </TextBlock>-->
-            <TextBlock Grid.Row="0"   Text="Enter your Planet user name and password" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{DynamicResource Esri_TextBlockDialogHeader}"/>
-            <StackPanel Grid.Row="1" Orientation="Vertical" Margin="6,6,1,1" HorizontalAlignment="Center">
-                
-                <!--<StackPanel  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,6,0,0">-->
-                <Grid>
+                        Copy and paste it into the box below and click the connect button to view your Raster Map Services
+                </TextBlock>-->
+                <TextBlock Grid.Row="0"   Text="Enter your Planet user name and password" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{DynamicResource Esri_TextBlockDialogHeader}"/>
+                <StackPanel Grid.Row="1" Orientation="Vertical" Margin="6,6,1,1" HorizontalAlignment="Center">
+
+                    <!--<StackPanel  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,6,0,0">-->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="75"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!--<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">-->
+                        <TextBlock Grid.Row="0" Grid.Column="0"  Text="User Name:"  Style="{DynamicResource Esri_TextBlockRegular}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Name="txtUserName" Text="{Binding Path=UserName}" 
+                              Width="170" Height="23" Margin="1" />
+                        <!--</StackPanel>-->
+                        <!--<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">-->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Password:"  Style="{DynamicResource Esri_TextBlockRegular}"
+                               />
+                        <PasswordBox Grid.Row="1" Grid.Column="1" Width="170" Name="txtPassword" Margin="1" Password="dawHmsPAtnlDeofD5yHe"></PasswordBox>
+                        <!--</StackPanel>-->
+                        <Button x:Name="btnLogin" Content="Log In" Grid.Row="0" Grid.Column="3"  Width="75" Command="{Binding Path=ClickLogin2}" CommandParameter="{Binding ElementName=txtPassword}" Style="{DynamicResource Esri_Button}" Margin="10,1,0,1" VerticalAlignment="Bottom"/>
+                    </Grid>
+
+                    <!--</StackPanel>-->
+                    <TextBlock Grid.Row="0" Margin="0,5" TextWrapping="Wrap">Not a member?  
+                        <Hyperlink  xml:space="preserve" 
+                            NavigateUri="https://go.planet.com/basemaps-trial-esri"
+                            Command="{Binding OpenHyperlinkCommand}">Sign up
+                        </Hyperlink>
+                        <LineBreak/>
+                    </TextBlock>
+                </StackPanel>
+                <TextBlock Grid.Row="2"  Visibility="Collapsed" Text="Or your API key" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{DynamicResource Esri_TextBlockDialogHeader}"/>
+                <Grid Grid.Row="3" HorizontalAlignment="Center" Margin="6,6,1,1" Visibility="Collapsed">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="75"/>
                         <ColumnDefinition Width="*"/>
@@ -37,47 +102,15 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-
-                    <!--<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">-->
-                    <TextBlock Grid.Row="0" Grid.Column="0"  Text="User Name:"  Style="{DynamicResource Esri_TextBlockRegular}"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Name="txtUserName" Text="{Binding Path=UserName}" 
-                          Width="170" Height="23" Margin="1" />
-                    <!--</StackPanel>-->
-                    <!--<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">-->
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Password:"  Style="{DynamicResource Esri_TextBlockRegular}"
-                           />
-                    <PasswordBox Grid.Row="1" Grid.Column="1" Width="170" Name="txtPassword" Margin="1"></PasswordBox>
-                    <!--</StackPanel>-->
-                    <Button x:Name="btnLogin" Content="Login" Grid.Row="0" Grid.Column="3"  Width="75" Command="{Binding Path=ClickLogin2}" CommandParameter="{Binding ElementName=txtPassword}" Style="{DynamicResource Esri_Button}" Margin="10,1,0,1" VerticalAlignment="Bottom"/>
+                    <TextBlock Grid.Row="0"  Grid.Column="0" Text="API_KEY:" HorizontalAlignment="Left"  Style="{DynamicResource Esri_TextBlockRegular}" />
+                    <TextBox Grid.Row="0"  Grid.Column="1" Text="{Binding Path=API_Key.API_KEY_Value, Mode=TwoWay}"   MinWidth="295"  />
+                    <Button x:Name="btnConnect" Grid.Row="0"  Grid.Column="2" Content="Connect" HorizontalAlignment="Left" Margin="10,1,0,1"    Command="{Binding Path=ClickCommand}" Style="{DynamicResource Esri_Button}"/>
                 </Grid>
-
-                <!--</StackPanel>-->
-                <TextBlock Grid.Row="0" Margin="0,5" TextWrapping="Wrap">Not a member?  
-                    <Hyperlink  xml:space="preserve" 
-                        NavigateUri="https://go.planet.com/basemaps-trial-esri"
-                        Command="{Binding OpenHyperlinkCommand}">Sign up
-                    </Hyperlink>
-                    <LineBreak/>
-                </TextBlock>
-            </StackPanel>
-            <TextBlock Grid.Row="2"  Visibility="Collapsed" Text="Or your API key" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{DynamicResource Esri_TextBlockDialogHeader}"/>
-            <Grid Grid.Row="3" HorizontalAlignment="Center" Margin="6,6,1,1" Visibility="Collapsed">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="75"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0"  Grid.Column="0" Text="API_KEY:" HorizontalAlignment="Left"  Style="{DynamicResource Esri_TextBlockRegular}" />
-                <TextBox Grid.Row="0"  Grid.Column="1" Text="{Binding Path=API_Key.API_KEY_Value, Mode=TwoWay}"   MinWidth="295"  />
-                <Button x:Name="btnConnect" Grid.Row="0"  Grid.Column="2" Content="Connect" HorizontalAlignment="Left" Margin="10,1,0,1"    Command="{Binding Path=ClickCommand}" Style="{DynamicResource Esri_Button}"/>
+                <Button Grid.Row="4" x:Name="btnClose" Content="Close" HorizontalAlignment="Center" Margin="6,6,0,0"  Style="{DynamicResource Esri_Button}"/>
             </Grid>
-            <Button Grid.Row="4" x:Name="btnClose" Content="Close" HorizontalAlignment="Center" Margin="6,6,0,0"  Style="{DynamicResource Esri_Button}"/>
         </Grid>
+        
     </DataTemplate>
           
 </ResourceDictionary>

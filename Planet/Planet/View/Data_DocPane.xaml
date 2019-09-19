@@ -131,7 +131,7 @@
               </TextBlock>
             </DockPanel>-->
         <TabControl x:Name="MainTabs" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}">
-            <TabItem Header="Browse"  Padding="5,0,5,0">
+            <TabItem Style="{DynamicResource MainTabItemStyle}" Header="Browse"  Padding="5,0,5,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
@@ -353,7 +353,7 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Filter" Style="{DynamicResource LastTabItemStyle}" Padding="5,0,0,0">
+            <TabItem Header="Filter" Style="{DynamicResource MainTabItemStyle}" Padding="5,0,0,0">
 
                 <Grid>
                     <Grid.RowDefinitions>
@@ -490,7 +490,7 @@
 
             </TabItem>
             
-            <TabItem Header="Orders" Style="{DynamicResource MainTabItemStyle}" Padding="5,0,0,0" >
+            <TabItem Header="Orders" Style="{DynamicResource LastTabItemStyle}" Padding="5,0,0,0" >
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
