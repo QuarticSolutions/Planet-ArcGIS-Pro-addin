@@ -72,7 +72,7 @@ namespace Planet
             _isInitialized = false;
             //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Gallery Clicked");
             //base.OnClick(item);
-            
+
         }
         
     }

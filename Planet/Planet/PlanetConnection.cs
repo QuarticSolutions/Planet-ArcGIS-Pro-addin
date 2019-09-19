@@ -40,7 +40,21 @@ namespace Planet
             }
         }
 
-        private string _UserName;
+        private bool _LoginVisible = true;
+        public bool LoginVisible
+        {
+            get
+            {
+                return _LoginVisible;
+            }
+            set
+            {
+                _LoginVisible = value;
+                OnPropertyChanged("LoginVisible");
+            }
+        }
+
+        private string _UserName = "drew@quarticsolutions.com";
         public string UserName
         {
             get
@@ -74,6 +88,24 @@ namespace Planet
         //        return _clicklogin ?? (_clicklogin = new CommandHandler(() => Login(), CanExecute));
         //    }
         //}
+
+        private ICommand _LogOut;
+        public ICommand LogOut
+        {
+            get
+            {
+                if (_LogOut == null)
+                    _LogOut = new CommandHandler(() => DoLogOut(), CanExecute);
+                return _LogOut;
+            }
+        }
+
+        private void DoLogOut()
+        {
+            API_Key.API_KEY_Value = null;
+            getkey();
+            LoginVisible = true;
+        }
 
         private ICommand _clicklogin2;
         public ICommand ClickLogin2
@@ -172,6 +204,8 @@ namespace Planet
                     getkey();
                     //var response = await postResp.Content.ReadAsStringAsync();
                     Console.WriteLine(result.token);
+
+                    LoginVisible = false;
                 }
                 catch (WebException wex)
                 {
@@ -219,7 +253,6 @@ namespace Planet
         private void getkey()
         {
             APIKeyChangedEvent.Publish(new APIKeyChangedEventArgs(API_Key.API_KEY_Value, API_Key.API_KEY_Value));
-
         }
         //private  void  Login()
         //{
