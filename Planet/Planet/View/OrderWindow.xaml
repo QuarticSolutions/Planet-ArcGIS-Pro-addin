@@ -10,39 +10,39 @@
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         xmlns:model="clr-namespace:Planet.Model"
         xmlns:viewmodel="clr-namespace:Planet.ViewModel"
-        Title="Order Window" Height="700" MaxHeight="1000" Width="600" ResizeMode="CanResizeWithGrip" ScrollViewer.VerticalScrollBarVisibility="Visible"
+        Title="Order Window" Height="700"  Width="800" ResizeMode="CanResizeWithGrip" ScrollViewer.VerticalScrollBarVisibility="Visible"
         WindowStartupLocation="CenterOwner"
         xmlns:ui="clr-namespace:Planet"
-                    DataContext="{Binding Path=viewmodel.OrderWindowViewModel}"
-        
-    >
+                    DataContext="{Binding Path=viewmodel.OrderWindowViewModel}">
     <!--DataContext="{Binding Path=viewmodel.Data_DocPaneViewModel}"-->
     <controls:ProWindow.Resources>
-        <viewmodel:Valueconverter x:Key="asdasd"/> 
-        <viewmodel:Download2Bool x:Key="Download2Bool"/>
-        <ResourceDictionary x:Key="asasas">
+        <ResourceDictionary >
             <ResourceDictionary.MergedDictionaries>
                 <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-        
+
     </controls:ProWindow.Resources>
-    <Grid Width="600" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
-        <Grid.ColumnDefinitions>
+    <Grid Width="800" Height="600" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Grid.Resources>
+            <viewmodel:Valueconverter x:Key="asdasd"/>
+            <viewmodel:Download2Bool x:Key="Download2Bool"/>
+        </Grid.Resources>
+        <!--<Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
+        </Grid.ColumnDefinitions>-->
         <Grid.RowDefinitions>
             <RowDefinition Height="15"/>
             <RowDefinition Height="Auto"/>
+            <!--<RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>-->
             <RowDefinition Height="65"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Width="600" Margin="0,0,0,0"  >
@@ -51,203 +51,320 @@
             <TextBlock Width="50"  TextWrapping="Wrap" Text="Visual" HorizontalAlignment="Left" Foreground="{DynamicResource Esri_TextControlBrush}" ></TextBlock>
             <TextBlock Width="50"  TextWrapping="Wrap" Text="Basic" HorizontalAlignment="Left" Foreground="{DynamicResource Esri_TextControlBrush}" ></TextBlock>
         </StackPanel>
-        <ListBox   Grid.Row="1" Width="600" MaxHeight="300"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSScene4Band}" Margin="10,10,0,0" >
-            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                <DataTemplate >
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="60"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                            <Image Grid.Column="0" Width="75" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                                <Image.Style>
-                                    <Style TargetType="{x:Type Image}">
-                                        <Setter Property="Source" Value="{Binding Path=image}"/>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
-                        <TextBlock Grid.Column="1" Width="90" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column ="2" Width="200" Text="{Binding Path=id }" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10"/>
-                        <CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <!--<ListBox ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"  Grid.Row="2" Width="600"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSScene3BandListView}" Margin="10,10,0,0" >
-            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                <DataTemplate >
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="60"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Row="1" MaxHeight="500" Height="Auto" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" >
+            <StackPanel  Orientation="Vertical" >
+                <ListBox x:Name="PS4"  Visibility="{Binding PSScene4BandVis}"  Grid.Row="1" Width="600" MaxHeight="200"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSScene4Band}" Margin="10,10,0,0" >
+                    <ListBox.Resources>
+                        <viewmodel:Valueconverter x:Key="asdasd"/>
+                        <viewmodel:Download2Bool x:Key="Download2Bool"/>
+                    </ListBox.Resources>
+                    <ListBox.ItemTemplate x:Uid="asdasd"  >
+                        <DataTemplate  >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Width="75" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Setter Property="Source" Value="{Binding Path=image}"/>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                                <TextBlock Grid.Column="1" Width="90" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column ="2" Width="200" Text="{Binding Path=id }" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10"/>
+                                <ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstPSScene4Band , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>
+                                <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>-->
+                                <!--<CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox Visibility="{Binding PSScene3BandVis}"    Width="600"  Grid.Column="0"  ItemsSource="{Binding PSScene3Band}" Margin="10,10,0,0" >
+                    <ListBox.ItemTemplate x:Uid="asdasd"  >
+                        <DataTemplate >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
 
-                        <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                            <Image.Style>
-                                <Style TargetType="{x:Type Image}">
-                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                        <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-                        <CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"  Grid.Row="3" Width="600"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding SkySatSceneListView}" Margin="10,10,0,0" >
-            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                <DataTemplate >
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="60"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Setter Property="Source" Value="{Binding Path=image}"/>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                                <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+                                <ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstPSScene3Band , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>
+                                <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox  Visibility="{Binding SkySatScenevis}"   Width="600"  Grid.Column="0"  ItemsSource="{Binding SkySatScene}" Margin="10,10,0,0" >
+                    <ListBox.ItemTemplate x:Uid="asdasd"  >
+                        <DataTemplate >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
 
-                        <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                            <Image.Style>
-                                <Style TargetType="{x:Type Image}">
-                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                        <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-                        <CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"  Grid.Row="4" Width="600"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding SkySatCollectListView}" Margin="10,10,0,0" >
-            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                <DataTemplate >
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="60"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Setter Property="Source" Value="{Binding Path=image}"/>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                                <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+                                <ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstSkySatScene , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>
+                                <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox  Visibility="{Binding SkySatCollectvis}"  Width="600"  Grid.Column="0"  ItemsSource="{Binding SkySatCollect}" Margin="10,10,0,0" >
+                    <ListBox.ItemTemplate x:Uid="asdasd"  >
+                        <DataTemplate >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
 
-                        <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                            <Image.Style>
-                                <Style TargetType="{x:Type Image}">
-                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                        <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-                        <CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"  Grid.Row="5" Width="600"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSOrthoTileListView}" Margin="10,10,0,0" >
-            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                <DataTemplate >
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="60"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Setter Property="Source" Value="{Binding Path=image}"/>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                                <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+                                <ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstSkySatCollect , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>
+                                <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox Visibility="{Binding REScenevis}"  Grid.Row="4" Width="600"  Grid.Column="0" ItemsSource="{Binding REScene}" Margin="10,10,0,0" >
+                    <ListBox.ItemTemplate x:Uid="asdasd"  >
+                        <DataTemplate >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
 
-                        <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                            <Image.Style>
-                                <Style TargetType="{x:Type Image}">
-                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                        <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-                        <CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"  Grid.Row="6" Width="600"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding REOrthoTile}" Margin="10,10,0,0" >
-            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                <DataTemplate >
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="60"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                                <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Setter Property="Source" Value="{Binding Path=image}"/>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                                <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+                                <ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstREScene , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>
+                                <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox Visibility="{Binding Path=PSOrthoTileVis}" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"  Grid.Row="5" Width="600"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSOrthoTile}" Margin="10,10,0,0" >
+                    <ListBox.ItemTemplate x:Uid="asdasd"  >
+                        <DataTemplate >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
 
-                        <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                            <Image.Style>
-                                <Style TargetType="{x:Type Image}">
-                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                        <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-                        <CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                        <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>-->
-        <StackPanel Grid.Row="9" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0" >
+                                <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Setter Property="Source" Value="{Binding Path=image}"/>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                                <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+                                <ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstPSOrthoTile , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>
+                                <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox Visibility="{Binding Path=REOrthoTilevis}" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"  Grid.Row="6" Width="600"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding REOrthoTile}" Margin="10,10,0,0" >
+                    <ListBox.ItemTemplate x:Uid="asdasd"  >
+                        <DataTemplate >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+
+                                <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Setter Property="Source" Value="{Binding Path=image}"/>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                                <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+                                <ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstREOrthoTile , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>
+                                <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox Visibility="{Binding Path=Landsat8L1Gvis}" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"  Grid.Row="6" Width="600"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Landsat8L1G}" Margin="10,10,0,0" >
+                    <ListBox.ItemTemplate x:Uid="asdasd"  >
+                        <DataTemplate >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+
+                                <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Setter Property="Source" Value="{Binding Path=image}"/>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                                <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+                                <ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstLandsat8L1G , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>
+                                <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox Visibility="{Binding Path=Sentinel2L1Cvis}" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300"  Grid.Row="6" Width="600"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Sentinel2L1C}" Margin="10,10,0,0" >
+                    <ListBox.ItemTemplate x:Uid="asdasd"  >
+                        <DataTemplate >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+
+                                <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Setter Property="Source" Value="{Binding Path=image}"/>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                                <TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column ="2" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+                                <ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstSentinel2L1C , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>
+                                <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
+                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </ScrollViewer>
+ 
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0" >
             <Label Content="Order Name:" VerticalAlignment="Center"/>
             <TextBox Text="{Binding Path=OrderName}" Width="200" Height="25" />
             <Button Command="{Binding OrderCommand}" Content="Place Order" Height="Auto"   Style="{DynamicResource Esri_Button}" Margin="20" VerticalAlignment="Center"/>

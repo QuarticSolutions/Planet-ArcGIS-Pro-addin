@@ -1,4 +1,6 @@
 ﻿using ArcGIS.Desktop.Mapping;
+using Newtonsoft.Json;
+using Planet.Model.Item_assets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,7 +44,16 @@ namespace Planet
             folderSelector.ShowActivated = true;
             folderSelector.SizeToContent = SizeToContent.Width;
             object da = folderSelector.txtGrids.DataContext;
+            //folderSelector.tvFolders.ItemStringFormat
 
+            //folderSelector.txtGrids.Foreground = Brushes.White;
+            //folderSelector.tvFolders.Foreground = Brushes.White;
+            //var myTextBlock = (TextBlock)folderSelector.FindName("txtblkFolder");
+            foreach (TreeViewItem item in folderSelector.tvFolders.Items)
+            {
+                item.Foreground = Brushes.White;
+            }
+            //Style style = folderSelector.Style;
             if (da is Data.BaseItem ba)
             {
                 ba.QuadCount = "";
@@ -51,7 +62,7 @@ namespace Planet
             if ((bool)folderSelector.DialogResult)
             {
                 string savelocation = folderSelector.SelectedPath;
-                await LoadImage(link.NavigateUri.AbsoluteUri, savelocation + "\\" + link.NavigateUri.AbsoluteUri.Substring(33, link.NavigateUri.AbsoluteUri.LastIndexOf("/") - 33) + ".zip");
+                await LoadImage(link.NavigateUri.AbsoluteUri, savelocation );
             }
                 
         }
@@ -115,6 +126,7 @@ namespace Planet
             //        Console.WriteLine(ex.Message);
             //        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
             //    }
+            OrderDownload orderDownload = null;
             try
             { 
                 using (HttpClient client = new HttpClient())
@@ -125,24 +137,68 @@ namespace Planet
                     client.DefaultRequestHeaders.Add("Connection", "keep-alive");
                     client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.16.3");
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-                    using (var response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead))
+                    try
                     {
-                        using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+                        using (HttpResponseMessage httpResponse = client.GetAsync(uri).Result)
                         {
-                            string fileToWriteTo = destination; //Path.GetTempFileName();
-                            if (File.Exists(fileToWriteTo))
+                            using (HttpContent content2 = httpResponse.Content)
                             {
-                                File.Delete(fileToWriteTo);
+                                var json2 = content2.ReadAsStringAsync().Result;
+                                orderDownload  = JsonConvert.DeserializeObject<OrderDownload>(json2);
+
                             }
-                            using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
+                        }
+
+                    }
+                    catch (WebException e)
+                    {
+                        if (e.Status == WebExceptionStatus.ProtocolError)
+                        {
+                            WebResponse resp = e.Response;
+                            using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
                             {
-                                await streamToReadFrom.CopyToAsync(streamToWriteTo);
-
-                                //MessageBox.Show("Download Completed Succesfully","Dowload Complete",MessageBoxButton.OK,MessageBoxImage.Information);
+                                string resps = sr.ReadToEnd();
+                                //Response.Write(sr.ReadToEnd());
                             }
-
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+                    }
+
+                    if (orderDownload != null)
+                    {
+                        if (orderDownload.state == "success")
+                        {
+                            using (var response = await client.GetAsync(orderDownload._links.results[1].location, HttpCompletionOption.ResponseHeadersRead))
+                            {
+                                if (!response.IsSuccessStatusCode)
+                                {
+                                    MessageBox.Show("There was a problem downloading your data" + Environment.NewLine + response.ReasonPhrase, "Dowload Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                                    return false;
+                                }
+                                using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+                                {
+                                    string fileToWriteTo = destination + "\\" + orderDownload.name + "." + orderDownload.delivery.archive_type; //Path.GetTempFileName();
+                                    if (File.Exists(fileToWriteTo))
+                                    {
+                                        File.Delete(fileToWriteTo);
+                                    }
+                                    using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
+                                    {
+                                        await streamToReadFrom.CopyToAsync(streamToWriteTo);
+
+                                        //MessageBox.Show("Download Completed Succesfully","Dowload Complete",MessageBoxButton.OK,MessageBoxImage.Information);
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+                   
                 }
                 return true;
             }

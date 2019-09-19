@@ -13,6 +13,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:viewmodel="clr-namespace:Planet.ViewModel"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{Binding Path=ui.Data_DocPaneViewModel}">
     <UserControl.Resources>
@@ -338,7 +339,7 @@
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Orientation="Horizontal" Visibility="{Binding PaginatorVisibility}">
-                            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}">
+                            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center"  Foreground="{DynamicResource Esri_TextControlBrush}">
                             <Run Text="Page" />
                             <Run Text="{Binding PageNumber}"/>
                             <Run Text="of"/>
@@ -509,17 +510,35 @@
                     <DataGrid ItemsSource="{Binding PastOrders}" Style="{DynamicResource Esri_DataGrid}" ScrollViewer.CanContentScroll="True" HeadersVisibility="Column" HorizontalAlignment="Stretch"  AutoGenerateColumns="False" >
                         <DataGrid.Resources>
                             <System:String x:Key="edit">Download</System:String>
+                            <viewmodel:uriValid x:Key="uriValid"/>
+                            <viewmodel:MultiDataValueConverter x:Key="multi"/>
                         </DataGrid.Resources>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Status" Binding="{Binding state}"/>
                             <DataGridTextColumn Header="Name" Binding="{Binding name}"/>
                             <DataGridTextColumn Header="Created" Binding="{Binding created_on}" SortDirection="Descending"/>
-                            <DataGridHyperlinkColumn Header="Download" TargetName="{Binding _links._self}" ContentBinding="{Binding Source={StaticResource edit}}" Binding="{Binding _links._self}">
+                            <!--<DataGridHyperlinkColumn Header="Download" TargetName="{Binding _links._self}" ContentBinding="{Binding Source={StaticResource edit}}" Binding="{Binding _links._self, Converter = {StaticResource uriValid}}"  >
                                 <DataGridHyperlinkColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
+                                    <Style TargetType="TextBlock" >
                                         <EventSetter Event="Hyperlink.Click" Handler="DG_Hyperlink_Click"/>
                                     </Style>
                                 </DataGridHyperlinkColumn.ElementStyle>
+                            </DataGridHyperlinkColumn>-->
+                            <DataGridHyperlinkColumn Header="Download2" >
+                                <DataGridHyperlinkColumn.ElementStyle>
+                                    <Style TargetType="TextBlock" >
+                                        <EventSetter Event="Hyperlink.Click" Handler="DG_Hyperlink_Click"/>
+                                    </Style>
+                                </DataGridHyperlinkColumn.ElementStyle>
+                                <DataGridHyperlinkColumn.Binding>
+                                    <MultiBinding>
+                                        <Binding Path="state"/>
+                                        <Binding Path="_links._self"/>
+                                        <MultiBinding.Converter>
+                                            <viewmodel:MultiDataValueConverter/>
+                                        </MultiBinding.Converter>
+                                    </MultiBinding>
+                                </DataGridHyperlinkColumn.Binding>
                             </DataGridHyperlinkColumn>
                             <DataGridTextColumn Header="ID" Binding="{Binding id}"/>
                         </DataGrid.Columns>

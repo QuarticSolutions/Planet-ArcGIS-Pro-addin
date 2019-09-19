@@ -31,6 +31,19 @@ namespace Planet.Model.Item_assets
         public Basic_Udm2 basic_udm2 { get; set; }
         public Udm udm { get; set; }
         public Udm2 udm2 { get; set; }
+        private string _selectedBundle;
+        public string selectedBundle
+        {
+            get { return _selectedBundle; }
+
+            set
+            {
+                _selectedBundle = value;
+                OnPropertyChanged("selectedBundle");
+
+            }
+        }
+    
         private bool _basic = false;
         public bool oBasic {
             get {return _basic; }

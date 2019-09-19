@@ -53,10 +53,10 @@
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type local_data:BaseItem}" ItemsSource="{Binding Items, Mode=OneWay}">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                <HierarchicalDataTemplate DataType="{x:Type local_data:BaseItem}" ItemsSource="{Binding Items, Mode=OneWay}" x:Name="treeHierarchicalDataTemplate"  >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Loaded="StackPanel_Loaded">
                         <Image Source="{Binding ItemIcon}" Stretch="None" Margin="0, 1" HorizontalAlignment="Center" />
-                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="3, 0" />
+                        <TextBlock x:Name="txtblkFolder"  Text="{Binding Name}" VerticalAlignment="Center" Margin="3, 0" />
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>

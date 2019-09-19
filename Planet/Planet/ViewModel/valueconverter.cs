@@ -44,4 +44,45 @@ namespace Planet.ViewModel
             throw new NotImplementedException();
         }
     }
+    [ValueConversion(typeof(string), typeof(string))]
+    public class uriValid : IValueConverter
+    {
+        object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value.ToString().Contains("http"))// == "download")
+            {
+                return value;
+            }
+            else
+            {
+                return "";
+            }
+
+        }
+
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class MultiDataValueConverter : IMultiValueConverter
+    {
+
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (values[0].ToString() == "success" && values[1].ToString().Contains("http"))
+            {
+                return values[1];
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

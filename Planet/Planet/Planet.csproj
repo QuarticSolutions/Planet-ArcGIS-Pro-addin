@@ -177,6 +177,7 @@
     <Compile Include="Model\demomodel.cs" />
     <Compile Include="Model\Item.cs" />
     <Compile Include="Model\Item_assets\AllOrders.cs" />
+    <Compile Include="Model\Item_assets\bundles.cs" />
     <Compile Include="Model\Item_assets\Order.cs" />
     <Compile Include="Model\Item_assets\OrderResponse.cs" />
     <Compile Include="Model\Item_assets\PSScene4Band.cs" />
