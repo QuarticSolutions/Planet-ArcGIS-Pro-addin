@@ -24,6 +24,8 @@ namespace Planet
     internal class AOI_Selected : Button
     {
         private SubscriptionToken _eventToken = null;
+
+
         protected override async void OnClick()
         {
             Polygon polygone = null;
@@ -67,6 +69,14 @@ namespace Planet
 
 
            });
+
+
+            if (polygone.PointCount > 500)
+            {
+                MessageBox.Show("Too Many Vertices. Please simplify the selected Polygon or choose another one.");
+                return;
+            }
+
             DockPane pane = FrameworkApplication.DockPaneManager.Find("Planet_Data_DocPane");
             Data_DocPaneViewModel data_DocPaneViewModel = (Data_DocPaneViewModel)pane;
             data_DocPaneViewModel.AOIGeometry = (Geometry)polygone;

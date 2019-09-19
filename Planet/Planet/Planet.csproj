@@ -166,7 +166,6 @@
     <Compile Include="Data\ItemsManager.cs" />
     <Compile Include="Data\QuadCount.cs" />
     <Compile Include="DownloadData.cs" />
-    <Compile Include="DownloadViewModel.cs" />
     <Compile Include="FolderSelector.xaml.cs">
       <DependentUpon>FolderSelector.xaml</DependentUpon>
     </Compile>

@@ -66,6 +66,7 @@ namespace Planet.ViewModel
                             if (lstLandsat8L1G == null)
                             {
                                 lstLandsat8L1G = new List<string>();
+                                lstLandsat8L1G.Add(" ");
                             }
                             lstLandsat8L1G.Add(item.BundleName);
                             break;
@@ -73,6 +74,7 @@ namespace Planet.ViewModel
                             if (lstPSScene4Band == null)
                             {
                                 lstPSScene4Band = new List<string>();
+                                lstPSScene4Band.Add(" ");
                             }
                             lstPSScene4Band.Add(item.BundleName);
                             break;
@@ -122,6 +124,7 @@ namespace Planet.ViewModel
                             if (lstSentinel2L1C == null)
                             {
                                 lstSentinel2L1C = new List<string>();
+                                lstSentinel2L1C.Add(" ");
                             }
                             lstSentinel2L1C.Add(item.BundleName);
                             break;
@@ -550,6 +553,10 @@ namespace Planet.ViewModel
             var combined = PSScene4Band.Concat(PSScene3Band).Concat(PSOrthoTile).Concat(REOrthoTile).Concat(REScene).Concat(SkySatScene).Concat(SkySatCollect).Concat(Landsat8L1G).Concat(Sentinel2L1C) ;
             foreach (PSScene4Band pSScene4Band in combined)
             {
+                if (pSScene4Band.selectedBundle == " ")
+                {
+                    break;
+                }
                 Tuple<string, string> tuple = Tuple.Create(pSScene4Band.properties.item_type, pSScene4Band.selectedBundle);
                 if (!selecttedproduct_bundles.Contains(pSScene4Band.selectedBundle))
                 {
@@ -679,12 +686,17 @@ namespace Planet.ViewModel
             order.delivery.archive_filename = _orderName + ".zip";
             order.delivery.archive_type = "zip";
 
-
+            if (order.products.Length == 0 )
+            {
+                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("No bundles selected. Please choose at least one bundle for one Item to download");
+                return;
+            }
             string json = JsonConvert.SerializeObject(order, new JsonSerializerSettings()
             {
                 NullValueHandling = NullValueHandling.Ignore
 
             });
+
             HttpClientHandler _handler = new HttpClientHandler()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate

@@ -15,7 +15,7 @@ using ArcGIS.Desktop.Framework.Contracts;
 using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
-
+using MessageBox = ArcGIS.Desktop.Framework.Dialogs.MessageBox;
 
 
 namespace Planet
@@ -39,6 +39,15 @@ namespace Planet
         /// <returns>A Task returning a Boolean indicating if the sketch complete event was successfully handled.</returns>
         protected override Task<bool> OnSketchCompleteAsync(Geometry geometry)
         {
+            if (geometry.GeometryType == GeometryType.Polygon)
+            {
+                Polygon polygon = (Polygon)geometry;
+                if (polygon.PointCount > 500)
+                {
+                    MessageBox.Show("Too Many Vertices. Please simplify your AOI");
+                    return base.OnSketchCompleteAsync(geometry);
+                }
+            }
             if (_graphic != null)
             {
                 _graphic.Dispose();
