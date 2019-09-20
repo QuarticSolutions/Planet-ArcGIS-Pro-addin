@@ -170,6 +170,7 @@
     <Compile Include="FolderSelector.xaml.cs">
       <DependentUpon>FolderSelector.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GalleryFilterBox.cs" />
     <Compile Include="GalleryNextButton.cs" />
     <Compile Include="GalleryPrevButton.cs" />
     <Compile Include="Moasic.cs" />

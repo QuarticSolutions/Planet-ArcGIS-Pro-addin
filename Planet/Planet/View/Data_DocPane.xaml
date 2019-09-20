@@ -73,7 +73,7 @@
                                     <Setter Property="TextElement.Foreground" TargetName="ContentSite" Value="{DynamicResource Esri_TextStyleDefaultBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsSelected" Value="False">
-                                    <Setter Property="TextElement.Foreground" TargetName="ContentSite" Value="{DynamicResource Esri_TextStyleDefaultBrush}"/>
+                                    <Setter Property="TextElement.Foreground" TargetName="ContentSite" Value="{DynamicResource Esri_TextStyleSubduedBrush}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -638,7 +638,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>-->
-                    <DataGrid ItemsSource="{Binding PastOrders}" Style="{DynamicResource Esri_DataGrid}" ScrollViewer.CanContentScroll="True" HeadersVisibility="Column" HorizontalAlignment="Stretch"  AutoGenerateColumns="False" >
+                    <DataGrid ItemsSource="{Binding PastOrders}" Style="{DynamicResource Esri_DataGrid}" ScrollViewer.CanContentScroll="True" HeadersVisibility="Column" HorizontalAlignment="Stretch"  AutoGenerateColumns="False" Margin="0,0,0,5" >
                         <DataGrid.Resources>
                             <System:String x:Key="edit">Download</System:String>
                         </DataGrid.Resources>
