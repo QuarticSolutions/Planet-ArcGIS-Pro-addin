@@ -60,6 +60,26 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <Style x:Key="SubTabItemStyle" TargetType="{x:Type TabItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TabItem}">
+                            <Border Background="Transparent" x:Name="Border" BorderThickness="0,0,0,2" BorderBrush="#00000000" CornerRadius="0" Padding="0,0,0,2" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <ContentPresenter x:Name="ContentSite" ContentSource="Header" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="BorderBrush" TargetName="Border" Value="{DynamicResource Esri_TextSelectionHighlightBrush}"/>
+                                    <Setter Property="TextElement.Foreground" TargetName="ContentSite" Value="{DynamicResource Esri_TextStyleDefaultBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="False">
+                                    <Setter Property="TextElement.Foreground" TargetName="ContentSite" Value="{DynamicResource Esri_TextStyleDefaultBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
             <Style TargetType="{x:Type DatePickerTextBox}">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -129,8 +149,8 @@
                 </TextBlock.ToolTip>
               </TextBlock>
             </DockPanel>-->
-        <TabControl x:Name="MainTabs" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}">
-            <TabItem Style="{DynamicResource MainTabItemStyle}" Header="Browse"  Padding="5,0,5,0">
+        <TabControl x:Name="MainTabs" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,0,0">
+            <TabItem Style="{DynamicResource MainTabItemStyle}" Header="Search"  Padding="5,0,5,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
@@ -139,28 +159,138 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <Grid Margin="5,0,0,5">
-                        <TextBlock Grid.Row="0" Text="Dates Aquired" Margin="0" Foreground="{DynamicResource Esri_TextControlBrush}" />
-                    </Grid>
-                    <Grid Grid.Row="1" Margin="5,0,5,5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <!--<Label VerticalAlignment="Center" Grid.Column="0" Content="From:" Margin="0,0,5,0" Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
-                        <DatePicker VerticalAlignment="Center" Grid.Column="1" Name="dtpDateFrom" SelectedDate="{Binding DateFrom}" Margin="0,0,5,0" Height="24" BorderBrush="{DynamicResource Esri_BorderBrush}" Background="{DynamicResource Esri_ControlBackgroundBrush}" Foreground="{DynamicResource Esri_TextControlBrush}"/>
-                        <Label VerticalAlignment="Center" Grid.Column="2" Content="to" Margin="0"/>
-                        <DatePicker VerticalAlignment="Center" Grid.Column="3" Name="dtpDateTo" SelectedDate="{Binding DateTo}" Margin="5,0,0,0" Height="24" BorderBrush="{DynamicResource Esri_BorderBrush}" Background="{DynamicResource Esri_ControlBackgroundBrush}" Foreground="{DynamicResource Esri_TextControlBrush}"/>
-                    </Grid>
+                    <TabControl Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}">
+                        <TabItem Header="Date Acquired" Background="{x:Null}"  Style="{DynamicResource SubTabItemStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <!--<RowDefinition Height="auto" />-->
+                                </Grid.RowDefinitions>
+                                <!--<Grid Margin="5,0,0,5" Grid.Row="0">
+                                    <TextBlock  Text="Dates Acquired" Margin="0" Foreground="{DynamicResource Esri_TextControlBrush}" />
+                                </Grid>-->
+                                <Grid Grid.Row="0" Margin="0,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <!--<Label VerticalAlignment="Center" Grid.Column="0" Content="From:" Margin="0,0,5,0" Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
+                                    <DatePicker VerticalAlignment="Center" Grid.Column="1" Name="dtpDateFrom" SelectedDate="{Binding DateFrom}" Margin="0,0,5,0" Height="24" BorderBrush="{DynamicResource Esri_BorderBrush}" Background="{DynamicResource Esri_ControlBackgroundBrush}" Foreground="{DynamicResource Esri_TextControlBrush}"/>
+                                    <Label VerticalAlignment="Center" Grid.Column="2" Content="to" Margin="0"/>
+                                    <DatePicker VerticalAlignment="Center" Grid.Column="3" Name="dtpDateTo" SelectedDate="{Binding DateTo}" Margin="5,0,0,0" Height="24" BorderBrush="{DynamicResource Esri_BorderBrush}" Background="{DynamicResource Esri_ControlBackgroundBrush}" Foreground="{DynamicResource Esri_TextControlBrush}"/>
+                                </Grid>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Product"  Style="{DynamicResource SubTabItemStyle}">
+                            <Grid Margin="0,5" VerticalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene3Band}" VerticalAlignment="Center" Height="22" >PSScene3Band</CheckBox>
+                                <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene4Band}" VerticalAlignment="Center" Height="22" >PSScene4Band</CheckBox>
+                                <CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSOrthoTile}" VerticalAlignment="Center" Height="22" >PSOrthoTile</CheckBox>
+                                <CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductREOrthoTile}" VerticalAlignment="Center" Height="22" >REOrthoTile</CheckBox>
+                                <CheckBox Grid.Row="1" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductREScene}" VerticalAlignment="Center" Height="22" >REScene</CheckBox>
+                                <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatScene}" VerticalAlignment="Center" Height="22" >SkySatScene</CheckBox>
+                                <CheckBox Grid.Row="0" Grid.Column="2" Padding ="5,0" IsChecked="{Binding ProductSkySatCollect}" VerticalAlignment="Center" Height="22" >SkySatCollect</CheckBox>
+                                <CheckBox Grid.Row="1" Grid.Column="2" Padding ="5,0" IsChecked="{Binding ProductLandsat8L1G}" VerticalAlignment="Center" Height="22" >Landsat8L1G</CheckBox>
+                                <CheckBox Grid.Row="2" Grid.Column="2" Padding ="5,0" IsChecked="{Binding ProductSentinel2L1C}" VerticalAlignment="Center" Height="22" >Sentinel2L1C</CheckBox>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Cloud Cover"  Style="{DynamicResource SubTabItemStyle}">
+                            <Grid VerticalAlignment="Center" Margin="0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="56*"/>
+                                    <ColumnDefinition Width="11*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Margin="0,0,4.2,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                <Run Text="{Binding CloudcoverLow}"/>
+                                <Run Text="-"/>
+                                <Run Text="{Binding CloudcoverHigh}"/>
+                                <Run Text="%"/>
+                                </TextBlock>
+                                <excd:RangeSlider Grid.Row="1" 
+                                    LowerValue="{Binding CloudcoverLow}" 
+                                    HigherValue="{Binding CloudcoverHigh}" 
+                                    Step="1"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    AutoToolTipPlacement="BottomRight"
+                                    AutoToolTipPrecision="1"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Background="Transparent"
+                                    Foreground="Transparent" 
+                                    Margin="0,5,0.2,0.2" 
+                                    Height="22"
+                                    TickPlacement="None"             
+                                    LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    RangeBackground="Transparent"
+                                    HigherRangeBackground="Transparent"
+                                    LowerRangeBackground="Transparent"
+                                    VerticalAlignment="Center" Grid.ColumnSpan="2">
+                                </excd:RangeSlider>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Area Cover"  Style="{DynamicResource SubTabItemStyle}">
+                            <Grid VerticalAlignment="Center" Margin="0,5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}">
+                                <Run Text="{Binding AreaCoverLow}"/>
+                                <Run Text="-"/>
+                                <Run Text="{Binding AreaCoverHigh}"/>
+                                <Run Text="%"/>
+                                </TextBlock>
+                                <excd:RangeSlider Grid.Row="1" 
+                                    LowerValue="{Binding AreaCoverLow}" 
+                                    HigherValue="{Binding AreaCoverHigh}" 
+                                    Step="1"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    AutoToolTipPlacement="BottomRight"
+                                    AutoToolTipPrecision="1"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Background="Transparent"
+                                    Foreground="Transparent" 
+                                    Margin="0,5,0,0" 
+                                    Height="22"
+                                    TickPlacement="None"             
+                                    LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    RangeBackground="Transparent"
+                                    HigherRangeBackground="Transparent"
+                                    LowerRangeBackground="Transparent"
+                                    VerticalAlignment="Center">
+                                </excd:RangeSlider>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+
                     <Grid Grid.Row="2" Margin="5,0,5,5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0" Width="auto" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="22" Content="Search" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center"/>
-                        <Button Grid.Column="1" Width="auto" Command="{Binding OrderCommand}" Content="Order"  IsEnabled="{Binding HasSelectedAssets}" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center"  />
+                        <Button Grid.Column="1" Width="auto" Command="{Binding OrderCommand}" Content="Order"  IsEnabled="{Binding HasSelectedAssets}" Style="{DynamicResource Esri_Button}" Margin="5,0,0,0" VerticalAlignment="Center"  />
                         <!--<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="False">
                             <Label Content="Page Size:" Margin="5,0,0,0" VerticalAlignment="Center" />
                             <ComboBox Width="48" Margin="5,0,0,0" VerticalAlignment="Center" SelectedIndex="0" IsEditable="True" >
@@ -217,11 +347,11 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                    <Border Background="#7F000000" BorderThickness="0" CornerRadius="3" Padding="3,2" Margin="5,2,2,2" VerticalAlignment="Center">
+                                    <Border BorderThickness="0" BorderBrush="{DynamicResource Esri_TextStyleDefaultBrush}" CornerRadius="3" Padding="2" Margin="5,2,2,2" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding Path=stripCount}" Foreground="{DynamicResource Esri_TextStyleDefaultBrush}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" >
                                         </TextBlock>
                                     </Border>
-                                    <Border Background="#7F000000" BorderThickness="0" CornerRadius="3" Padding="3,2" Margin="0,2,2,2" VerticalAlignment="Center">
+                                    <Border BorderThickness="0" BorderBrush="{DynamicResource Esri_TextStyleDefaultBrush}" CornerRadius="3" Padding="2" Margin="0,2,2,2" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding Path=imageCount}" Foreground="{DynamicResource Esri_TextStyleDefaultBrush}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" >
                                         </TextBlock>
                                     </Border>
@@ -262,7 +392,7 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                    <Border Background="#7F000000" BorderThickness="0" CornerRadius="3" Padding="3,2" Margin="5,2,2,2" VerticalAlignment="Center">
+                                    <Border BorderThickness="0" BorderBrush="{DynamicResource Esri_TextStyleDefaultBrush}" CornerRadius="3" Padding="2" Margin="5,2,2,2" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding Path=imageCount}" Foreground="{DynamicResource Esri_TextStyleDefaultBrush}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" >
                                         </TextBlock>
                                     </Border>
@@ -352,7 +482,7 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Filter" Style="{DynamicResource MainTabItemStyle}" Padding="5,0,0,0">
+            <!--<TabItem Header="Filter" Style="{DynamicResource MainTabItemStyle}" Padding="5,0,0,0">
 
                 <Grid>
                     <Grid.RowDefinitions>
@@ -464,7 +594,8 @@
                             </excd:RangeSlider>
                         </Grid>
                     </Expander>
-                    <!--<Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="4" Header="Ground sample distance" IsExpanded="False">
+                    -->
+            <!--<Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="4" Header="Ground sample distance" IsExpanded="False">
                     </Expander>
                     <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="5" Header="Off-nadir angle" IsExpanded="False">
                     </Expander>
@@ -476,6 +607,7 @@
                     </Expander>
                     <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="9" Header="Access Filter" IsExpanded="False">
                     </Expander>-->
+            <!--
 
                     <Grid Grid.Row="10" VerticalAlignment="Bottom" Margin="5">
                         <StackPanel Orientation="Horizontal">
@@ -487,10 +619,10 @@
                 </Grid>
 
 
-            </TabItem>
-            
-            <TabItem Header="Orders" Style="{DynamicResource LastTabItemStyle}" Padding="5,0,0,0" >
-                <Grid>
+            </TabItem>-->
+
+            <TabItem Header="Orders" Style="{DynamicResource LastTabItemStyle}" Padding="5,0" >
+                <Grid Margin="5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -524,10 +656,10 @@
                             <DataGridTextColumn Header="ID" Binding="{Binding id}"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Button  Grid.Row="2" Content="Refresh" Command="{Binding ViewOrderCommand}" Style="{DynamicResource Esri_Button}"/>
+                    <Button  Grid.Row="2" Content="Refresh" Command="{Binding ViewOrderCommand}" Style="{DynamicResource Esri_Button}" Margin="0,5"/>
                 </Grid>
             </TabItem>
-            
+
         </TabControl>
     </Grid>
 </UserControl>

@@ -215,6 +215,31 @@ namespace Planet
         }
     }
 
+    public class PlanetGalleryChangedEventArgs : EventBase
+    {
+
+        /// <summary>
+        /// Gets the old name
+        /// </summary>
+        public string OldPage { get; private set; }
+
+        /// <summary>
+        /// Gets the new name
+        /// </summary>
+        public string NewPage { get; private set; }
+
+        /// <summary>
+        /// Constructor. Create a name changed event passing in the new and old names
+        /// </summary>
+        /// <param name="oldName">The old name</param>
+        /// <param name="newName">The new name</param>
+        public PlanetGalleryChangedEventArgs(string oldPage, string newPage)
+        {
+            OldPage = oldPage;
+            NewPage = newPage;
+        }
+    }
+
     /// <summary>
     /// A custom CompositePresentationEvent to be published when we change the api key
     /// </summary>
@@ -257,6 +282,48 @@ namespace Planet
         internal static void Publish(APIKeyChangedEventArgs payload)
         {
             FrameworkApplication.EventAggregator.GetEvent<APIKeyChangedEvent>().Broadcast(payload);
+        }
+    }
+
+    public class PlanetGalleryChangedEvent : CompositePresentationEvent<PlanetGalleryChangedEventArgs>
+    {
+
+        /// <summary>
+        /// Allow subscribers to register for our custom event
+        /// </summary>
+        /// <param name="action">The callback which will be used to notify the subscriber</param>
+        /// <param name="keepSubscriberReferenceAlive">Set to true to retain a strong reference</param>
+        /// <returns><see cref="ArcGIS.Core.Events.SubscriptionToken"/></returns>
+        public static SubscriptionToken Subscribe(Action<PlanetGalleryChangedEventArgs> action, bool keepSubscriberReferenceAlive = false)
+        {
+            return FrameworkApplication.EventAggregator.GetEvent<PlanetGalleryChangedEvent>()
+                .Register(action, keepSubscriberReferenceAlive);
+        }
+
+        /// <summary>
+        /// Allow subscribers to unregister from our custom event
+        /// </summary>
+        /// <param name="subscriber">The action that will be unsubscribed</param>
+        public static void Unsubscribe(Action<PlanetGalleryChangedEventArgs> subscriber)
+        {
+            FrameworkApplication.EventAggregator.GetEvent<PlanetGalleryChangedEvent>().Unregister(subscriber);
+        }
+        /// <summary>
+        /// Allow subscribers to unregister from our custom event
+        /// </summary>
+        /// <param name="token">The token that will be used to find the subscriber to unsubscribe</param>
+        public static void Unsubscribe(SubscriptionToken token)
+        {
+            FrameworkApplication.EventAggregator.GetEvent<PlanetGalleryChangedEvent>().Unregister(token);
+        }
+
+        /// <summary>
+        /// Event owner calls publish to raise the event and notify subscribers
+        /// </summary>
+        /// <param name="payload">The associated event information</param>
+        internal static void Publish(PlanetGalleryChangedEventArgs payload)
+        {
+            FrameworkApplication.EventAggregator.GetEvent<PlanetGalleryChangedEvent>().Broadcast(payload);
         }
     }
 

@@ -28,6 +28,27 @@ namespace Planet
     {
         private bool _isInitialized;
 
+        private List<Mosaic> _Items;
+        public List<Mosaic> Items
+        {
+            get
+            {
+                if (_Items == null)
+                {
+                    _Items = new List<Mosaic>();
+                }
+                return _Items;
+            }
+            set
+            {
+                _Items = value;
+            }
+        }
+
+        private int PageSize = 10;
+        private int PageNumber = 0;
+        private int TotalPages = 0;
+
         /// <summary>
         /// Initial load but also
         /// listen for changes to the api key value and reload the gallery if detected
@@ -41,7 +62,20 @@ namespace Planet
                 _isInitialized = false;
                 Initialize();
             });
-            MapViewCameraChangedEvent.Subscribe(OnCameraChanged);
+
+            PlanetGalleryChangedEvent.Subscribe((args) =>
+            {
+                if (args.NewPage == "next")
+                {
+                    SetNextPage();
+                }
+                if (args.NewPage == "prev")
+                {
+                    SetPrevPage();
+                }
+            });
+
+            //MapViewCameraChangedEvent.Subscribe(OnCameraChanged);
             Initialize();
         }
 
@@ -57,6 +91,37 @@ namespace Planet
                     //    SetThumbnail(item);
                     //}
                 }
+            }
+        }
+
+        public void SetNextPage()
+        {
+            if (PageNumber != TotalPages)
+            {
+                PageNumber = PageNumber + 1;
+                var currentItems = Items.Skip((PageNumber - 1) * PageSize).Take(PageSize);
+                Clear();
+                foreach (var dataItem in currentItems)
+                {
+                    Add(dataItem);
+                }
+            }
+        }
+
+        public void SetPrevPage()
+        {
+            if (PageNumber != 1)
+            {
+                PageNumber = PageNumber - 1;
+                var currentItems = Items.Skip((PageNumber - 1) * PageSize).Take(PageSize);
+                Clear();
+                foreach (var dataItem in currentItems)
+                {
+                    Add(dataItem);
+                }
+            } else
+            {
+                
             }
         }
 
@@ -80,12 +145,19 @@ namespace Planet
             {
                 try
                 {
-                    var lstWebmapItems = await GetMosicsAsync2(ResultCallBack);
-                    if (lstWebmapItems.Count > 0)
+                    Items = await GetMosicsAsync2(ResultCallBack);
+                    PageNumber = 0;
+                    TotalPages = 0;
+                    if (Items.Count > 0)
                     {
                         this.Clear();
-                        foreach (var dataItem in lstWebmapItems)
+                        TotalPages = (Items.Count + PageSize - 1) / PageSize;
+                        var currentItems = Items.Take(PageSize);
+                        foreach (var dataItem in currentItems)
+                        {
                             Add(dataItem);
+                        }
+                        PageNumber = 1;
                         _isInitialized = true;
                         FrameworkApplication.State.Activate("planet_state_connection");
                     }
@@ -118,6 +190,7 @@ namespace Planet
         private static async Task<List<Mosaic>>GetMosicsAsync2(Action<Mosaics> callBack = null)
         {
             var lstMosaics = new List<Mosaic>();
+
             HttpClient httpClient = new HttpClient();
             //httpClient.BaseAddress = new Uri("https://api.planet.com/basemaps/v1/mosaics?api_key=" + Module1.Current.API_KEY.API_KEY_Value);
             var nextUrl = "https://api.planet.com/basemaps/v1/mosaics?api_key=" + Module1.Current.API_KEY.API_KEY_Value;
@@ -143,12 +216,12 @@ namespace Planet
                                 TilePointConvert tilePointConvert = new TilePointConvert();
                                 foreach (Mosaic item in result.mosaics)
                                 {
-                                    //MapPoint sw = MapPointBuilder.CreateMapPoint(item.bbox[0], item.bbox[1], MapView.Active.Extent.SpatialReference);
-                                    //MapPoint ne = MapPointBuilder.CreateMapPoint(item.bbox[2], item.bbox[3], MapView.Active.Extent.SpatialReference);
-                                    MapPoint sw = MapPointBuilder.CreateMapPoint(extent.XMin, extent.YMin, extent.SpatialReference);
-                                    sw = GeometryEngine.Instance.Project(sw, SpatialReferences.WGS84) as MapPoint;
-                                    MapPoint ne = MapPointBuilder.CreateMapPoint(extent.XMax, extent.YMax, SpatialReferences.WGS84);
-                                    ne = GeometryEngine.Instance.Project(ne, SpatialReferences.WGS84) as MapPoint;
+                                    MapPoint sw = MapPointBuilder.CreateMapPoint(item.bbox[0], item.bbox[1], MapView.Active.Extent.SpatialReference);
+                                    MapPoint ne = MapPointBuilder.CreateMapPoint(item.bbox[2], item.bbox[3], MapView.Active.Extent.SpatialReference);
+                                    //MapPoint sw = MapPointBuilder.CreateMapPoint(extent.XMin, extent.YMin, extent.SpatialReference);
+                                    //sw = GeometryEngine.Instance.Project(sw, SpatialReferences.WGS84) as MapPoint;
+                                    //MapPoint ne = MapPointBuilder.CreateMapPoint(extent.XMax, extent.YMax, extent.SpatialReference);
+                                    //ne = GeometryEngine.Instance.Project(ne, SpatialReferences.WGS84) as MapPoint;
 
                                     IList<MapPoint> mapPoints = new List<MapPoint>();
                                     mapPoints.Add(sw);
@@ -159,11 +232,11 @@ namespace Planet
                                     {
                                         z = z * -1;
                                     }
-                                    //double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
-                                    //double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
-                                    var centerProjected = GeometryEngine.Instance.Project(extent.Center, SpatialReferences.WGS84) as MapPoint;
-                                    double centerlong = centerProjected.X;
-                                    double centerlat = centerProjected.Y;
+                                    double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
+                                    double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
+                                    //var centerProjected = GeometryEngine.Instance.Project(extent.Center, SpatialReferences.WGS84) as MapPoint;
+                                    //double centerlong = centerProjected.X;
+                                    //double centerlat = centerProjected.Y;
                                     //z=4;
                                     PointF point = tilePointConvert.WorldToTilePos(centerlong, centerlat, z);
                                     //item.Thumbnail = item._links.tiles.Replace("{x}", x).Replace("{y}", y).Replace("{z}", "0");

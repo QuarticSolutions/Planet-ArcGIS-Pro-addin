@@ -22,6 +22,9 @@ namespace Planet
     {
         protected override void OnClick()
         {
+            PlanetGalleryChangedEvent.Publish(new PlanetGalleryChangedEventArgs("next", "prev"));
         }
+
+
     }
 }
