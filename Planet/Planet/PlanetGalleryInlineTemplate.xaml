@@ -12,13 +12,14 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <!--Source="pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"-->
-            <StackPanel Grid.Row="0" Orientation="Vertical" Background="#7F000000">
+            <StackPanel Grid.Row="0" Orientation="Vertical" Background="#dbd6d6">
                 <Image StretchDirection="DownOnly" Stretch="Fill" VerticalAlignment="Bottom" HorizontalAlignment="Center">
                     <Image.Source>
                         <BitmapImage UriCachePolicy="CacheIfAvailable" UriSource="{Binding Path=Thumbnail}" />
+                        <!--<BitmapImage UriCachePolicy="NoCacheNoStore" UriSource="{Binding Path=Thumbnail}" />-->
                     </Image.Source>
                     <Image.Effect>
-                        <DropShadowEffect Color="{DynamicResource Esri_Color_Gray145}" Opacity="0.4" />
+                        <DropShadowEffect Color="{DynamicResource Esri_Color_Gray145}" Opacity="0.8" />
                     </Image.Effect>
                     <!--<Image.Style>
                     <Style TargetType="{x:Type  Image}">

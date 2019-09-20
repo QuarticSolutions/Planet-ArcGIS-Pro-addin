@@ -1,4 +1,5 @@
-﻿using ArcGIS.Desktop.Mapping;
+﻿using ArcGIS.Desktop.Framework;
+using ArcGIS.Desktop.Mapping;
 using Newtonsoft.Json;
 using Planet.Model.Item_assets;
 using System;
@@ -66,8 +67,20 @@ namespace Planet
                 string savelocation = folderSelector.SelectedPath;
                 //await LoadImage(link.NavigateUri.AbsoluteUri, savelocation );
                await LoadImage(order2._links._self, savelocation);
+                // a project warning notification - disappears when the project is closed
+                var notification = new NotificationItem("Planet_Download_Complete_Notification_" + order2.id, false,
+                              "The download of Order: " + order2.name + " is complete" + Environment.NewLine + "the faile is saved to: " + savelocation , NotificationType.Information);
+                NotificationManager.AddNotification(notification);
+                FrameworkApplication.AddNotification(new Notification()
+                {
+                    Title = "Downloading Finished",
+                    Message = String.Format("The download of Order: {0} is complete", order2.name),
+                    ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
+
+                });
+
             }
-                
+
         }
         public async static Task<bool> LoadImage(string uri, string destination)
         {

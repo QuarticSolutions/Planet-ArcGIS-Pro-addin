@@ -160,25 +160,25 @@ namespace Planet.ViewModel
                 _selectedAssets = value;
                 OnPropertyChanged("SelectAssets");
                 doUpdateItems();
-                PSScene3BandListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                PSScene3BandListView.Filter = new Predicate<object>(FilterPSScene3Band);
-                PSScene3BandListView.Refresh();
-                PSScene4BandListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                PSScene4BandListView.Filter = new Predicate<object>(FilterPSScene4Band);
-                SkySatSceneListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                SkySatSceneListView.Filter = new Predicate<object>(FilterMessageList);
-                PSOrthoTileListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                PSOrthoTileListView.Filter = new Predicate<object>(FilterMessageList2);
-                SkySatCollectListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                SkySatCollectListView.Filter = new Predicate<object>(FilterSkySatCollect);
-                RESceneListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                RESceneListView.Filter = new Predicate<object>(FilterREScene);
-                REOrthoTileListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                REOrthoTileListView.Filter = new Predicate<object>(FilterREOrthoTile);
-                Landsat8L1GListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                Landsat8L1GListView.Filter = new Predicate<object>(FilterLandsat8L1G);
-                Sentinel2L1CListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                Sentinel2L1CListView.Filter = new Predicate<object>(FilterSentinel2L1C);
+                //PSScene3BandListView = CollectionViewSource.GetDefaultView(SelectAssets);
+                //PSScene3BandListView.Filter = new Predicate<object>(FilterPSScene3Band);
+                //PSScene3BandListView.Refresh();
+                //PSScene4BandListView = CollectionViewSource.GetDefaultView(SelectAssets);
+                //PSScene4BandListView.Filter = new Predicate<object>(FilterPSScene4Band);
+                //SkySatSceneListView = CollectionViewSource.GetDefaultView(SelectAssets);
+                //SkySatSceneListView.Filter = new Predicate<object>(FilterMessageList);
+                //PSOrthoTileListView = CollectionViewSource.GetDefaultView(SelectAssets);
+                //PSOrthoTileListView.Filter = new Predicate<object>(FilterMessageList2);
+                //SkySatCollectListView = CollectionViewSource.GetDefaultView(SelectAssets);
+                //SkySatCollectListView.Filter = new Predicate<object>(FilterSkySatCollect);
+                //RESceneListView = CollectionViewSource.GetDefaultView(SelectAssets);
+                //RESceneListView.Filter = new Predicate<object>(FilterREScene);
+                //REOrthoTileListView = CollectionViewSource.GetDefaultView(SelectAssets);
+                //REOrthoTileListView.Filter = new Predicate<object>(FilterREOrthoTile);
+                //Landsat8L1GListView = CollectionViewSource.GetDefaultView(SelectAssets);
+                //Landsat8L1GListView.Filter = new Predicate<object>(FilterLandsat8L1G);
+                //Sentinel2L1CListView = CollectionViewSource.GetDefaultView(SelectAssets);
+                //Sentinel2L1CListView.Filter = new Predicate<object>(FilterSentinel2L1C);
 
             }
         }
