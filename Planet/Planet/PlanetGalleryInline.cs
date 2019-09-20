@@ -194,7 +194,8 @@ namespace Planet
             {
                 try
                 {
-                    Items = await GetMosicsAsync2(ResultCallBack);
+                    //Items = await GetMosicsAsync2(ResultCallBack);
+                    Items = await QueuedTask.Run(() => GetMosicsAsync2(ResultCallBack));
                     ItemsClean = Items;
                     PageNumber = 0;
                     TotalPages = 0;
@@ -254,71 +255,82 @@ namespace Planet
                         //response.EnsureSuccessStatusCode();
                         if (response.IsSuccessStatusCode)
                         {
-                            string responseBody = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<Mosaics>(responseBody);
-                            if (result != null)
+                            try
                             {
-                                string x = "0";
-                                string y = "0";
-                                int z = 7;
-
-                                var extent = MapView.Active.Extent;
-                                TilePointConvert tilePointConvert = new TilePointConvert();
-                                foreach (Mosaic item in result.mosaics)
+                                string responseBody = await response.Content.ReadAsStringAsync();
+                                var result = JsonConvert.DeserializeObject<Mosaics>(responseBody);
+                                if (result != null)
                                 {
-                                    MapPoint sw = MapPointBuilder.CreateMapPoint(item.bbox[0], item.bbox[1], MapView.Active.Extent.SpatialReference);
-                                    MapPoint ne = MapPointBuilder.CreateMapPoint(item.bbox[2], item.bbox[3], MapView.Active.Extent.SpatialReference);
-                                    //MapPoint sw = MapPointBuilder.CreateMapPoint(extent.XMin, extent.YMin, extent.SpatialReference);
-                                    //sw = GeometryEngine.Instance.Project(sw, SpatialReferences.WGS84) as MapPoint;
-                                    //MapPoint ne = MapPointBuilder.CreateMapPoint(extent.XMax, extent.YMax, extent.SpatialReference);
-                                    //ne = GeometryEngine.Instance.Project(ne, SpatialReferences.WGS84) as MapPoint;
+                                    string x = "0";
+                                    string y = "0";
+                                    int z = 7;
 
-                                    IList<MapPoint> mapPoints = new List<MapPoint>();
-                                    mapPoints.Add(sw);
-                                    mapPoints.Add(ne);
-                                    double zz = TilePointConvert.BestMapView(mapPoints, 100, 56, 2);
-                                    double[] bounds = { item.bbox[0], item.bbox[1], item.bbox[2], item.bbox[3] };
+                                    //var extent = MapView.Active.Extent;
+                                    TilePointConvert tilePointConvert = new TilePointConvert();
+                                    foreach (Mosaic item in result.mosaics)
+                                    {
+                                        MapPoint sw = MapPointBuilder.CreateMapPoint(item.bbox[0], item.bbox[1], SpatialReferences.WGS84);
+                                        MapPoint ne = MapPointBuilder.CreateMapPoint(item.bbox[2], item.bbox[3], SpatialReferences.WGS84);
+                                        //MapPoint sw = MapPointBuilder.CreateMapPoint(item.bbox[0], item.bbox[1], MapView.Active.Extent.SpatialReference);
+                                        //MapPoint ne = MapPointBuilder.CreateMapPoint(item.bbox[2], item.bbox[3], MapView.Active.Extent.SpatialReference);
+                                        //MapPoint sw = MapPointBuilder.CreateMapPoint(extent.XMin, extent.YMin, extent.SpatialReference);
+                                        //sw = GeometryEngine.Instance.Project(sw, SpatialReferences.WGS84) as MapPoint;
+                                        //MapPoint ne = MapPointBuilder.CreateMapPoint(extent.XMax, extent.YMax, extent.SpatialReference);
+                                        //ne = GeometryEngine.Instance.Project(ne, SpatialReferences.WGS84) as MapPoint;
 
-                                    double centerlat2;
-                                    double centerlong2;
-                                    double z2;
-                                    TilePointConvert.BestMapView2(bounds, 90, 46, 2, 256, out centerlat2, out centerlong2, out z2);
-                                    z = (int)Math.Floor(zz);
-                                    if (z < 0)
-                                    {
-                                        z = z * -1;
-                                    }
-                                    double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
-                                    double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
-                                    //var centerProjected = GeometryEngine.Instance.Project(extent.Center, SpatialReferences.WGS84) as MapPoint;
-                                    //double centerlong = centerProjected.X;
-                                    //double centerlat = centerProjected.Y;
-                                    //z=4;
-                                    PointF point = tilePointConvert.WorldToTilePos(centerlong, centerlat, z);
-                                    double[] pos = { centerlong2, centerlat2 };
-                                    z2 = Convert.ToInt16(z2);
-                                    if (z2 < 0)
-                                    {
-                                        z2 = 0;
-                                    }
-                                    else if (z2 > 0)
-                                    {
-                                        z2 = z2 + 2;
-                                    }
-                                    tilePointConvert.WorldToTilePos2(pos, Convert.ToInt32(z2), 256, out int tileX, out int tileY);
+                                        IList<MapPoint> mapPoints = new List<MapPoint>();
+                                        mapPoints.Add(sw);
+                                        mapPoints.Add(ne);
+                                        double zz = TilePointConvert.BestMapView(mapPoints, 100, 56, 2);
+                                        double[] bounds = { item.bbox[0], item.bbox[1], item.bbox[2], item.bbox[3] };
 
-                                    //item.Thumbnail = item._links.tiles.Replace("{x}", x).Replace("{y}", y).Replace("{z}", "0");
-                                    //item.Thumbnail = item._links.tiles.Replace("{x}", Math.Floor(point.X).ToString()).Replace("{y}", Math.Floor(point.Y).ToString()).Replace("{z}", z.ToString());
-                                    item.Thumbnail = item._links.tiles.Replace("{x}", tileX.ToString()).Replace("{y}", tileY.ToString()).Replace("{z}", z2.ToString());
-                                    lstMosaics.Add(item);
+                                        double centerlat2;
+                                        double centerlong2;
+                                        double z2;
+                                        TilePointConvert.BestMapView2(bounds, 90, 46, 2, 256, out centerlat2, out centerlong2, out z2);
+                                        z = (int)Math.Floor(zz);
+                                        if (z < 0)
+                                        {
+                                            z = z * -1;
+                                        }
+                                        double centerlong = (item.bbox[0] + item.bbox[2]) / 2;
+                                        double centerlat = (item.bbox[1] + item.bbox[3]) / 2;
+                                        //var centerProjected = GeometryEngine.Instance.Project(extent.Center, SpatialReferences.WGS84) as MapPoint;
+                                        //double centerlong = centerProjected.X;
+                                        //double centerlat = centerProjected.Y;
+                                        //z=4;
+                                        PointF point = tilePointConvert.WorldToTilePos(centerlong, centerlat, z);
+                                        double[] pos = { centerlong2, centerlat2 };
+                                        z2 = Convert.ToInt16(z2);
+                                        if (z2 < 0)
+                                        {
+                                            z2 = 0;
+                                        }
+                                        else if (z2 > 0)
+                                        {
+                                            z2 = z2 + 2;
+                                        }
+                                        tilePointConvert.WorldToTilePos2(pos, Convert.ToInt32(z2), 256, out int tileX, out int tileY);
+
+                                        //item.Thumbnail = item._links.tiles.Replace("{x}", x).Replace("{y}", y).Replace("{z}", "0");
+                                        //item.Thumbnail = item._links.tiles.Replace("{x}", Math.Floor(point.X).ToString()).Replace("{y}", Math.Floor(point.Y).ToString()).Replace("{z}", z.ToString());
+                                        item.Thumbnail = item._links.tiles.Replace("{x}", tileX.ToString()).Replace("{y}", tileY.ToString()).Replace("{z}", z2.ToString());
+                                        lstMosaics.Add(item);
+                                    }
+
+                                    // Run the callback method, passing the current page of data from the API.
+                                    //callBack?.Invoke(result);
+
+                                    // Get the URL for the next page
+                                    nextUrl = result._links._next ?? string.Empty;
                                 }
-
-                                // Run the callback method, passing the current page of data from the API.
-                                //callBack?.Invoke(result);
-
-                                // Get the URL for the next page
-                                nextUrl = result._links._next ?? string.Empty;
                             }
+                            catch (Exception sd)
+                            {
+                                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Error getting the basemaps" + Environment.NewLine + sd.Message,"Basemap error",MessageBoxButton.OK,MessageBoxImage.Error);
+                                return;
+                            }
+                            
                         }
                         else
                         {
@@ -549,7 +561,7 @@ namespace Planet
                     minLon = locations[i].Y;
                 }
             }
-            MapPoint center = MapPointBuilder.CreateMapPoint((maxLat + minLat) / 2, (maxLon + minLon) / 2, MapView.Active.Extent.SpatialReference);
+            MapPoint center = MapPointBuilder.CreateMapPoint((maxLat + minLat) / 2, (maxLon + minLon) / 2, SpatialReferences.WGS84);
 
             //center.X = (maxLat + minLat) / 2;
             //center.Y = (maxLon + minLon) / 2;
