@@ -44,6 +44,8 @@
           <!-- host controls within groups -->
           <gallery refID="Planet_PlanetLogin" inline="false" size="large" />
           <gallery refID="Planet_PlanetGalleryInline" inline="true" size="large" />
+          <button refID="Planet_GalleryNextButton" size="middle"/>
+          <button refID="Planet_GalleryPrevButton" size="middle"/>
           <!--<button refID="Planet_LoginDetails_OpenButton" size="large" />-->
           <tool refID="Planet_DownloadData" size="large" />
           <!--<button refID="Planet_TrialWarning" size="large" />-->
@@ -88,19 +90,17 @@
         <button id="Planet_OrderWindow" caption="OrderWindow" className="ShowOrderWindow" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
           <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
         </button>
-        <button id="Planet_GalleryNextButton" caption="Next Page" className="GalleryNextButton" loadOnClick="true" smallImage="Images\GenericButtonBlue16.png" largeImage="Images\GenericButtonBlue32.png">
-          <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
+        <button id="Planet_GalleryNextButton" caption="Next Page" condition="planet_condition_isconnected" className="GalleryNextButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericBlueRightArrowLongTail16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericBlueRightArrowLongTail32.png">
+          <tooltip heading="Next Page">Show next 10 basemaps<disabledText /></tooltip>
         </button>
-        <button id="Planet_GalleryPrevButton" caption="Previous Page" className="GalleryPrevButton" loadOnClick="true" smallImage="Images\GenericButtonBlue16.png" largeImage="Images\GenericButtonBlue32.png">
-          <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
+        <button id="Planet_GalleryPrevButton" caption="Previous Page" condition="planet_condition_isconnected" className="GalleryPrevButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericBlueLeftArrowLongTail16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericBlueLeftArrowLongTail32.png">
+          <tooltip heading="Previous Page">Show previous 10 basemaps<disabledText /></tooltip>
         </button>
       </controls>
       <galleries>
-        <gallery  id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Basemap Mosaics" className="PlanetGalleryInline" itemsInRow="4" dataTemplateFile="pack://application:,,,/Planet;component//PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
+        <gallery  id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Basemap Mosaics" className="PlanetGalleryInline" itemsInRow="5" dataTemplateFile="pack://application:,,,/Planet;component//PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
           <tooltip heading="Planet Rasters">Planet Rasters
             <disabledText>You must Enter a valid api key first</disabledText></tooltip>
-          <button refID="Planet_GalleryNextButton"/>
-          <button refID="Planet_GalleryPrevButton"/>
         </gallery>
         <gallery id="Planet_PlanetLogin" caption="Planet Login" className="PlanetLogin" itemsInRow="1" dataTemplateFile="pack://application:,,,/Planet;component//PlanetLoginTemplate.xaml" templateID="PlanetLoginItemTemplate" resizable="false" largeImage="Images\Clouddata.png">
           <tooltip heading="Login">
