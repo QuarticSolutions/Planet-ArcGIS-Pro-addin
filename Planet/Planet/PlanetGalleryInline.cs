@@ -45,6 +45,23 @@ namespace Planet
             }
         }
 
+        private List<Mosaic> _ItemsClean;
+        public List<Mosaic> ItemsClean
+        {
+            get
+            {
+                if (_ItemsClean == null)
+                {
+                    _ItemsClean = new List<Mosaic>();
+                }
+                return _ItemsClean;
+            }
+            set
+            {
+                _ItemsClean = value;
+            }
+        }
+
         private int PageSize = 10;
         private int PageNumber = 0;
         private int TotalPages = 0;
@@ -75,6 +92,11 @@ namespace Planet
                 }
             });
 
+            PlanetGalleryFilterEvent.Subscribe((args) =>
+            {
+                FilterItems(args.FilterText);
+            });
+
             //MapViewCameraChangedEvent.Subscribe(OnCameraChanged);
             Initialize();
         }
@@ -94,7 +116,7 @@ namespace Planet
             }
         }
 
-        public void SetNextPage()
+        private void SetNextPage()
         {
             if (PageNumber != TotalPages)
             {
@@ -108,7 +130,7 @@ namespace Planet
             }
         }
 
-        public void SetPrevPage()
+        private void SetPrevPage()
         {
             if (PageNumber != 1)
             {
@@ -123,6 +145,33 @@ namespace Planet
             {
                 
             }
+        }
+
+        private void FilterItems(string text)
+        {
+            List<Mosaic> filteredItems = new List<Mosaic>();
+            if (text.Trim().Length > 0)
+            {
+                filteredItems = ItemsClean.Where(i => i.name.Contains(text)).ToList();
+            } else
+            {
+                filteredItems = ItemsClean;
+            }
+            PageNumber = 0;
+            TotalPages = 0;
+            if (filteredItems.Count > 0)
+            {
+                Items = filteredItems;
+                Clear();
+                TotalPages = (Items.Count + PageSize - 1) / PageSize;
+                var currentItems = Items.Take(PageSize);
+                foreach (var dataItem in currentItems)
+                {
+                    Add(dataItem);
+                }
+                PageNumber = 1;
+            }
+
         }
 
         /// <summary>
@@ -146,6 +195,7 @@ namespace Planet
                 try
                 {
                     Items = await GetMosicsAsync2(ResultCallBack);
+                    ItemsClean = Items;
                     PageNumber = 0;
                     TotalPages = 0;
                     if (Items.Count > 0)
@@ -362,7 +412,14 @@ namespace Planet
                 await QueuedTask.Run(() =>
                 {
                     var extent = MapView.Active.Extent;
-                    BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, MapView.Active.Map, 0, mosaic.name);
+                    string layerName = "Planet Basemaps";
+                    GroupLayer groupLayer = MapView.Active.Map.FindLayers(layerName).FirstOrDefault() as GroupLayer;
+                    if (groupLayer == null)
+                    {
+                        int index = MapView.Active.Map.Layers.Count;
+                        groupLayer = LayerFactory.Instance.CreateGroupLayer(MapView.Active.Map, index, layerName);
+                    }
+                    BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, groupLayer, 0, mosaic.name);
                     MapView.Active.ZoomTo(extent, TimeSpan.Zero);
                 });
 

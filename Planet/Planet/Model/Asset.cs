@@ -25,6 +25,7 @@ namespace Planet.Model
 {
     class Asset : Feature, INotifyPropertyChanged
     {
+        public static string RootGroup = "Planet Daily Imagery";
         public Strip parent { get; set; }
         private string _image;
         public string image
@@ -187,7 +188,7 @@ namespace Planet.Model
         private GroupLayer GetGroupLayer()
         {
             //check strip, then check item, then check date, then check root
-            string rootGroup = "Planet API";
+            string rootGroup = RootGroup;
             string dateGroup = parent.parent.parent.date;
             string itemGroup = parent.parent.itemType;
             string stripGroup = parent.acquired.ToShortTimeString() + " (" + parent.stripId + ")";
@@ -231,7 +232,8 @@ namespace Planet.Model
                             return stripGroupLayer;
                         }
                         else {
-                            GroupLayer rootGroupLayer = LayerFactory.Instance.CreateGroupLayer(MapView.Active.Map, 0, rootGroup);
+                            int index = MapView.Active.Map.Layers.Count;
+                            GroupLayer rootGroupLayer = LayerFactory.Instance.CreateGroupLayer(MapView.Active.Map, index, rootGroup);
                             GroupLayer dateGroupLayer = LayerFactory.Instance.CreateGroupLayer(rootGroupLayer as ILayerContainerEdit, 0, dateGroup);
                             GroupLayer itemGroupLayer = LayerFactory.Instance.CreateGroupLayer(dateGroupLayer as ILayerContainerEdit, 0, itemGroup);
                             GroupLayer stripGroupLayer = LayerFactory.Instance.CreateGroupLayer(itemGroupLayer as ILayerContainerEdit, 0, stripGroup);

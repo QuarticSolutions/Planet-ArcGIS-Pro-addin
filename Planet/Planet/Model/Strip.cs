@@ -135,7 +135,7 @@ namespace Planet.Model
         {
             await QueuedTask.Run(() =>
             {
-                string rootGroup = "Planet API";
+                string rootGroup = Asset.RootGroup;
                 string dateGroup = parent.parent.mapLayerName;
                 string itemGroup = parent.mapLayerName;
                 string[] stripParents = { itemGroup, dateGroup, rootGroup };
