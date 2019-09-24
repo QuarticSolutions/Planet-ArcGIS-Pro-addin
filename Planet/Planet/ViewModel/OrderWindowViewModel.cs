@@ -17,21 +17,15 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+
 namespace Planet.ViewModel
 {
     class OrderWindowViewModel : INotifyPropertyChanged
     {
         private string _orderName;
-        private static HttpClientHandler _handler = new HttpClientHandler()
-        {
-            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-        };
-        private HttpClient _client = new HttpClient(_handler)
-        {
-            BaseAddress = new Uri("https://api.planet.com")
-        };
-
-
         public string OrderName
         {
             get
@@ -44,9 +38,26 @@ namespace Planet.ViewModel
                 OnPropertyChanged("OrderName");
             }
         }
+        private static HttpClientHandler _handler = new HttpClientHandler()
+        {
+            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+        };
+        private HttpClient _client = new HttpClient(_handler)
+        {
+            BaseAddress = new Uri("https://api.planet.com")
+        };
         private ObservableCollection<Asset> _selectedAssets = new ObservableCollection<Asset>();
+
+
         public OrderWindowViewModel()
         {
+            Expanders = new ObservableCollection<ExpanderItem>
+            {
+                new ExpanderItem { Header="Expander 1", ItemId="1", Content = new TextBlock { Text="Hello"} },
+                new ExpanderItem { Header="Expander 2", ItemId="2", Content = new System.Windows.Controls.Grid {  Width=200, Height=30, Background=Brushes.Yellow } },
+                new ExpanderItem { Header="Expander 3", ItemId="3", Content = new Label { Content="World"} },
+            };
+
             var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
             _client.DefaultRequestHeaders.Host = "api.planet.com";
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
@@ -82,6 +93,7 @@ namespace Planet.ViewModel
                             if (lstPSScene3Band == null)
                             {
                                 lstPSScene3Band = new List<string>();
+                                lstPSScene3Band.Add(" ");
                             }
                             lstPSScene3Band.Add(item.BundleName);
                             break;
@@ -89,6 +101,7 @@ namespace Planet.ViewModel
                             if (lstPSOrthoTile == null)
                             {
                                 lstPSOrthoTile = new List<string>();
+                                lstPSOrthoTile.Add(" ");
                             }
                             lstPSOrthoTile.Add(item.BundleName);
                             break;
@@ -96,6 +109,7 @@ namespace Planet.ViewModel
                             if (lstREOrthoTile == null)
                             {
                                 lstREOrthoTile = new List<string>();
+                                lstREOrthoTile.Add(" ");
                             }
                             lstREOrthoTile.Add(item.BundleName);
                             break;
@@ -103,6 +117,7 @@ namespace Planet.ViewModel
                             if (lstREScene == null)
                             {
                                 lstREScene = new List<string>();
+                                lstREScene.Add(" ");
                             }
                             lstREScene.Add(item.BundleName);
                             break;
@@ -110,6 +125,7 @@ namespace Planet.ViewModel
                             if (lstSkySatScene == null)
                             {
                                 lstSkySatScene = new List<string>();
+                                lstSkySatScene.Add(" ");
                             }
                             lstSkySatScene.Add(item.BundleName);
                             break;
@@ -117,6 +133,7 @@ namespace Planet.ViewModel
                             if (lstSkySatCollect == null)
                             {
                                 lstSkySatCollect = new List<string>();
+                                lstSkySatCollect.Add(" ");
                             }
                             lstSkySatCollect.Add(item.BundleName);
                             break;
@@ -215,6 +232,277 @@ namespace Planet.ViewModel
         public string Sentinel2L1Cvis { get { return _Sentinel2L1Cvis; } set { _Sentinel2L1Cvis = value; OnPropertyChanged("Sentinel2L1Cvis"); } }
         #endregion
 
+
+        #region imagery product group all selected bools
+
+        private bool _psscene4Bandselall = false;
+        public bool psscene4Bandselall
+        {
+            get { return _psscene4Bandselall; }
+            set
+            {
+                _psscene4Bandselall = value;
+                OnPropertyChanged("psscene4Bandselall");
+                foreach (PSScene4Band pSScene4 in PSScene4Band)
+                {
+                    pSScene4.oAnalytic = _psscene4Bandselall;
+                }
+            }
+        }
+
+        private bool _psscene3Bandselall = false;
+        public bool psscene3Bandselall
+        {
+            get { return _psscene3Bandselall; }
+            set
+            {
+                _psscene3Bandselall = value;
+                OnPropertyChanged("psscene3Bandselall");
+                foreach (PSScene4Band pSScene4 in PSScene3Band)
+                {
+                    pSScene4.oAnalytic = _psscene3Bandselall;
+                }
+            }
+        }
+
+        private bool _PSOrthoTileselall = false;
+        public bool PSOrthoTileselall
+        {
+            get { return _PSOrthoTileselall; }
+            set
+            {
+                _PSOrthoTileselall = value;
+                OnPropertyChanged("PSOrthoTileselall");
+                foreach (PSScene4Band pSScene4 in PSOrthoTile)
+                {
+                    pSScene4.oAnalytic = _PSOrthoTileselall;
+                }
+            }
+        }
+        private bool _REOrthoTileselall = false;
+        public bool REOrthoTileselall
+        {
+            get { return _REOrthoTileselall; }
+            set
+            {
+                _REOrthoTileselall = value;
+                OnPropertyChanged("REOrthoTileselall");
+                foreach (PSScene4Band pSScene4 in REOrthoTile)
+                {
+                    pSScene4.oAnalytic = _REOrthoTileselall;
+                }
+            }
+        }
+        private bool _RESceneselall = false;
+        public bool RESceneselall
+        {
+            get { return _RESceneselall; }
+            set
+            {
+                _RESceneselall = value;
+                OnPropertyChanged("RESceneselall");
+                foreach (PSScene4Band pSScene4 in REScene)
+                {
+                    pSScene4.oAnalytic = _RESceneselall;
+                }
+            }
+        }
+        private bool _SkySatSceneselall = false;
+        public bool SkySatSceneselall
+        {
+            get { return _SkySatSceneselall; }
+            set
+            {
+                _SkySatSceneselall = value;
+                OnPropertyChanged("SkySatSceneselall");
+                foreach (PSScene4Band pSScene4 in SkySatScene)
+                {
+                    pSScene4.oAnalytic = _SkySatSceneselall;
+                }
+            }
+        }
+        private bool _SkySatCollectselall = false;
+        public bool SkySatCollectselall
+        {
+            get { return _SkySatCollectselall; }
+            set
+            {
+                _SkySatCollectselall = value;
+                OnPropertyChanged("SkySatCollectselall");
+                foreach (PSScene4Band pSScene4 in SkySatCollect)
+                {
+                    pSScene4.oAnalytic = _SkySatCollectselall;
+                }
+            }
+        }
+
+        private bool _Landsat8L1Gselall = false;
+        public bool Landsat8L1Gselall
+        {
+            get { return _Landsat8L1Gselall; }
+            set
+            {
+                _Landsat8L1Gselall = value;
+                OnPropertyChanged("Landsat8L1Gselall");
+                foreach (PSScene4Band pSScene4 in Landsat8L1G)
+                {
+                    pSScene4.oAnalytic = _Landsat8L1Gselall;
+                }
+            }
+        }
+        private bool _Sentinel2L1Cselall = false;
+        public bool Sentinel2L1Cselall
+        {
+            get { return _Sentinel2L1Cselall; }
+            set
+            {
+                _Sentinel2L1Cselall = value;
+                OnPropertyChanged("Sentinel2L1Cselall");
+                foreach (PSScene4Band pSScene4 in Sentinel2L1C)
+                {
+                    pSScene4.oAnalytic = _Sentinel2L1Cselall;
+                }
+            }
+        }
+
+        #endregion
+
+
+        #region coboBox currently selected values
+        private string _PSScene4Bandcurrselect;
+        public string PSScene4Bandcurrselect
+        {
+            get { return _PSScene4Bandcurrselect; }
+            set {
+                _PSScene4Bandcurrselect = value;
+                foreach (PSScene4Band item in PSScene4Band)
+                {
+                    item.selectedBundle = _PSScene4Bandcurrselect;
+                }
+                OnPropertyChanged("PSScene4Bandcurrselect");
+            }
+        }
+        private string _PSScene3Bandcurrselect;
+        public string PSScene3Bandcurrselect
+        {
+            get { return _PSScene3Bandcurrselect; }
+            set
+            {
+                _PSScene3Bandcurrselect = value;
+                foreach (PSScene4Band item in PSScene3Band)
+                {
+                    item.selectedBundle = _PSScene3Bandcurrselect;
+                }
+                OnPropertyChanged("PSScene3Bandcurrselect");
+            }
+        }
+        private string _PSOrthoTilecurrselect;
+        public string PSOrthoTilecurrselect
+        {
+            get { return _PSOrthoTilecurrselect; }
+            set
+            {
+                _PSOrthoTilecurrselect = value;
+                foreach (PSScene4Band item in PSOrthoTile)
+                {
+                    item.selectedBundle = _PSOrthoTilecurrselect;
+                }
+                OnPropertyChanged("PSOrthoTilecurrselect");
+            }
+        }
+
+        private string _REOrthoTilecurrselect;
+        public string REOrthoTilecurrselect
+        {
+            get { return _PSOrthoTilecurrselect; }
+            set
+            {
+                _REOrthoTilecurrselect = value;
+                foreach (PSScene4Band item in REOrthoTile)
+                {
+                    item.selectedBundle = _REOrthoTilecurrselect;
+                }
+                OnPropertyChanged("REOrthoTilecurrselect");
+            }
+        }
+
+        private string _REScenecurrselect;
+        public string REScenecurrselect
+        {
+            get { return _PSOrthoTilecurrselect; }
+            set
+            {
+                _REScenecurrselect = value;
+                foreach (PSScene4Band item in REScene)
+                {
+                    item.selectedBundle = _REScenecurrselect;
+                }
+                OnPropertyChanged("REScenecurrselect");
+            }
+        }
+
+        private string _SkySatScenecurrselect;
+        public string SkySatScenecurrselect
+        {
+            get { return _SkySatScenecurrselect; }
+            set
+            {
+                _SkySatScenecurrselect = value;
+                foreach (PSScene4Band item in SkySatScene)
+                {
+                    item.selectedBundle = _SkySatScenecurrselect;
+                }
+                OnPropertyChanged("SkySatScenecurrselect");
+            }
+        }
+
+        private string _SkySatCollectcurrselect;
+        public string SkySatCollectcurrselect
+        {
+            get { return _SkySatCollectcurrselect; }
+            set
+            {
+                _SkySatCollectcurrselect = value;
+                foreach (PSScene4Band item in SkySatCollect)
+                {
+                    item.selectedBundle = _SkySatCollectcurrselect;
+                }
+                OnPropertyChanged("SkySatCollectcurrselect");
+            }
+        }
+
+        private string _Landsat8L1Gcurrselect;
+        public string Landsat8L1Gcurrselect
+        {
+            get { return _Landsat8L1Gcurrselect; }
+            set
+            {
+                _Landsat8L1Gcurrselect = value;
+                foreach (PSScene4Band item in Landsat8L1G)
+                {
+                    item.selectedBundle = _Landsat8L1Gcurrselect;
+                }
+                OnPropertyChanged("Landsat8L1Gcurrselect");
+            }
+        }
+
+        private string _Sentinel2L1Ccurrselect;
+        public string Sentinel2L1Ccurrselect
+        {
+            get { return _Sentinel2L1Ccurrselect; }
+            set
+            {
+                _Sentinel2L1Ccurrselect = value;
+                foreach (PSScene4Band item in Sentinel2L1C)
+                {
+                    item.selectedBundle = _Sentinel2L1Ccurrselect;
+                }
+                OnPropertyChanged("Sentinel2L1Ccurrselect");
+            }
+        }
+        #endregion
+
+        #region imagery product collections
         private ObservableCollection<PSScene4Band> _psscene4Band;
         public ObservableCollection<PSScene4Band> PSScene4Band
         {
@@ -387,6 +675,8 @@ namespace Planet.ViewModel
                 OnPropertyChanged("Sentinel2L1C");
             }
         }
+        #endregion
+
         private void doUpdateItems()
         {
             HttpClientHandler handler = new HttpClientHandler()
@@ -588,7 +878,7 @@ namespace Planet.ViewModel
                 List<string> ids = new List<string>();
                 foreach (PSScene4Band pSScene4Band in combined)
                 {
-                    if (pSScene4Band.properties.item_type == item.Item2 && pSScene4Band.selectedBundle == item.Item1)
+                    if (pSScene4Band.properties.item_type == item.Item2 && pSScene4Band.selectedBundle == item.Item1 && pSScene4Band.oAnalytic)
                     {
 
                         ids.Add(pSScene4Band.id);
@@ -745,7 +1035,7 @@ namespace Planet.ViewModel
                         {
                             ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString());
                         }
-                        else if (orderResponse2.state == "initializing" || orderResponse2.state == "queued")
+                        else if (orderResponse2.state == "initializing" || orderResponse2.state == "queued"  )
                         {
                             ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("The order has been placed and is being processed." + Environment.NewLine + "Please saee the Orders tab for details." + Environment.NewLine + "Order Name:" + orderResponse2.name.ToString(),"Order Success",System.Windows.MessageBoxButton.OK);
                         }
@@ -832,148 +1122,151 @@ namespace Planet.ViewModel
             //}
         }
 
-        private ICollectionView _SkySatSceneListView;
-        public ICollectionView SkySatSceneListView
-        {
-            get { return this._SkySatSceneListView; }
-            private set
-            {
-                if (value == this._SkySatSceneListView)
-                {
-                    return;
-                }
+        #region Collection views - not used
+        //private ICollectionView _SkySatSceneListView;
+        //public ICollectionView SkySatSceneListView
+        //{
+        //    get { return this._SkySatSceneListView; }
+        //    private set
+        //    {
+        //        if (value == this._SkySatSceneListView)
+        //        {
+        //            return;
+        //        }
 
-                this._SkySatSceneListView = value;
-                OnPropertyChanged("SkySatSceneListView");
-            }
-        }
-        private ICollectionView _PSOrthoTileListView;
-        public ICollectionView PSOrthoTileListView
-        {
-            get { return this._PSOrthoTileListView; }
-            private set
-            {
-                if (value == this._PSOrthoTileListView)
-                {
-                    return;
-                }
+        //        this._SkySatSceneListView = value;
+        //        OnPropertyChanged("SkySatSceneListView");
+        //    }
+        //}
+        //private ICollectionView _PSOrthoTileListView;
+        //public ICollectionView PSOrthoTileListView
+        //{
+        //    get { return this._PSOrthoTileListView; }
+        //    private set
+        //    {
+        //        if (value == this._PSOrthoTileListView)
+        //        {
+        //            return;
+        //        }
 
-                this._PSOrthoTileListView = value;
-                OnPropertyChanged("PSOrthoTileListView");
-            }
-        }
+        //        this._PSOrthoTileListView = value;
+        //        OnPropertyChanged("PSOrthoTileListView");
+        //    }
+        //}
 
-        private ICollectionView _SkySatCollectListView;
-        public ICollectionView SkySatCollectListView
-        {
-            get { return this._SkySatCollectListView; }
-            private set
-            {
-                if (value == this._SkySatCollectListView)
-                {
-                    return;
-                }
+        //private ICollectionView _SkySatCollectListView;
+        //public ICollectionView SkySatCollectListView
+        //{
+        //    get { return this._SkySatCollectListView; }
+        //    private set
+        //    {
+        //        if (value == this._SkySatCollectListView)
+        //        {
+        //            return;
+        //        }
 
-                this._SkySatCollectListView = value;
-                OnPropertyChanged("SkySatCollectListView");
-            }
-        }
-        private ICollectionView _RESceneListView;
-        public ICollectionView RESceneListView
-        {
-            get { return this._RESceneListView; }
-            private set
-            {
-                if (value == this._RESceneListView)
-                {
-                    return;
-                }
+        //        this._SkySatCollectListView = value;
+        //        OnPropertyChanged("SkySatCollectListView");
+        //    }
+        //}
+        //private ICollectionView _RESceneListView;
+        //public ICollectionView RESceneListView
+        //{
+        //    get { return this._RESceneListView; }
+        //    private set
+        //    {
+        //        if (value == this._RESceneListView)
+        //        {
+        //            return;
+        //        }
 
-                this._RESceneListView = value;
-                OnPropertyChanged("RESceneListView");
-            }
-        }
-        private ICollectionView _PSScene3BandListView;
-        public ICollectionView PSScene3BandListView
-        {
-            get { return this._PSScene3BandListView; }
-            private set
-            {
-                if (value == this._PSScene3BandListView)
-                {
-                    return;
-                }
+        //        this._RESceneListView = value;
+        //        OnPropertyChanged("RESceneListView");
+        //    }
+        //}
+        //private ICollectionView _PSScene3BandListView;
+        //public ICollectionView PSScene3BandListView
+        //{
+        //    get { return this._PSScene3BandListView; }
+        //    private set
+        //    {
+        //        if (value == this._PSScene3BandListView)
+        //        {
+        //            return;
+        //        }
 
-                this._PSScene3BandListView = value;
-                OnPropertyChanged("PSScene3BandListView");
-                _PSScene3BandListView.Refresh();
-            }
-        }
-        private ICollectionView _PSScene4BandListView;
-        public ICollectionView PSScene4BandListView
-        {
-            get { return this._PSScene4BandListView; }
-            private set
-            {
-                if (value == this._PSScene4BandListView)
-                {
-                    return;
-                }
+        //        this._PSScene3BandListView = value;
+        //        OnPropertyChanged("PSScene3BandListView");
+        //        _PSScene3BandListView.Refresh();
+        //    }
+        //}
+        //private ICollectionView _PSScene4BandListView;
+        //public ICollectionView PSScene4BandListView
+        //{
+        //    get { return this._PSScene4BandListView; }
+        //    private set
+        //    {
+        //        if (value == this._PSScene4BandListView)
+        //        {
+        //            return;
+        //        }
 
-                this._PSScene4BandListView = value;
-                OnPropertyChanged("PSScene4BandListView");
-            }
-        }
-        
-        private ICollectionView _REOrthoTileListView;
-        public ICollectionView REOrthoTileListView
-        {
-            get { return this._REOrthoTileListView; }
-            private set
-            {
-                if (value == this._REOrthoTileListView)
-                {
-                    return;
-                }
+        //        this._PSScene4BandListView = value;
+        //        OnPropertyChanged("PSScene4BandListView");
+        //    }
+        //}
 
-                this._REOrthoTileListView = value;
-                OnPropertyChanged("REOrthoTileListView");
-            }
-        }
+        //private ICollectionView _REOrthoTileListView;
+        //public ICollectionView REOrthoTileListView
+        //{
+        //    get { return this._REOrthoTileListView; }
+        //    private set
+        //    {
+        //        if (value == this._REOrthoTileListView)
+        //        {
+        //            return;
+        //        }
 
-        private ICollectionView _Landsat8L1GListView;
-        public ICollectionView Landsat8L1GListView
-        {
-            get { return this._Landsat8L1GListView; }
-            private set
-            {
-                if (value == this._Landsat8L1GListView)
-                {
-                    return;
-                }
+        //        this._REOrthoTileListView = value;
+        //        OnPropertyChanged("REOrthoTileListView");
+        //    }
+        //}
 
-                this._Landsat8L1GListView = value;
-                OnPropertyChanged("Landsat8L1GListView");
-            }
-        }
+        //private ICollectionView _Landsat8L1GListView;
+        //public ICollectionView Landsat8L1GListView
+        //{
+        //    get { return this._Landsat8L1GListView; }
+        //    private set
+        //    {
+        //        if (value == this._Landsat8L1GListView)
+        //        {
+        //            return;
+        //        }
 
-        private ICollectionView _Sentinel2L1CListView;
-        public ICollectionView Sentinel2L1CListView
-        {
-            get { return this._Sentinel2L1CListView; }
-            private set
-            {
-                if (value == this._Sentinel2L1CListView)
-                {
-                    return;
-                }
+        //        this._Landsat8L1GListView = value;
+        //        OnPropertyChanged("Landsat8L1GListView");
+        //    }
+        //}
 
-                this._Sentinel2L1CListView = value;
-                OnPropertyChanged("Sentinel2L1CListView");
-            }
-        }
+        //private ICollectionView _Sentinel2L1CListView;
+        //public ICollectionView Sentinel2L1CListView
+        //{
+        //    get { return this._Sentinel2L1CListView; }
+        //    private set
+        //    {
+        //        if (value == this._Sentinel2L1CListView)
+        //        {
+        //            return;
+        //        }
 
-        #region Filters
+        //        this._Sentinel2L1CListView = value;
+        //        OnPropertyChanged("Sentinel2L1CListView");
+        //    }
+        //}
+        #endregion
+
+
+        #region Filters - not used
         public bool FilterMessageList(object item)
         {
             bool ismatch = false;
@@ -1127,6 +1420,69 @@ namespace Planet.ViewModel
         public List<string> lstLandsat8L1G { get; set; }
         public List<string> lstSentinel2L1C { get; set; }
 
+        #endregion
+
+        #region expanderlogic
+        string _CurrentExpanded;
+        public string CurrentExpanded
+        {
+            get
+            {
+                return _CurrentExpanded;
+            }
+            set
+            {
+                if (_CurrentExpanded != value)
+                {
+                    _CurrentExpanded = value;
+                    OnPropertyChanged("CurrentExpanded");
+                }
+            }
+        }
+
+        string _CurrentExpanded2;
+        public string CurrentExpanded2
+        {
+            get
+            {
+                return _CurrentExpanded2;
+            }
+            set
+            {
+                if (_CurrentExpanded2 != value)
+                {
+                    _CurrentExpanded2 = value;
+                    OnPropertyChanged("CurrentExpanded2");
+                }
+            }
+        }
+
+        string _CurrentExpanded3 = "1";
+        public string CurrentExpanded3
+        {
+            get
+            {
+                return _CurrentExpanded3;
+            }
+            set
+            {
+                if (_CurrentExpanded3 != value)
+                {
+                    _CurrentExpanded3 = value;
+                    OnPropertyChanged("CurrentExpanded3");
+                }
+            }
+        }
+
+
+        public ObservableCollection<ExpanderItem> Expanders { get; set; }
+
+        public class ExpanderItem
+        {
+            public string Header { get; set; }
+            public string ItemId { get; set; }
+            public FrameworkElement Content { get; set; }
+        }
         #endregion
     }
 }

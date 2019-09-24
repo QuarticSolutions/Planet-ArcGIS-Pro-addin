@@ -54,7 +54,7 @@ namespace Planet
             }
         }
 
-        private string _UserName = "drew@quarticsolutions.com";
+        private string _UserName = "";
         public string UserName
         {
             get
