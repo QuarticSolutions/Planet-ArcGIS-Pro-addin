@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -119,4 +120,76 @@ namespace Planet.ViewModel
             return splitValues;
         }
     }
+
+    [ValueConversion(typeof(object), typeof(bool))]
+    public class PermissionsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool show = false;
+            if (value is IEnumerable enumerable)
+            {
+
+                foreach (object element in enumerable)
+                {
+                    show = true;
+                    break;
+                }
+            }
+            return show;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
+    [ValueConversion(typeof(object), typeof(string))]
+    public class LockIconVisibiltyConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string show = "Visible";
+            if (value is IEnumerable enumerable)
+            {
+                foreach (object element in enumerable)
+                {
+                    show = "Collapsed";
+                    break;
+                }
+            }
+            return show;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    [ValueConversion(typeof(object), typeof(string))]
+    public class SelectCheckIconVisibiltyConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string show = "Collapsed";
+            if (value is IEnumerable enumerable)
+            {
+                foreach (object element in enumerable)
+                {
+                    show = "Visible";
+                    break;
+                }
+            }
+            return show;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+
 }

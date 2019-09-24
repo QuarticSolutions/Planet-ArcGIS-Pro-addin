@@ -401,6 +401,11 @@
                             </HierarchicalDataTemplate>
                             <DataTemplate DataType="{x:Type model:Asset}">
                                 <StackPanel Orientation="Horizontal" Margin="0" Background="Transparent" Tag="{Binding Path=id}">
+                                    <StackPanel.Resources>
+                                        <viewmodel:PermissionsConverter x:Key="PermissionsConverter"/>
+                                        <viewmodel:LockIconVisibiltyConverter x:Key="LockIconVisibiltyConverter"/>
+                                        <viewmodel:SelectCheckIconVisibiltyConverter x:Key="SelectCheckIconVisibiltyConverter"/>
+                                    </StackPanel.Resources>
                                     <StackPanel.ContextMenu>
                                         <ContextMenu StaysOpen="true">
                                             <MenuItem Header="View more information" />
@@ -418,9 +423,15 @@
                                                 MethodName="RemoveFootprint" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
-                                    <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="5,0,0,0" Focusable="False" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Select" Tag="{Binding Path=id}">
+                                    <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding _permissions, Converter={StaticResource SelectCheckIconVisibiltyConverter }}"  IsEnabled="{Binding _permissions, Converter={StaticResource PermissionsConverter}}"  Margin="5,0,0,0" Focusable="False" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Select" Tag="{Binding Path=id}">
                                     </CheckBox>
-
+                                    <Grid Margin="5,0" VerticalAlignment="Center" Visibility="{Binding _permissions, Converter={StaticResource LockIconVisibiltyConverter}}">
+                                        <TextBlock ToolTipService.ToolTip="These images require additional access">
+                                            <Hyperlink NavigateUri="https://www.planet.com/" TextDecorations="None">
+                                                <Image Width="30" Source="pack://application:,,,/Planet;component/Images/lock_image.png"/>
+                                            </Hyperlink>
+                                        </TextBlock>
+                                    </Grid>
                                     <Grid Margin="5,0" VerticalAlignment="Center">
                                         <Image Height="64" HorizontalAlignment="Left" Tag="{Binding Path=id}" OverridesDefaultStyle="True"  >
                                             <Image.Style>

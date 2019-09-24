@@ -366,6 +366,9 @@
   <ItemGroup>
     <AddInContent Include="DarkImages\GenericButtonGrey32.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\lock_image.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--
   PackageAction can be:

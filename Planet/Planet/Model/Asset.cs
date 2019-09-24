@@ -89,6 +89,10 @@ namespace Planet.Model
         /// </summary>
         public async void doAddToMap()
         {
+            if(_permissions.Length == 0)
+            {
+                return;
+            }
             //IsSelected = true;
             if (canToggleExisting())
             {
