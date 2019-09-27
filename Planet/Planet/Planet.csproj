@@ -183,6 +183,7 @@
     <Compile Include="Model\Item_assets\Order.cs" />
     <Compile Include="Model\Item_assets\OrderResponse.cs" />
     <Compile Include="Model\Item_assets\PSScene4Band.cs" />
+    <Compile Include="Model\Item_assets\tempBundles.cs" />
     <Compile Include="Model\Page.cs" />
     <Compile Include="Model\PlanetResultModel.cs" />
     <Compile Include="Model\QuickSearchResult.cs" />

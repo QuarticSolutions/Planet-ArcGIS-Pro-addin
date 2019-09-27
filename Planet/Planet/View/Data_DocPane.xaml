@@ -657,7 +657,16 @@
                             <viewmodel:MultiDataValueConverter x:Key="multi"/>
                         </DataGrid.Resources>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Status" Binding="{Binding state}"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding state}">
+                                <DataGridTextColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="ToolTip" Value="{Binding last_message}" />
+                                    </Style>
+                                </DataGridTextColumn.CellStyle>
+                                <ToolTipService.ToolTip>
+                                    <ToolTip Content="{Binding last_message}"/>
+                                </ToolTipService.ToolTip>
+                            </DataGridTextColumn>
                             <DataGridTextColumn Header="Name" Binding="{Binding name}"/>
                             <DataGridTextColumn Header="Created" Binding="{Binding created_on}" SortDirection="Descending"/>
                             <!--<DataGridHyperlinkColumn Header="Download" TargetName="{Binding _links._self}" ContentBinding="{Binding Source={StaticResource edit}}" Binding="{Binding _links._self, Converter = {StaticResource uriValid}}"  >

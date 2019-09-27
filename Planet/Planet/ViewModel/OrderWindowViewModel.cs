@@ -51,12 +51,12 @@ namespace Planet.ViewModel
 
         public OrderWindowViewModel()
         {
-            Expanders = new ObservableCollection<ExpanderItem>
-            {
-                new ExpanderItem { Header="Expander 1", ItemId="1", Content = new TextBlock { Text="Hello"} },
-                new ExpanderItem { Header="Expander 2", ItemId="2", Content = new System.Windows.Controls.Grid {  Width=200, Height=30, Background=Brushes.Yellow } },
-                new ExpanderItem { Header="Expander 3", ItemId="3", Content = new Label { Content="World"} },
-            };
+            //Expanders = new ObservableCollection<ExpanderItem>
+            //{
+            //    new ExpanderItem { Header="Expander 1", ItemId="1", Content = new TextBlock { Text="Hello"} },
+            //    new ExpanderItem { Header="Expander 2", ItemId="2", Content = new System.Windows.Controls.Grid {  Width=200, Height=30, Background=Brushes.Yellow } },
+            //    new ExpanderItem { Header="Expander 3", ItemId="3", Content = new Label { Content="World"} },
+            //};
 
             var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
             _client.DefaultRequestHeaders.Host = "api.planet.com";
@@ -65,7 +65,7 @@ namespace Planet.ViewModel
             _client.DefaultRequestHeaders.Add("User-Agent", "ArcGISProC#");
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
             _client.DefaultRequestHeaders.ExpectContinue = false;
-
+            //TempBundles = new tempBundles();
             Bundles2 bundles2 = new Bundles2();
             foreach (Bundles2.BundelItem item in bundles2.bundles)
             {
@@ -80,6 +80,7 @@ namespace Planet.ViewModel
                                 lstLandsat8L1G.Add(" ");
                             }
                             lstLandsat8L1G.Add(item.BundleName);
+                            
                             break;
                         case "PSScene4Band":
                             if (lstPSScene4Band == null)
@@ -204,31 +205,31 @@ namespace Planet.ViewModel
         #region listboxvisibility
 
         
-        private string _psscene4Bandvis = "Hidden";
+        private string _psscene4Bandvis = "Collapsed";
         public string PSScene4BandVis { get { return _psscene4Bandvis; } set { _psscene4Bandvis = value; OnPropertyChanged("PSScene4BandVis"); } }
 
-        private string _psscene3Bandvis = "Hidden";
+        private string _psscene3Bandvis = "Collapsed";
         public string PSScene3BandVis { get { return _psscene3Bandvis; } set { _psscene3Bandvis = value; OnPropertyChanged("PSScene3BandVis"); } }
 
-        private string _PSOrthoTilevis = "Hidden";
+        private string _PSOrthoTilevis = "Collapsed";
         public string PSOrthoTileVis { get { return _PSOrthoTilevis; } set { _PSOrthoTilevis = value; OnPropertyChanged("PSOrthoTileVis"); } }
 
-        private string _REOrthoTilevis = "Hidden";
+        private string _REOrthoTilevis = "Collapsed";
         public string REOrthoTilevis { get { return _REOrthoTilevis; } set { _REOrthoTilevis = value; OnPropertyChanged("REOrthoTilevis"); } }
 
-        private string _REScenevis = "Hidden";
+        private string _REScenevis = "Collapsed";
         public string REScenevis { get { return _REScenevis; } set { _REScenevis = value; OnPropertyChanged("REScenevis"); } }
 
-        private string _SkySatScenevis = "Hidden";
+        private string _SkySatScenevis = "Collapsed";
         public string SkySatScenevis { get { return _SkySatScenevis; } set { _SkySatScenevis = value; OnPropertyChanged("SkySatScenevis"); } }
 
-        private string _SkySatCollectvis = "Hidden";
+        private string _SkySatCollectvis = "Collapsed";
         public string SkySatCollectvis { get { return _SkySatCollectvis; } set { _SkySatCollectvis = value; OnPropertyChanged("SkySatCollectvis"); } }
 
-        private string _Landsat8L1Gvis = "Hidden";
+        private string _Landsat8L1Gvis = "Collapsed";
         public string Landsat8L1Gvis { get { return _Landsat8L1Gvis; } set { _Landsat8L1Gvis = value; OnPropertyChanged("Landsat8L1Gvis"); } }
 
-        private string _Sentinel2L1Cvis = "Hidden";
+        private string _Sentinel2L1Cvis = "Collapsed";
         public string Sentinel2L1Cvis { get { return _Sentinel2L1Cvis; } set { _Sentinel2L1Cvis = value; OnPropertyChanged("Sentinel2L1Cvis"); } }
         #endregion
 
@@ -503,6 +504,10 @@ namespace Planet.ViewModel
         #endregion
 
         #region imagery product collections
+
+        private List<ObservableCollection<PSScene4Band>> _products = new List<ObservableCollection<PSScene4Band>>();
+
+
         private ObservableCollection<PSScene4Band> _psscene4Band;
         public ObservableCollection<PSScene4Band> PSScene4Band
         {
@@ -725,6 +730,7 @@ namespace Planet.ViewModel
                                     if (PSScene4BandVis != "Visible")
                                     {
                                         PSScene4BandVis = "Visible";
+                                        _products.Add(PSScene4Band);
                                     }
                                     break;
                                 case "PSScene3Band":
@@ -732,6 +738,7 @@ namespace Planet.ViewModel
                                     if (PSScene3BandVis != "Visible")
                                     {
                                         PSScene3BandVis = "Visible";
+                                        _products.Add(PSScene3Band);
                                     }
                                     break;
                                 case "PSOrthoTile":
@@ -739,6 +746,7 @@ namespace Planet.ViewModel
                                     if (PSOrthoTileVis != "Visible")
                                     {
                                         PSOrthoTileVis = "Visible";
+                                        _products.Add(PSOrthoTile);
                                     }
                                     break;
                                 case "REOrthoTile":
@@ -746,6 +754,7 @@ namespace Planet.ViewModel
                                     if (REOrthoTilevis != "Visible")
                                     {
                                         REOrthoTilevis = "Visible";
+                                        _products.Add(REOrthoTile);
                                     }
                                     break;
                                 case "REScene":
@@ -753,6 +762,7 @@ namespace Planet.ViewModel
                                     if (REScenevis != "Visible")
                                     {
                                         REScenevis = "Visible";
+                                        _products.Add(REScene);
                                     }
                                     break;
                                 case "SkySatScene":
@@ -760,6 +770,7 @@ namespace Planet.ViewModel
                                     if (SkySatScenevis != "Visible")
                                     {
                                         SkySatScenevis = "Visible";
+                                        _products.Add(SkySatScene);
                                     }
                                     break;
                                 case "SkySatCollect":
@@ -767,6 +778,7 @@ namespace Planet.ViewModel
                                     if (SkySatCollectvis != "Visible")
                                     {
                                         SkySatCollectvis = "Visible";
+                                        _products.Add(SkySatCollect);
                                     }
                                     break;
                                 case "Landsat8L1G":
@@ -774,6 +786,7 @@ namespace Planet.ViewModel
                                     if (Landsat8L1Gvis != "Visible")
                                     {
                                         Landsat8L1Gvis = "Visible";
+                                        _products.Add(Landsat8L1G);
                                     }
                                     break;
                                 case "Sentinel2L1C":
@@ -781,6 +794,7 @@ namespace Planet.ViewModel
                                     if (Sentinel2L1Cvis != "Visible")
                                     {
                                         Sentinel2L1Cvis = "Visible";
+                                        _products.Add(Sentinel2L1C);
                                     }
                                     break;
                                 default:
@@ -827,6 +841,8 @@ namespace Planet.ViewModel
 
         private void DoOrder()
         {
+
+
             Order order = new Order();
             order.name = _orderName;
             Delivery delivery = new Delivery();
@@ -840,6 +856,7 @@ namespace Planet.ViewModel
             List<string> selecttedproduct_bundles = new List<string>();
             //Dictionary<string, string> pppp = new Dictionary<string, string>;
             List<Tuple<string, string>> pppp = new List<Tuple<string, string>>();
+
             var combined = PSScene4Band.Concat(PSScene3Band).Concat(PSOrthoTile).Concat(REOrthoTile).Concat(REScene).Concat(SkySatScene).Concat(SkySatCollect).Concat(Landsat8L1G).Concat(Sentinel2L1C) ;
             foreach (PSScene4Band pSScene4Band in combined)
             {
@@ -880,7 +897,6 @@ namespace Planet.ViewModel
                 {
                     if (pSScene4Band.properties.item_type == item.Item2 && pSScene4Band.selectedBundle == item.Item1 && pSScene4Band.oAnalytic)
                     {
-
                         ids.Add(pSScene4Band.id);
                     }
                 }
@@ -889,176 +905,220 @@ namespace Planet.ViewModel
                     product.item_ids = ids.ToArray();
                     productlist.Add(product);
                 }
-
             }
 
-            //foreach (PSScene4Band pSScene4Band in PSScene4Band)
-            //{
-            //    if (!selectteditem_types.Contains(pSScene4Band.properties.item_type))
-            //    {
-            //        selectteditem_types.Add(pSScene4Band.properties.item_type);
-            //    }
-            //    if (!selecttedproduct_bundles.Contains(pSScene4Band.selectedBundle))
-            //    {
-            //        selecttedproduct_bundles.Add(pSScene4Band.selectedBundle);
-            //    }
-            //    if (pSScene4Band.oAnalytic)
-            //    {
-            //        if (!selecttedproduct_bundles.Contains("analytic"))
-            //        {
-            //            selecttedproduct_bundles.Add("analytic");
-            //        }
-            //        if (analyticitem_ids == null)
-            //        {
-            //            analyticitem_ids = new List<string>();
-            //        }
-            //        analyticitem_ids.Add(pSScene4Band.id);
-            //    }
-            //    if (pSScene4Band.oVisual)
-            //    {
-            //        if (!selecttedproduct_bundles.Contains("visual"))
-            //        {
-            //            selecttedproduct_bundles.Add("visual");
-            //        }
-            //        if (visualitem_ids == null)
-            //        {
-            //            visualitem_ids = new List<string>();
-            //        }
-            //        visualitem_ids.Add(pSScene4Band.id);
-            //    }
-            //    if (pSScene4Band.oBasic)
-            //    {
-            //        if (!selecttedproduct_bundles.Contains("basic_analytic"))
-            //        {
-            //            selecttedproduct_bundles.Add("basic_analytic");
-            //        }
-            //        if (!selecttedproduct_bundles.Contains("basic_uncalibrated_dn"))
-            //        {
-            //            selecttedproduct_bundles.Add("basic_uncalibrated_dn");
-            //        }
-            //        if (basicitem_ids == null)
-            //        {
-            //            basicitem_ids = new List<string>();
-            //        }
-            //        basicitem_ids.Add(pSScene4Band.id);
-            //    }
-            //}
-
-            //foreach (string  item in selecttedproduct_bundles)
-            //{
-            //    foreach (string selected_item in selectteditem_types)
-            //    {
-            //        Product product = new Product();
-            //        product.product_bundle = item;
-            //        product.item_type = selected_item;
-            //        switch (item)
-            //        {
-            //            case "analytic":
-            //                product.item_ids = analyticitem_ids.ToArray();
-            //                break;
-            //            case "basic_analytic":
-            //                product.item_ids = basicitem_ids.ToArray();
-            //                break;
-            //            case "basic_uncalibrated_dn":
-            //                product.item_ids = basicitem_ids.ToArray();
-            //                break;
-            //            case "visual":
-            //                product.item_ids = visualitem_ids.ToArray();
-            //                break;
-            //            default:
-            //                break;
-            //        }
-            //        productlist.Add(product);
-
-            //    }
-            //}
-            order.products = productlist.ToArray();
-            order.delivery.archive_filename = _orderName + ".zip";
-            order.delivery.archive_type = "zip";
-
-            if (order.products.Length == 0 )
+            foreach (Product product in productlist)
             {
-                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("No bundles selected. Please choose at least one bundle for one Item to download");
-                return;
-            }
-            string json = JsonConvert.SerializeObject(order, new JsonSerializerSettings()
-            {
-                NullValueHandling = NullValueHandling.Ignore
-
-            });
-
-            HttpClientHandler _handler = new HttpClientHandler()
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-
-            HttpClient _client = new HttpClient(_handler)
-            {
-                BaseAddress = new Uri("https://api.planet.com")
-
-            };
-            var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:");
-            _client.DefaultRequestHeaders.Host = "api.planet.com";
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-            _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-            _client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.16.3");
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            //_client.DefaultRequestHeaders.ExpectContinue = false;
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "compute/ops/orders/v2");
-            //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "v0/orders/");
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-            request.Headers.CacheControl = new CacheControlHeaderValue
-            {
-                NoCache = true
-            };
-            request.Headers.Host = "api.planet.com";
-            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
-            request.Headers.CacheControl = new CacheControlHeaderValue();
-            request.Headers.CacheControl.NoCache = true;
-            //string json = "{ \"name\":\"Prod5\",\"products\":[{\"item_ids\":[\"20190914_195736_0f2b\",\"20190914_195737_0f2b\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
-            //string json = "{\"name\":\"Pro4\",\"products\":[{\"item_ids\":[\"20190910_205244_101b\",\"20190908_195741_1048\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            content.Headers.Remove("Content-Type");
-            content.Headers.Add("Content-Type", "application/json");
-
-            request.Content = content;
-            try
-            {
-                using (HttpResponseMessage httpResponse = _client.SendAsync(request).Result)
+                Order order2 = new Order();
+                order2.name = _orderName + "_" +product.item_type + "_" + product.product_bundle;
+                Delivery delivery2 = new Delivery();
+                order2.delivery = delivery2;
+                order2.delivery.single_archive = true;
+                List<Product> listproduct = new List<Product>();
+                listproduct.Add(product);
+                order2.products = listproduct.ToArray();
+                order2.delivery.archive_filename = _orderName + ".zip";
+                order2.delivery.archive_type = "zip";
+                if (order2.products.Length == 0)
                 {
-                    using (HttpContent content2 = httpResponse.Content)
+                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("No bundles selected. Please choose at least one bundle for one Item to download");
+                    return;
+                }
+                string json = JsonConvert.SerializeObject(order2, new JsonSerializerSettings()
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+
+                });
+                HttpClientHandler _handler = new HttpClientHandler()
+                {
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                };
+                HttpClient _client = new HttpClient(_handler)
+                {
+                    BaseAddress = new Uri("https://api.planet.com")
+
+                };
+                var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:");
+                _client.DefaultRequestHeaders.Host = "api.planet.com";
+                _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                _client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.16.3");
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                //_client.DefaultRequestHeaders.ExpectContinue = false;
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "compute/ops/orders/v2");
+                //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "v0/orders/");
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                request.Headers.CacheControl = new CacheControlHeaderValue
+                {
+                    NoCache = true
+                };
+                request.Headers.Host = "api.planet.com";
+                request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+                request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+                request.Headers.CacheControl = new CacheControlHeaderValue();
+                request.Headers.CacheControl.NoCache = true;
+                //string json = "{ \"name\":\"Prod5\",\"products\":[{\"item_ids\":[\"20190914_195736_0f2b\",\"20190914_195737_0f2b\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
+                //string json = "{\"name\":\"Pro4\",\"products\":[{\"item_ids\":[\"20190910_205244_101b\",\"20190908_195741_1048\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                content.Headers.Remove("Content-Type");
+                content.Headers.Add("Content-Type", "application/json");
+
+                request.Content = content;
+                try
+                {
+                    using (HttpResponseMessage httpResponse = _client.SendAsync(request).Result)
                     {
-                        var json2 = content2.ReadAsStringAsync().Result;
-                        OrderResponse2 orderResponse2 = JsonConvert.DeserializeObject<OrderResponse2>(json2);
-                        if (orderResponse2.state == "failed")
+                        if (httpResponse.IsSuccessStatusCode)
                         {
-                            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString());
+                            using (HttpContent content2 = httpResponse.Content)
+                            {
+                                var json2 = content2.ReadAsStringAsync().Result;
+                                OrderResponse2 orderResponse2 = JsonConvert.DeserializeObject<OrderResponse2>(json2);
+                                if (orderResponse2.state == "failed")
+                                {
+                                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Order Failed", MessageBoxButton.OK);
+                                }
+                                else if (orderResponse2.state == "initializing" || orderResponse2.state == "queued")
+                                {
+                                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("The order has been placed and is being processed." + Environment.NewLine + "Please see the Orders tab for details." + Environment.NewLine + "Order Name:" + orderResponse2.name.ToString(), "Order Success", System.Windows.MessageBoxButton.OK);
+                                }
+                                else if (orderResponse2.state == "partial")
+                                {
+                                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Your order was only partially successful. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Partial Success", System.Windows.MessageBoxButton.OK);
+                                }
+                            }
                         }
-                        else if (orderResponse2.state == "initializing" || orderResponse2.state == "queued"  )
+                        else
                         {
-                            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("The order has been placed and is being processed." + Environment.NewLine + "Please saee the Orders tab for details." + Environment.NewLine + "Order Name:" + orderResponse2.name.ToString(),"Order Success",System.Windows.MessageBoxButton.OK);
+                            Console.WriteLine(httpResponse.StatusCode);
+                            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problem was:" + Environment.NewLine + httpResponse.StatusCode + ": " + httpResponse.ReasonPhrase);
+                        }
+
+                    }
+
+                }
+                catch (WebException e)
+                {
+                    if (e.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        WebResponse resp = e.Response;
+                        using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                        {
+                            string resps = sr.ReadToEnd();
+                            //Response.Write(sr.ReadToEnd());
                         }
                     }
+
                 }
-            }
-            catch (WebException e)
-            {
-                if (e.Status == WebExceptionStatus.ProtocolError)
+                catch (Exception ex)
                 {
-                    WebResponse resp = e.Response;
-                    using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
-                    {
-                        string resps = sr.ReadToEnd();
-                        //Response.Write(sr.ReadToEnd());
-                    }
+                    Console.WriteLine(ex.Message);
+                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
-            }
+
+            //order.products = productlist.ToArray();
+            //order.delivery.archive_filename = _orderName + ".zip";
+            //order.delivery.archive_type = "zip";
+
+            //if (order.products.Length == 0 )
+            //{
+            //    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("No bundles selected. Please choose at least one bundle for one Item to download");
+            //    return;
+            //}
+            //string json = JsonConvert.SerializeObject(order, new JsonSerializerSettings()
+            //{
+            //    NullValueHandling = NullValueHandling.Ignore
+
+            //});
+
+            //HttpClientHandler _handler = new HttpClientHandler()
+            //{
+            //    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            //};
+
+            //HttpClient _client = new HttpClient(_handler)
+            //{
+            //    BaseAddress = new Uri("https://api.planet.com")
+
+            //};
+            //var byteArray = Encoding.ASCII.GetBytes("1fe575980e78467f9c28b552294ea410:");
+            //_client.DefaultRequestHeaders.Host = "api.planet.com";
+            //_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+            //_client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            //_client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.16.3");
+            //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            ////_client.DefaultRequestHeaders.ExpectContinue = false;
+            //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "compute/ops/orders/v2");
+            ////HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "v0/orders/");
+            //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+            //request.Headers.CacheControl = new CacheControlHeaderValue
+            //{
+            //    NoCache = true
+            //};
+            //request.Headers.Host = "api.planet.com";
+            //request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+            //request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+            //request.Headers.CacheControl = new CacheControlHeaderValue();
+            //request.Headers.CacheControl.NoCache = true;
+            ////string json = "{ \"name\":\"Prod5\",\"products\":[{\"item_ids\":[\"20190914_195736_0f2b\",\"20190914_195737_0f2b\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
+            ////string json = "{\"name\":\"Pro4\",\"products\":[{\"item_ids\":[\"20190910_205244_101b\",\"20190908_195741_1048\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
+            //var content = new StringContent(json, Encoding.UTF8, "application/json");
+            //content.Headers.Remove("Content-Type");
+            //content.Headers.Add("Content-Type", "application/json");
+
+            //request.Content = content;
+            //try
+            //{
+            //    using (HttpResponseMessage httpResponse = _client.SendAsync(request).Result)
+            //    {
+            //        if (httpResponse.IsSuccessStatusCode)
+            //        {
+            //            using (HttpContent content2 = httpResponse.Content)
+            //            {
+            //                var json2 = content2.ReadAsStringAsync().Result;
+            //                OrderResponse2 orderResponse2 = JsonConvert.DeserializeObject<OrderResponse2>(json2);
+            //                if (orderResponse2.state == "failed")
+            //                {
+            //                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(),"Order Failed",MessageBoxButton.OK);
+            //                }
+            //                else if (orderResponse2.state == "initializing" || orderResponse2.state == "queued")
+            //                {
+            //                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("The order has been placed and is being processed." + Environment.NewLine + "Please see the Orders tab for details." + Environment.NewLine + "Order Name:" + orderResponse2.name.ToString(), "Order Success", System.Windows.MessageBoxButton.OK);
+            //                }
+            //                else if (orderResponse2.state == "partial")
+            //                {
+            //                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Your order was only partially successful. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Partial Success", System.Windows.MessageBoxButton.OK);
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            Console.WriteLine(httpResponse.StatusCode);
+            //            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problem was:" + Environment.NewLine + httpResponse.StatusCode + ": " + httpResponse.ReasonPhrase);
+            //        }
+
+            //    }
+
+            //}
+            //catch (WebException e)
+            //{
+            //    if (e.Status == WebExceptionStatus.ProtocolError)
+            //    {
+            //        WebResponse resp = e.Response;
+            //        using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+            //        {
+            //            string resps = sr.ReadToEnd();
+            //            //Response.Write(sr.ReadToEnd());
+            //        }
+            //    }
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+            //}
             
             //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "compute/ops/orders/v2");
             //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
@@ -1411,6 +1471,8 @@ namespace Planet.ViewModel
                 OnPropertyChanged("lstPSScene4Band");
             }
         }
+        public tempBundles TempBundles { get; set; } = new tempBundles();
+
         public List<string> lstPSScene3Band { get; set; }
         public List<string> lstPSOrthoTile { get; set; }
         public List<string> lstREOrthoTile { get; set; }

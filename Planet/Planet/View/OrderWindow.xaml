@@ -10,7 +10,7 @@
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         xmlns:model="clr-namespace:Planet.Model"
         xmlns:viewmodel="clr-namespace:Planet.ViewModel"
-        Title="Order Window" Height="Auto"  Width="600"  ResizeMode="CanMinimize" ScrollViewer.VerticalScrollBarVisibility="Visible"
+        Title="Order Window" Height="auto" MaxHeight="750"  Width="600"  ResizeMode="CanMinimize" ScrollViewer.VerticalScrollBarVisibility="Visible"
         WindowStartupLocation="CenterOwner"
         xmlns:ui="clr-namespace:Planet"
                     DataContext="{Binding Path=viewmodel.OrderWindowViewModel}">
@@ -71,7 +71,7 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         
                         <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10"  IsChecked="{Binding Path=psscene4Bandselall, Mode=TwoWay}"/>
-                        <ComboBox ItemsSource="{Binding Path=lstPSScene4Band}" SelectedItem="{Binding Path=PSScene4Bandcurrselect}" Margin="10,10,10,10" Width="100" />
+                        <ComboBox ItemsSource="{Binding TempBundles.PlanetScope4}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding  Path=PSScene4Bandcurrselect}"   Margin="10,10,10,10" Width="100" />
                     </StackPanel>
                     <ListBox x:Name="PS42"  Visibility="{Binding PSScene4BandVis}"  Grid.Row="1" Width="Auto" MaxHeight="400"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSScene4Band}" Margin="10,2,0,0" >
                         <ListBox.ItemTemplate x:Uid="asdasd"  >
@@ -228,7 +228,7 @@
                     </ListBox>
                 </StackPanel>
             </Expander>
-            <Expander Visibility="{Binding REScenevis}" Header="REScene" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource  ExpandedConverter} , ConverterParameter=5}">
+            <Expander Visibility="{Binding REScenevis}" Header="Rapid Eye Scene" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource  ExpandedConverter} , ConverterParameter=5}">
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Label Content="3-band PlanetScope Scene"/>
@@ -388,7 +388,7 @@
                     </ListBox>
                 </StackPanel>
             </Expander>
-            <Expander Visibility="{Binding REOrthoTilevis}" Header="RE Ortho Tile" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=9}">
+            <Expander Visibility="{Binding REOrthoTilevis}" Header="Rapid Eye Ortho Tile" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=9}">
                 <StackPanel Orientation="Vertical" Visibility="{Binding REOrthoTilevis}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10"  IsChecked="{Binding Path=REOrthoTileselall, Mode=TwoWay}"/>

@@ -1,4 +1,5 @@
-﻿using ArcGIS.Desktop.Framework;
+﻿using ArcGIS.Desktop.Core.Geoprocessing;
+using ArcGIS.Desktop.Framework;
 using ArcGIS.Desktop.Mapping;
 using Newtonsoft.Json;
 using Planet.Model.Item_assets;
@@ -205,7 +206,6 @@ namespace Planet
                                     using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
                                     {
                                         await streamToReadFrom.CopyToAsync(streamToWriteTo);
-
                                         //MessageBox.Show("Download Completed Succesfully","Dowload Complete",MessageBoxButton.OK,MessageBoxImage.Information);
                                     }
 

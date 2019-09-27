@@ -47,7 +47,7 @@ namespace Planet
         private int _CloudcoverHigh = 100;
         private int _AreaCoverLow = 0;
         private int _AreaCoverHigh = 100;
-        private DateTime _DateFrom = DateTime.Now.AddMonths(-6);
+        private DateTime _DateFrom = DateTime.Now.AddMonths(-1);
         private DateTime _DateTo = DateTime.Now;
         public Data_DocPaneView View { get; set; }
         private bool _hasGeom = false;
@@ -838,35 +838,43 @@ namespace Planet
             {
                 using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
                 {
-                    using (HttpContent content2 = httpResponse.Content)
+                    if (httpResponse.IsSuccessStatusCode)
                     {
-                        var json2 = content2.ReadAsStringAsync().Result;
-                        QuickSearchResult quickSearchResult = JsonConvert.DeserializeObject<QuickSearchResult>(json2);
-                        //if (_quickSearchResults is null )
-                        //{
-                        _quickSearchResults = new ObservableCollection<QuickSearchResult>();
-                        Items = new ObservableCollection<AcquiredDateGroup>();
-                        Pages = new List<Model.Page>();
-                        //}
-                        _quickSearchResults.Add(quickSearchResult);
-                        Model.Page page = new Model.Page
+                        using (HttpContent content2 = httpResponse.Content)
                         {
-                            QuickSearchResult = quickSearchResult
-                        };
-                        List<AcquiredDateGroup> groupedItems = Model.Page.ProcessQuickSearchResults(quickSearchResult);
-                        page.Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
-                        Pages.Add(page);
-                        CurrentPage = page;
-                        Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
-                        //ProcessQuickSearchResults(quickSearchResult, page);
-                        HasPages = true;
-                        HasNextPage = quickSearchResult._links._next != null;
-                        IsNotFirstPage = false;
-                        PageNumber = 1;
-                        PageTotal = HasNextPage ? "many" : "1";
-                        PaginatorVisibility = Visibility.Visible;
-                        //Pages.AddRange(await Model.Page.GetAllPages(quickSearchResult));
+                            var json2 = content2.ReadAsStringAsync().Result;
+                            QuickSearchResult quickSearchResult = JsonConvert.DeserializeObject<QuickSearchResult>(json2);
+                            //if (_quickSearchResults is null )
+                            //{
+                            _quickSearchResults = new ObservableCollection<QuickSearchResult>();
+                            Items = new ObservableCollection<AcquiredDateGroup>();
+                            Pages = new List<Model.Page>();
+                            //}
+                            _quickSearchResults.Add(quickSearchResult);
+                            Model.Page page = new Model.Page
+                            {
+                                QuickSearchResult = quickSearchResult
+                            };
+                            List<AcquiredDateGroup> groupedItems = Model.Page.ProcessQuickSearchResults(quickSearchResult);
+                            page.Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
+                            Pages.Add(page);
+                            CurrentPage = page;
+                            Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
+                            //ProcessQuickSearchResults(quickSearchResult, page);
+                            HasPages = true;
+                            HasNextPage = quickSearchResult._links._next != null;
+                            IsNotFirstPage = false;
+                            PageNumber = 1;
+                            PageTotal = HasNextPage ? "many" : "1";
+                            PaginatorVisibility = Visibility.Visible;
+                            //Pages.AddRange(await Model.Page.GetAllPages(quickSearchResult));
+                        }
                     }
+                    else
+                    {
+                        ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was a problem with the Search. PLease try again." + Environment.NewLine + httpResponse.StatusCode  + Environment.NewLine + httpResponse.ReasonPhrase);
+                    }
+                    
                 }
 
 
