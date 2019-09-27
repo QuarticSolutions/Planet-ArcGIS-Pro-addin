@@ -720,6 +720,10 @@ namespace Planet
                                 }
                             }
                         }
+                        else
+                        {
+                            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Order is not ready");
+                        }
                     }
 
 
