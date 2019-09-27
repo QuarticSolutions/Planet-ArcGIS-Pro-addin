@@ -21,6 +21,17 @@
             <ResourceDictionary.MergedDictionaries>
                 <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="DataGridCell" x:Key="DownloadStatusCellStyle">
+                <Setter Property="Foreground" Value="{DynamicResource Esri_TextStyleDefaultBrush}"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding status}" Value="Error">
+                        <Setter Property="Foreground" Value="Red"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsActive}" Value="Complete">
+                        <Setter Property="Foreground" Value="Green"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
             <Style x:Key="MainTabItemStyle" TargetType="{x:Type TabItem}">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -134,7 +145,7 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Grid Name="Root">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -184,7 +195,7 @@
                                 </Grid>
                             </Grid>
                         </TabItem>
-                        <TabItem Header="Product"  Style="{DynamicResource SubTabItemStyle}">
+                        <TabItem Header="Source"  Style="{DynamicResource SubTabItemStyle}">
                             <Grid Margin="0,5" VerticalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
@@ -406,11 +417,11 @@
                                         <viewmodel:LockIconVisibiltyConverter x:Key="LockIconVisibiltyConverter"/>
                                         <viewmodel:SelectCheckIconVisibiltyConverter x:Key="SelectCheckIconVisibiltyConverter"/>
                                     </StackPanel.Resources>
-                                    <StackPanel.ContextMenu>
+                                    <!--<StackPanel.ContextMenu>
                                         <ContextMenu StaysOpen="true">
                                             <MenuItem Header="View more information" />
                                         </ContextMenu>
-                                    </StackPanel.ContextMenu>
+                                    </StackPanel.ContextMenu>-->
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseEnter">
                                             <ei:CallMethodAction 
@@ -428,7 +439,7 @@
                                     <Grid Margin="5,0" VerticalAlignment="Center" Visibility="{Binding _permissions, Converter={StaticResource LockIconVisibiltyConverter}}">
                                         <TextBlock ToolTipService.ToolTip="These images require additional access">
                                             <Hyperlink NavigateUri="https://www.planet.com/" TextDecorations="None">
-                                                <Image Width="30" Source="pack://application:,,,/Planet;component/Images/lock_image.png"/>
+                                                <Image Width="32" Source="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericLockYellow32.png"/>
                                             </Hyperlink>
                                         </TextBlock>
                                     </Grid>
@@ -637,8 +648,10 @@
                 <Grid Margin="5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <!--<ListBox Name="lbOrders" Grid.Row="0" HorizontalContentAlignment="Stretch" ItemsSource="{Binding PastOrders}" IsEnabled="{Binding OrdersEnabled}" >
                         <ListBox.ItemTemplate >
@@ -650,7 +663,8 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>-->
-                    <DataGrid ItemsSource="{Binding PastOrders}" Style="{DynamicResource Esri_DataGrid}" ScrollViewer.CanContentScroll="True" HeadersVisibility="Column" HorizontalAlignment="Stretch"  AutoGenerateColumns="False" Margin="0,0,0,5" >
+                    <TextBlock Grid.Row="0" Text="Orders" Margin="0,0,0,5" Foreground="{DynamicResource Esri_TextControlBrush}" />
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding PastOrders}" Style="{DynamicResource Esri_DataGrid}" ScrollViewer.CanContentScroll="True" HeadersVisibility="Column" HorizontalAlignment="Stretch"  AutoGenerateColumns="False" Margin="0,0,0,5" >
                         <DataGrid.Resources>
                             <System:String x:Key="edit">Download</System:String>
                             <viewmodel:uriValid x:Key="uriValid"/>
@@ -660,33 +674,29 @@
                             <DataGridTextColumn Header="Status" Binding="{Binding state}"/>
                             <DataGridTextColumn Header="Name" Binding="{Binding name}"/>
                             <DataGridTextColumn Header="Created" Binding="{Binding created_on}" SortDirection="Descending"/>
-                            <!--<DataGridHyperlinkColumn Header="Download" TargetName="{Binding _links._self}" ContentBinding="{Binding Source={StaticResource edit}}" Binding="{Binding _links._self, Converter = {StaticResource uriValid}}"  >
-                                <DataGridHyperlinkColumn.ElementStyle>
-                                    <Style TargetType="TextBlock" >
-                                        <EventSetter Event="Hyperlink.Click" Handler="DG_Hyperlink_Click"/>
-                                    </Style>
-                                </DataGridHyperlinkColumn.ElementStyle>
-                            </DataGridHyperlinkColumn>-->
-                            <DataGridHyperlinkColumn Header="Download2" >
-                                <DataGridHyperlinkColumn.ElementStyle>
-                                    <Style TargetType="TextBlock" >
-                                        <EventSetter Event="Hyperlink.Click" Handler="DG_Hyperlink_Click"/>
-                                    </Style>
-                                </DataGridHyperlinkColumn.ElementStyle>
-                                <DataGridHyperlinkColumn.Binding>
-                                    <MultiBinding>
-                                        <Binding Path="state"/>
-                                        <Binding Path="_links._self"/>
-                                        <MultiBinding.Converter>
-                                            <viewmodel:MultiDataValueConverter/>
-                                        </MultiBinding.Converter>
-                                    </MultiBinding>
-                                </DataGridHyperlinkColumn.Binding>
-                            </DataGridHyperlinkColumn>
+                            <DataGridTemplateColumn Header="Download">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock>
+                                          <Hyperlink Command="{Binding ElementName=Root, Path=DataContext.OpenDownloadHyperlink}" CommandParameter="{Binding}">
+                                            <TextBlock Text="{Binding _links._self}" />
+                                          </Hyperlink>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTextColumn Header="ID" Binding="{Binding id}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <Button  Grid.Row="2" Content="Refresh" Command="{Binding ViewOrderCommand}" Style="{DynamicResource Esri_Button}" Margin="0,5"/>
+                    <TextBlock Grid.Row="3" Text="Downloads" Margin="0,5" Foreground="{DynamicResource Esri_TextControlBrush}" />
+                    <DataGrid Grid.Row="4" ItemsSource="{Binding CurrentDownloads}" Style="{DynamicResource Esri_DataGrid}" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" HeadersVisibility="Column" HorizontalAlignment="Stretch"  AutoGenerateColumns="False" Margin="0,5,0,0" >
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding name}"/>
+                            <DataGridTextColumn CellStyle="{StaticResource DownloadStatusCellStyle}" Header="Status" Binding="{Binding status}"/>
+                            <DataGridTextColumn Header="Location" Binding="{Binding path}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
             </TabItem>
 

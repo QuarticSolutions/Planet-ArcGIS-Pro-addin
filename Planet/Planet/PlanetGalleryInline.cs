@@ -62,7 +62,7 @@ namespace Planet
             }
         }
 
-        private int PageSize = 10;
+        private int PageSize = 5;
         private int PageNumber = 0;
         private int TotalPages = 0;
 

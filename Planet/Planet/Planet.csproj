@@ -182,6 +182,7 @@
     <Compile Include="Model\Item_assets\bundles.cs" />
     <Compile Include="Model\Item_assets\Order.cs" />
     <Compile Include="Model\Item_assets\OrderResponse.cs" />
+    <Compile Include="Model\Item_assets\OrderStatusItem.cs" />
     <Compile Include="Model\Item_assets\PSScene4Band.cs" />
     <Compile Include="Model\Page.cs" />
     <Compile Include="Model\PlanetResultModel.cs" />
@@ -189,6 +190,8 @@
     <Compile Include="Model\SearchFilter.cs" />
     <Compile Include="Model\Strip.cs" />
     <Compile Include="Module1.cs" />
+    <Compile Include="PlanetBasemapsComboBox.cs" />
+    <Compile Include="PlanetBasemapsLoadMoreButton.cs" />
     <Compile Include="ViewModel\OrderWindowViewModel.cs" />
     <Compile Include="ViewModel\Valueconverter.cs" />
     <Compile Include="View\OrderWindow.xaml.cs">
@@ -368,6 +371,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\lock_image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ArcGIS\Desktop\Framework\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--
