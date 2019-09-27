@@ -68,10 +68,9 @@
         <StackPanel Margin="20" Grid.Row="0">
             <Expander Visibility="{Binding PSScene4BandVis}" Header="4-band PlanetScope Scene" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=1}">
                 <StackPanel Orientation="Vertical" Visibility="{Binding PSScene4BandVis}">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        
-                        <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10"  IsChecked="{Binding Path=psscene4Bandselall, Mode=TwoWay}"/>
-                        <ComboBox ItemsSource="{Binding TempBundles.PlanetScope4}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding  Path=PSScene4Bandcurrselect}"   Margin="10,10,10,10" Width="100" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <ComboBox ItemsSource="{Binding TempBundles.PlanetScope4}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding  Path=PSScene4Bandcurrselect}"   Margin="10,10,0,10" Width="300" />
+                        <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="50,10"  IsChecked="{Binding Path=psscene4Bandselall, Mode=TwoWay}"/>
                     </StackPanel>
                     <ListBox x:Name="PS42"  Visibility="{Binding PSScene4BandVis}"  Grid.Row="1" Width="Auto" MaxHeight="400"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSScene4Band}" Margin="10,2,0,0" >
                         <ListBox.ItemTemplate x:Uid="asdasd"  >
@@ -191,10 +190,10 @@
             </Expander>
             <Expander Visibility="{Binding SkySatCollectvis}" Header="SkySat Collect" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource  ExpandedConverter} , ConverterParameter=4}">
                 <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <!--<Label Content="3-band PlanetScope Scene"/>-->
-                        <CheckBox Width="70" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=SkySatCollectselall, Mode=TwoWay}"/>
-                        <ComboBox ItemsSource="{Binding lstSkySatCollect}" SelectedItem="{Binding Path=SkySatCollectcurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="100"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <ComboBox ItemsSource="{Binding TempBundles.SkySat}" DisplayMemberPath="Value" SelectedValuePath="Key"  SelectedValue="{Binding Path=SkySatCollectcurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="300"/>
+                        <CheckBox Width="70" VerticalAlignment="Center" Margin="40,10"  IsChecked="{Binding Path=SkySatCollectselall, Mode=TwoWay}"/>
+                        
                     </StackPanel>
                     <ListBox  Visibility="{Binding SkySatCollectvis}"  Width="Auto" ItemsSource="{Binding SkySatCollect}"  Margin="10,2,0,0" >
                         <ListBox.ItemTemplate  >

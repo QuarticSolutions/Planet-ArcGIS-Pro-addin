@@ -910,7 +910,15 @@ namespace Planet.ViewModel
             foreach (Product product in productlist)
             {
                 Order order2 = new Order();
-                order2.name = _orderName + "_" +product.item_type + "_" + product.product_bundle;
+                if (product.product_bundle.ToString().LastIndexOf(",") > -1)
+                {
+                    order2.name = _orderName + "_" + product.item_type + "_" + product.product_bundle.ToString().Substring(0, product.product_bundle.ToString().LastIndexOf(","));
+                }
+                else
+                {
+                    order2.name = _orderName + "_" + product.item_type + "_" + product.product_bundle.ToString();
+                }
+                
                 Delivery delivery2 = new Delivery();
                 order2.delivery = delivery2;
                 order2.delivery.single_archive = true;
@@ -991,7 +999,12 @@ namespace Planet.ViewModel
                         else
                         {
                             Console.WriteLine(httpResponse.StatusCode);
-                            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problem was:" + Environment.NewLine + httpResponse.StatusCode + ": " + httpResponse.ReasonPhrase);
+                            //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problem was:" + Environment.NewLine + httpResponse.StatusCode + ": " + httpResponse.ReasonPhrase);
+                            using (HttpContent content2 = httpResponse.Content)
+                            {
+                                var json2 = content2.ReadAsStringAsync().Result;
+                                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order for: " + order2.name + ". Problem was:" + Environment.NewLine + json2.ToString());
+                            }
                         }
 
                     }
