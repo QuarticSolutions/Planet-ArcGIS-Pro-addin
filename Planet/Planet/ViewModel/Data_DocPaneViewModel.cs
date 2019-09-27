@@ -31,6 +31,7 @@ using ArcGIS.Desktop.Framework.DragDrop;
 using Planet.ViewModel;
 using Planet.Model.Item_assets;
 using System.IO;
+using System.Windows.Documents;
 
 namespace Planet
 {
@@ -56,6 +57,7 @@ namespace Planet
         {
             _selectedAssets.CollectionChanged += _selectedAssets_CollectionChanged;
             //GetPastOrders();
+            
         }
 
 
@@ -552,6 +554,186 @@ namespace Planet
             {
                 //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
             }
+        }
+
+        private ObservableCollection<OrderStatusItem> _CurrentDownloads;
+        public ObservableCollection<OrderStatusItem> CurrentDownloads
+        {
+            get
+            {
+                if (_CurrentDownloads == null)
+                {
+                    _CurrentDownloads = new ObservableCollection<OrderStatusItem>();
+                }
+                return _CurrentDownloads;
+            }
+            set
+            {
+                _CurrentDownloads = value;
+                OnPropertyChanged("CurrentDownloads");
+            }
+        }
+        private Visibility _DownloadGridVisibility = Visibility.Collapsed;
+        public Visibility DownloadGridVisibility
+        {
+            get { return _DownloadGridVisibility; }
+            set
+            {
+                _DownloadGridVisibility = value;
+                OnPropertyChanged("DownloadGridVisibility");
+            }
+        }
+        public bool CanExecuteDownload { get; set; } = true;
+        private ICommand _OpenDownloadHyperlink;
+        public ICommand OpenDownloadHyperlink
+        {
+            get
+            {
+                if (_OpenDownloadHyperlink == null)
+                    _OpenDownloadHyperlink = new DownloadCommandHandler(param => DoDownloadHyperlink(param), CanExecuteDownload);
+                return _OpenDownloadHyperlink;
+            }
+        }
+
+        private async void DoDownloadHyperlink(object order)
+        {
+            Order2 order2 = order as Order2;
+
+            FolderSelector folderSelector = new FolderSelector();
+            folderSelector.lbxGrids.ItemsSource = null;
+            folderSelector.ShowNewFolderButton = false;
+            folderSelector.ShowActivated = true;
+            folderSelector.SizeToContent = SizeToContent.Width;
+            object da = folderSelector.txtGrids.DataContext;
+
+            foreach (System.Windows.Controls.TreeViewItem item in folderSelector.tvFolders.Items)
+            {
+                item.Foreground = System.Windows.Media.Brushes.White;
+            }
+
+            if (da is Data.BaseItem ba)
+            {
+                ba.QuadCount = "";
+            }
+            folderSelector.ShowDialog();
+            if ((bool)folderSelector.DialogResult)
+            {
+                string savelocation = folderSelector.SelectedPath;
+
+                OrderStatusItem download = new OrderStatusItem();
+                download.name = order2.name;
+                download.status = "Downloading";
+                download.path = savelocation;
+                download.id = order2.id;
+                CurrentDownloads.Add(download);
+                DownloadGridVisibility = Visibility.Visible;
+
+                bool complete = await LoadImage(order2._links._self, savelocation);
+                if (complete)
+                {
+                    download.status = "Complete";
+                    var notification = new NotificationItem("Planet_Download_Complete_Notification_" + order2.id, false,
+                        "The download of Order: " + order2.name + " is complete" + Environment.NewLine + "The file is saved to: " + savelocation, NotificationType.Information);
+                    NotificationManager.AddNotification(notification);
+                    FrameworkApplication.AddNotification(new Notification()
+                    {
+                        Title = "Downloading Finished",
+                        Message = String.Format("The download of Order: {0} is complete", order2.name),
+                        ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
+
+                    });
+                } else
+                {
+                    download.status = "Error";
+                }
+            }
+        }
+
+        public async static Task<bool> LoadImage(string uri, string destination)
+        {
+            OrderDownload orderDownload = null;
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":");// "1fe575980e78467f9c28b552294ea410:");
+                    client.DefaultRequestHeaders.Host = "api.planet.com";
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                    client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                    client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.16.3");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    try
+                    {
+                        using (HttpResponseMessage httpResponse = client.GetAsync(uri).Result)
+                        {
+                            using (HttpContent content2 = httpResponse.Content)
+                            {
+                                var json2 = content2.ReadAsStringAsync().Result;
+                                orderDownload = JsonConvert.DeserializeObject<OrderDownload>(json2);
+
+                            }
+                        }
+
+                    }
+                    catch (WebException e)
+                    {
+                        if (e.Status == WebExceptionStatus.ProtocolError)
+                        {
+                            WebResponse resp = e.Response;
+                            using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                            {
+                                string resps = sr.ReadToEnd();
+                                //Response.Write(sr.ReadToEnd());
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+                    }
+
+                    if (orderDownload != null)
+                    {
+                        if (orderDownload.state == "success")
+                        {
+                            using (var response = await client.GetAsync(orderDownload._links.results[1].location, HttpCompletionOption.ResponseHeadersRead))
+                            {
+                                if (!response.IsSuccessStatusCode)
+                                {
+                                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was a problem downloading your data" + Environment.NewLine + response.ReasonPhrase, "Download Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                                    return false;
+                                }
+                                using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
+                                {
+                                    string fileToWriteTo = destination + "\\" + orderDownload.name + "." + orderDownload.delivery.archive_type; //Path.GetTempFileName();
+                                    if (File.Exists(fileToWriteTo))
+                                    {
+                                        File.Delete(fileToWriteTo);
+                                    }
+                                    using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
+                                    {
+                                        await streamToReadFrom.CopyToAsync(streamToWriteTo);
+                                        //MessageBox.Show("Download Completed Succesfully","Dowload Complete",MessageBoxButton.OK,MessageBoxImage.Information);
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Error downloading \n" + ex.Message, "Download Problem", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Console.WriteLine("Failed to Download the quad: {0}", ex.Message);
+
+            }
+
+            return false;
         }
 
 
@@ -1087,6 +1269,29 @@ namespace Planet
         public void Execute(object parameter)
         {
             _action();
+        }
+    }
+
+    public class DownloadCommandHandler : ICommand
+    {
+        private Action<object> _action;
+        private bool _canExecute;
+        public DownloadCommandHandler(Action<object> action, bool canExecute)
+        {
+            _action = action;
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return _canExecute;
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public void Execute(object parameter)
+        {
+            _action(parameter);
         }
     }
 
