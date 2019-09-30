@@ -109,10 +109,10 @@
             </Expander>
             <Expander Visibility="{Binding PSScene3BandVis}" Header="3-band PlanetScope Scene" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=2}">
                 <StackPanel Orientation="Vertical" Visibility="{Binding PSScene3BandVis}">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-
-                        <CheckBox Width="70" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=psscene3Bandselall, Mode=TwoWay}"/>
-                        <ComboBox ItemsSource="{Binding Path=lstPSScene3Band}" SelectedItem="{Binding Path=PSScene3Bandcurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="100"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <ComboBox ItemsSource="{Binding TempBundles.PlanetScope3}"  DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=PSScene3Bandcurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="300"/>
+                        <CheckBox Width="70" VerticalAlignment="Center" Margin="40,10"  IsChecked="{Binding Path=psscene3Bandselall, Mode=TwoWay}"/>
+                       
                     </StackPanel>
                     <ListBox Visibility="{Binding PSScene3BandVis}" MaxHeight="400"    Width="Auto"  Grid.Column="0"  ItemsSource="{Binding PSScene3Band}" Margin="10,2,0,0" >
                         <ListBox.ItemTemplate x:Uid="asdasd"  >
@@ -191,7 +191,7 @@
             <Expander Visibility="{Binding SkySatCollectvis}" Header="SkySat Collect" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource  ExpandedConverter} , ConverterParameter=4}">
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <ComboBox ItemsSource="{Binding TempBundles.SkySat}" DisplayMemberPath="Value" SelectedValuePath="Key"  SelectedValue="{Binding Path=SkySatCollectcurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="300"/>
+                        <ComboBox ItemsSource="{Binding TempBundles.SkySatCollect}" DisplayMemberPath="Value" SelectedValuePath="Key"  SelectedValue="{Binding Path=SkySatCollectcurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="300"/>
                         <CheckBox Width="70" VerticalAlignment="Center" Margin="40,10"  IsChecked="{Binding Path=SkySatCollectselall, Mode=TwoWay}"/>
                         
                     </StackPanel>
@@ -229,10 +229,10 @@
             </Expander>
             <Expander Visibility="{Binding REScenevis}" Header="Rapid Eye Scene" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource  ExpandedConverter} , ConverterParameter=5}">
                 <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Label Content="3-band PlanetScope Scene"/>
-                        <CheckBox Width="70" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=RESceneselall, Mode=TwoWay}"/>
-                        <ComboBox ItemsSource="{Binding PathlstREScene}" SelectedItem="{Binding Path=REScenecurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="100"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <ComboBox ItemsSource="{Binding TempBundles.REScene}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=REScenecurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="300"/>
+                        <CheckBox Width="70" VerticalAlignment="Center" Margin="40,10"  IsChecked="{Binding Path=RESceneselall, Mode=TwoWay}"/>
+                        
                     </StackPanel>
                     <ListBox  Visibility="{Binding REScenevis}"  Width="Auto" ItemsSource="{Binding REScene}"   Margin="10,2,0,0" >
                         <ListBox.ItemTemplate  >
@@ -309,9 +309,10 @@
             </Expander>
             <Expander Visibility="{Binding Landsat8L1Gvis}" Header="Landsat 8" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=7}">
                 <StackPanel Orientation="Vertical" Visibility="{Binding Landsat8L1Gvis}">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10"  IsChecked="{Binding Path=Landsat8L1Gselall, Mode=TwoWay}"/>
-                        <ComboBox ItemsSource="{Binding lstLandsat8L1G}" SelectedItem="{Binding Path=Landsat8L1Gcurrselect}" Margin="10,10,10,10" Width="100" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <ComboBox ItemsSource="{Binding TempBundles.LandSat8L1C}"  DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=Landsat8L1Gcurrselect}" Margin="10,10,10,10" Width="300" />
+                        <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40,10"  IsChecked="{Binding Path=Landsat8L1Gselall, Mode=TwoWay}"/>
+                        
                     </StackPanel>
                     <ListBox  Visibility="{Binding Landsat8L1Gvis}"  Grid.Row="1" Width="Auto" MaxHeight="400"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Landsat8L1G}" Margin="10,2,0,0" >
                         <ListBox.ItemTemplate x:Uid="asdasd"  >
@@ -350,8 +351,8 @@
             <Expander Visibility="{Binding Sentinel2L1Cvis}" Header="Sentine l2" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=8}">
                 <StackPanel Orientation="Vertical" Visibility="{Binding Sentinel2L1Cvis}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10"  IsChecked="{Binding Path=Sentinel2L1Cselall, Mode=TwoWay}"/>
-                        <ComboBox ItemsSource="{Binding Path=lstSentinel2L1C}" SelectedItem="{Binding Path=Sentinel2L1Ccurrselect}" Margin="10,10,10,10" Width="100" />
+                        <ComboBox ItemsSource="{Binding Path=TempBundles.Sentinel2L1C}"  DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=Sentinel2L1Ccurrselect}" Margin="10,10,10,10" Width="300" />
+                        <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="50,10"  IsChecked="{Binding Path=Sentinel2L1Cselall, Mode=TwoWay}"/>
                     </StackPanel>
                     <ListBox  Visibility="{Binding Sentinel2L1Cvis}"  Grid.Row="1" Width="Auto" MaxHeight="400"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Sentinel2L1C}" Margin="10,2,0,0" >
                         <ListBox.ItemTemplate x:Uid="asdasd"  >
@@ -361,7 +362,6 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>

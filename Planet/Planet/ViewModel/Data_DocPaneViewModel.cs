@@ -843,16 +843,25 @@ namespace Planet
         /// Do a Quick search against the Planet Data api
         /// The results of the search update the QuickSearchResults Collection
         /// </summary>
-        private void DoSearch()
+        private async void DoSearch()
         {
             ShowCircularAnimation = Visibility.Visible;
             SelectAssets.Clear();
             TreeEnabled = false;
             Polygon poly = (Polygon)AOIGeometry;
             IReadOnlyList<Coordinate2D> coordinates = poly.Copy2DCoordinatesToList();
+            string ejson = poly.ToJson(true);
             ToGeoCoordinateParameter ddParam = new ToGeoCoordinateParameter(GeoCoordinateType.DD);
             List<string> geocoords = new List<string>();
             List<Tuple<double, double>> AllPts = new List<Tuple<double, double>>();
+            await QueuedTask.Run(() =>
+            {
+                Polygon wgsPoly = PolygonBuilder.CreatePolygon(poly, SpatialReferences.WGS84);
+                
+                ejson = wgsPoly.ToJson();
+            });
+                
+            
             double x;
             double y;
             foreach (Coordinate2D item in coordinates)
