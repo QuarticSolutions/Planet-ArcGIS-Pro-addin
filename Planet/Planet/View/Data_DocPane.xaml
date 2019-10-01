@@ -27,7 +27,7 @@
                     <DataTrigger Binding="{Binding status}" Value="Error">
                         <Setter Property="Foreground" Value="Red"/>
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding IsActive}" Value="Complete">
+                    <DataTrigger Binding="{Binding status}" Value="Complete">
                         <Setter Property="Foreground" Value="Green"/>
                     </DataTrigger>
                 </Style.Triggers>
