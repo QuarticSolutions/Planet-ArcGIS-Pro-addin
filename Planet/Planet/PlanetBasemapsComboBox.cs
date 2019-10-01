@@ -116,6 +116,11 @@ namespace Planet
                 //    Add(new ComboBoxItem(name));
                 //}
                 //_isInitialized = true;
+                if (Module1.Current.API_KEY == null)
+                {
+                    FrameworkApplication.State.Deactivate("planet_state_connection");
+                    return;
+                }
                 if (Module1.Current.API_KEY.API_KEY_Value == null || Module1.Current.API_KEY.API_KEY_Value == "")
                 {
                     FrameworkApplication.State.Deactivate("planet_state_connection");

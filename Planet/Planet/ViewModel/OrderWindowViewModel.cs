@@ -47,7 +47,8 @@ namespace Planet.ViewModel
             BaseAddress = new Uri("https://api.planet.com")
         };
         private ObservableCollection<Asset> _selectedAssets = new ObservableCollection<Asset>();
-
+        //private string ResultsColl;
+        
 
         public OrderWindowViewModel()
         {
@@ -201,10 +202,28 @@ namespace Planet.ViewModel
             }
         }
 
+        private ObservableCollection<string> _resultscoll = new ObservableCollection<string>();
+        public ObservableCollection<string> Resultscoll
+        {
+            get
+            {
+                return _resultscoll;
+            }
+            set
+            {
+                if (_resultscoll is null)
+                {
+                    _resultscoll = new ObservableCollection<string>();
+                }
+                _resultscoll = value;
+                OnPropertyChanged("Resultscoll");
+            }
+
+        }
 
         #region listboxvisibility
 
-        
+
         private string _psscene4Bandvis = "Collapsed";
         public string PSScene4BandVis { get { return _psscene4Bandvis; } set { _psscene4Bandvis = value; OnPropertyChanged("PSScene4BandVis"); } }
 
@@ -982,18 +1001,28 @@ namespace Planet.ViewModel
                             {
                                 var json2 = content2.ReadAsStringAsync().Result;
                                 OrderResponse2 orderResponse2 = JsonConvert.DeserializeObject<OrderResponse2>(json2);
+                                if (Resultscoll == null)
+                                {
+                                    Resultscoll = new ObservableCollection<string>();
+                                }
                                 if (orderResponse2.state == "failed")
                                 {
-                                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Order Failed", MessageBoxButton.OK);
+                                    //_resultscoll
+                                    Resultscoll.Add(order2.name + " failed. There was an error placing the order. Possible problems are: "  + orderResponse2.error_hints.ToString());
+                                    //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Order Failed", MessageBoxButton.OK);
                                 }
                                 else if (orderResponse2.state == "initializing" || orderResponse2.state == "queued")
                                 {
-                                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("The order has been placed and is being processed." + Environment.NewLine + "Please see the Orders tab for details." + Environment.NewLine + "Order Name:" + orderResponse2.name.ToString(), "Order Success", System.Windows.MessageBoxButton.OK);
+                                    Resultscoll.Add(order2.name + " " + orderResponse2.state + ". The order has been placed and is being processed. Please see the Orders tab for details");
+                                    //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("The order has been placed and is being processed." + Environment.NewLine + "Please see the Orders tab for details." + Environment.NewLine + "Order Name:" + orderResponse2.name.ToString(), "Order Success", System.Windows.MessageBoxButton.OK);
                                 }
                                 else if (orderResponse2.state == "partial")
                                 {
-                                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Your order was only partially successful. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Partial Success", System.Windows.MessageBoxButton.OK);
+                                    Resultscoll.Add(order2.name + " " + orderResponse2.state + ". Your order was only partially successful. Possible problems are: " + orderResponse2.error_hints.ToString());
+                                    //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Your order was only partially successful. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Partial Success", System.Windows.MessageBoxButton.OK);
                                 }
+                                Utils.AnalyticsReporter analyticsReporter = new Utils.AnalyticsReporter();
+                                analyticsReporter.MakeReport("Order", new Segment.Model.Traits() { { "name", order2.name },{ "numItems", order2.products.Length } });
                             }
                         }
                         else
@@ -1003,7 +1032,8 @@ namespace Planet.ViewModel
                             using (HttpContent content2 = httpResponse.Content)
                             {
                                 var json2 = content2.ReadAsStringAsync().Result;
-                                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order for: " + order2.name + ". Problem was:" + Environment.NewLine + json2.ToString());
+                                Resultscoll.Add("There was an error placing the order for: " + order2.name + ". Problem was: " + json2.ToString());
+                                //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order for: " + order2.name + ". Problem was:" + Environment.NewLine + json2.ToString());
                             }
                         }
 

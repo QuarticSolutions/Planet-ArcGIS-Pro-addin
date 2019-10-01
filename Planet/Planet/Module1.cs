@@ -20,6 +20,8 @@ using ArcGIS.Desktop.Core.Events;
 using System.ComponentModel;
 using System.Net.Http;
 using ArcGIS.Core.Events;
+using Segment;
+using Segment.Model;
 
 namespace Planet
 {
@@ -41,6 +43,10 @@ namespace Planet
         private void OnProjectClose(ProjectEventArgs obj)
         {
             hasSettings = false;
+            if (!String.IsNullOrEmpty(API_KEY.EMAIL_Value))
+            {
+                Analytics.Client.Identify(API_KEY.EMAIL_Value, new Traits() { });
+            }
         }
 
         private void OnProjectOpen(ProjectEventArgs obj)
@@ -58,7 +64,7 @@ namespace Planet
                 return _this ?? (_this = (Module1)FrameworkApplication.FindModule("Planet_Module"));
             }
         }
-        private Dictionary<string, string> _moduleSettings = new Dictionary<string, string>();
+        //private Dictionary<string, string> _moduleSettings = new Dictionary<string, string>();
 
         #region Overrides
         /// <summary>
@@ -86,39 +92,77 @@ namespace Planet
             // set the flag
             hasSettings = true;
             // clear existing setting values
-            _moduleSettings.Clear();
+            //_moduleSettings.Clear();
 
             if (settings == null) return Task.FromResult(0);
 
             // Settings defined in the Property sheet’s viewmodel.	
-            string[] keys = new string[] { "planet_api_key" };
-            
+            string[] keys = new string[] { "planet_api_key", "planet_email", "planet_organizationId", "planet_programId" };
+
+
             foreach (string key in keys)
             {
-
                 object value = settings.Get(key);
                 if (value != null)
                 {
-                    API_KEY.API_KEY_Value = value.ToString();
-                    if (_moduleSettings.ContainsKey(key))
+                    if (key=="planet_email")
                     {
-                        _moduleSettings[key] = value.ToString();
-
+                        API_KEY.EMAIL_Value = value.ToString();
+                       
                     }
-                    else
-                        _moduleSettings.Add(key, value.ToString());
-                    using (HttpClient client = new HttpClient())
+                    else if (key == "planet_organizationId")
                     {
-                        HttpResponseMessage response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics?api_key=" + Module1.Current.API_KEY.API_KEY_Value).Result;
-                        if (response.IsSuccessStatusCode)
+                        API_KEY.organizationId_Value = value.ToString();
+                    }
+                    else if (key == "planet_programId")
+                    {
+                        API_KEY.programId_Value = value.ToString();
+                    }
+                    else if (key == "planet_api_key")
+                    {
+                        API_KEY.API_KEY_Value = value.ToString();
+                        //if (_moduleSettings.ContainsKey(key))
+                        //{
+                        //    _moduleSettings[key] = value.ToString();
+                        //}
+                        //else
+                        //    _moduleSettings.Add(key, value.ToString());
+                        using (HttpClient client = new HttpClient())
                         {
-                            FrameworkApplication.State.Activate("planet_state_connection");
-                            //IPlugInWrapper wrapper = FrameworkApplication.GetPlugInWrapper("Planet_PlanetGalleryInline");
-                            //FrameworkApplication.SetCurrentToolAsync("Planet_PlanetGalleryInline");
+                            HttpResponseMessage response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics?api_key=" + Module1.Current.API_KEY.API_KEY_Value).Result;
+                            if (response.IsSuccessStatusCode)
+                            {
+
+                                FrameworkApplication.State.Activate("planet_state_connection");
+                                //IPlugInWrapper wrapper = FrameworkApplication.GetPlugInWrapper("Planet_PlanetGalleryInline");
+                                //FrameworkApplication.SetCurrentToolAsync("Planet_PlanetGalleryInline");
+                            }
                         }
                     }
-
                 }
+            }
+            
+            if (!string.IsNullOrEmpty(API_KEY.EMAIL_Value) && !string.IsNullOrEmpty(API_KEY.API_KEY_Value))
+            {
+                if (Analytics.Client == null)
+                {
+                    Analytics.Initialize("at3uKKI8tvtIzsvXU4MpmxKBWSfnUPwR");
+                }
+                Analytics.Client.Identify(API_KEY.EMAIL_Value, new Traits() {
+
+                        { "apiKey", API_KEY.API_KEY_Value },
+                        { "email", API_KEY.EMAIL_Value },
+                        { "organizationId", API_KEY.organizationId_Value },
+                        { "programId", API_KEY.programId_Value }
+                    });
+                Analytics.Client.Track(API_KEY.EMAIL_Value,"Login from ArcGIS Pro", new Traits()
+                {
+
+                    { "apiKey", API_KEY.API_KEY_Value },
+                    { "email", API_KEY.EMAIL_Value },
+                    { "organizationId", API_KEY.organizationId_Value },
+                    { "programId", API_KEY.programId_Value }
+                });
             }
 
             object trial = settings.Get("IsTrial");
@@ -146,6 +190,18 @@ namespace Planet
             if (IsTrial==true)
             {
                 settings.Add("IsTrial", "true");
+            }
+            if (API_KEY.EMAIL_Value != "")
+            {
+                settings.Add("planet_email", API_KEY.EMAIL_Value);
+            }
+            if (API_KEY.organizationId_Value != "")
+            {
+                settings.Add("planet_organizationId", API_KEY.organizationId_Value);
+            }
+            if (API_KEY.programId_Value != "")
+            {
+                settings.Add("planet_programId", API_KEY.programId_Value);
             }
             //foreach (string key in _moduleSettings.Keys)
             //{
@@ -175,6 +231,45 @@ namespace Planet
             {
                 _apikey = value;
                 OnPropertyChanged("API_KEY_Value");
+            }
+        }
+        private string _email;
+        public string EMAIL_Value
+        {
+            get
+            {
+                return _email;
+            }
+            set
+            {
+                _email = value;
+                OnPropertyChanged("EMAIL_Value");
+            }
+        }
+        private string _organizationId;
+        public string organizationId_Value
+        {
+            get
+            {
+                return _organizationId;
+            }
+            set
+            {
+                _organizationId = value;
+                OnPropertyChanged("organizationId_Value");
+            }
+        }
+        private string _programId;
+        public string programId_Value
+        {
+            get
+            {
+                return _programId;
+            }
+            set
+            {
+                _programId = value;
+                OnPropertyChanged("programId_Value");
             }
         }
         #region INotifyPropertyChanged

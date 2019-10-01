@@ -1,7 +1,10 @@
 ﻿using ArcGIS.Desktop.Framework;
 using ArcGIS.Desktop.Framework.Dialogs;
+using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Segment;
+using Segment.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,8 +38,11 @@ namespace Planet
             set
             {
                 _api_key = value;
+                Module1.Current.API_KEY = _api_key;
                 OnPropertyChanged("API_Key");
-                Module1.Current.API_KEY.API_KEY_Value = _api_key.API_KEY_Value;
+                
+                //Module1.Current.API_KEY.API_KEY_Value = _api_key.API_KEY_Value;
+                //Module1.Current.API_KEY.EMAIL_Value = _api_key.EMAIL_Value;
             }
         }
 
@@ -102,7 +108,9 @@ namespace Planet
 
         private void DoLogOut()
         {
-            API_Key.API_KEY_Value = null;
+            //API_Key.API_KEY_Value = null;
+            Module1.Current.API_KEY = null;
+            FrameworkApplication.State.Deactivate("planet_state_connection");
             getkey();
             LoginVisible = true;
         }
@@ -124,86 +132,104 @@ namespace Planet
                 //Console.WriteLine(pass);
                 try
                 {
-                    HttpClient client = new HttpClient();
-                    client.BaseAddress = new Uri("https://api.planet.com/");
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Add("User-Agent", "C# App");
-                    client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-                    //client.DefaultRequestHeaders.Add("content-length", "application/json");
-                    Data.User user = new Data.User
+                    using (HttpClient client = new HttpClient())
                     {
-                        email = _UserName,
-                        password = passwordBox.Password
-                    };
-                    var requestMessage = JsonConvert.SerializeObject(user);
-                    var content = new StringContent(requestMessage, Encoding.UTF8, "application/json");
-                    content.Headers.Remove("Content-Type");
-                    content.Headers.Add("Content-Type", "application/json");
-                    var postResp = client.PostAsync("auth/v1/experimental/public/users/authenticate", content);
-                    postResp.Wait();
-                    var response = postResp.Result;
-
-                    var me = response.Content.ReadAsStringAsync();
-                    me.Wait();
-                    var rr = JsonConvert.DeserializeObject<dynamic>(me.Result);
-                    IDictionary<string, JToken> Jsondata = JObject.Parse(me.Result);
-                    if (Jsondata.ContainsKey("success"))
-                    {
-                        if (Jsondata["success"].ToString() == "False")
+                        //HttpClient client = new HttpClient();
+                        client.BaseAddress = new Uri("https://api.planet.com/");
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        client.DefaultRequestHeaders.Add("User-Agent", "C# App");
+                        client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                        //client.DefaultRequestHeaders.Add("content-length", "application/json");
+                        Data.User user = new Data.User
                         {
-                            MessageBox.Show("There was a problem with the user name or password that you entered." + Environment.NewLine + Jsondata["errors"].ToString(), "Problem logging in");
+                            email = _UserName,
+                            password = passwordBox.Password
+                        };
+                        var requestMessage = JsonConvert.SerializeObject(user);
+                        var content = new StringContent(requestMessage, Encoding.UTF8, "application/json");
+                        content.Headers.Remove("Content-Type");
+                        content.Headers.Add("Content-Type", "application/json");
+                        var postResp = client.PostAsync("auth/v1/experimental/public/users/authenticate", content);
+                        postResp.Wait();
+                        var response = postResp.Result;
+
+                        var me = response.Content.ReadAsStringAsync();
+                        me.Wait();
+                        var rr = JsonConvert.DeserializeObject<dynamic>(me.Result);
+                        IDictionary<string, JToken> Jsondata = JObject.Parse(me.Result);
+                        if (Jsondata.ContainsKey("success"))
+                        {
+                            if (Jsondata["success"].ToString() == "False")
+                            {
+                                MessageBox.Show("There was a problem with the user name or password that you entered." + Environment.NewLine + Jsondata["errors"].ToString(), "Problem logging in");
+                                return;
+                            }
+
+                        }
+                        Data.Token result = JsonConvert.DeserializeObject<Data.Token>(me.Result);
+                        var jwtHandler = new JwtSecurityTokenHandler();
+                        var readableToken = jwtHandler.CanReadToken(result.token);
+                        if (readableToken != true)
+                        {
+                            Console.WriteLine("The token doesn't seem to be in a proper JWT format.");
+                            MessageBox.Show("The token doesn't seem to be in a proper JWT format.", "Problem logging in");
                             return;
                         }
-
-                    }
-                    Data.Token result = JsonConvert.DeserializeObject<Data.Token>(me.Result);
-                    var jwtHandler = new JwtSecurityTokenHandler();
-                    var readableToken = jwtHandler.CanReadToken(result.token);
-                    if (readableToken != true)
-                    {
-                        Console.WriteLine("The token doesn't seem to be in a proper JWT format.");
-                        MessageBox.Show("The token doesn't seem to be in a proper JWT format.", "Problem logging in");
-                        return;
-                    }
-                    if (readableToken == true)
-                    {
-                        var token = jwtHandler.ReadJwtToken(result.token);
-
-                        ////Extract the headers of the JWT
-                        //var headers = token.Header;
-                        //var jwtHeader = "{";
-                        //foreach (var h in headers)
-                        //{
-                        //    jwtHeader += '"' + h.Key + "\":\"" + h.Value + "\",";
-                        //}
-                        //jwtHeader += "}";
-                        //Console.WriteLine("Header:\r\n" + JToken.Parse(jwtHeader).ToString(Formatting.Indented));
-
-                        //Extract the payload of the JWT
-                        var claims = token.Claims;
-                        var jwtPayload = "{";
-                        foreach (Claim c in claims)
+                        if (readableToken == true)
                         {
-                            jwtPayload += '"' + c.Type + "\":\"" + c.Value + "\",";
-                        }
-                        jwtPayload += "}";
-                        //string txtJwtOut = "\r\nPayload:\r\n" + JToken.Parse(jwtPayload).ToString(Formatting.Indented);
-                        Data.Payload payload = JsonConvert.DeserializeObject<Data.Payload>(jwtPayload);
-                        _api_key.API_KEY_Value = payload.api_key;
-                        if (payload.program_id == "29")
-                        {
-                            Module1.Current.IsTrial = true;
-                        }
-                        else
-                        {
-                            Module1.Current.IsTrial = false;
-                        }
-                    }
+                            IdentityModelEventSource.ShowPII = true;
+                            var token = jwtHandler.ReadJwtToken(result.token);
 
-                    getkey();
-                    //var response = await postResp.Content.ReadAsStringAsync();
-                    Console.WriteLine(result.token);
+                            ////Extract the headers of the JWT
+                            //var headers = token.Header;
+                            //var jwtHeader = "{";
+                            //foreach (var h in headers)
+                            //{
+                            //    jwtHeader += '"' + h.Key + "\":\"" + h.Value + "\",";
+                            //}
+                            //jwtHeader += "}";
+                            //Console.WriteLine("Header:\r\n" + JToken.Parse(jwtHeader).ToString(Formatting.Indented));
+
+                            //Extract the payload of the JWT
+                            var claims = token.Claims;
+                            var jwtPayload = "{";
+                            foreach (Claim c in claims)
+                            {
+                                jwtPayload += '"' + c.Type + "\":\"" + c.Value + "\",";
+                            }
+                            jwtPayload += "}";
+                            //string txtJwtOut = "\r\nPayload:\r\n" + JToken.Parse(jwtPayload).ToString(Formatting.Indented);
+                            Data.Payload payload = JsonConvert.DeserializeObject<Data.Payload>(jwtPayload);
+                            API_Key.API_KEY_Value = payload.api_key;
+                            API_Key.EMAIL_Value = payload.email;
+                            API_Key.programId_Value = payload.program_id;
+                            API_Key.organizationId_Value = payload.organization_id;
+                            if (payload.program_id == "29")
+                            {
+                                Module1.Current.IsTrial = true;
+                            }
+                            else
+                            {
+                                Module1.Current.IsTrial = false;
+                            }
+                            if (Analytics.Client == null)
+                            {
+                                Analytics.Initialize("at3uKKI8tvtIzsvXU4MpmxKBWSfnUPwR");
+                            }
+                            Analytics.Client.Identify(payload.email, new Traits() {
+                            { "apiKey", payload.api_key },
+                            { "email", payload.email },
+                            { "organizationId", payload.organization_id },
+                            { "programId", payload.program_id }
+                        });
+                        }
+
+                        getkey();
+                        //var response = await postResp.Content.ReadAsStringAsync();
+                        Console.WriteLine(result.token);
+                    }
+                   
 
                     LoginVisible = false;
                 }
@@ -252,7 +278,7 @@ namespace Planet
 
         private void getkey()
         {
-            APIKeyChangedEvent.Publish(new APIKeyChangedEventArgs(API_Key.API_KEY_Value, API_Key.API_KEY_Value));
+            APIKeyChangedEvent.Publish(new APIKeyChangedEventArgs(_api_key.API_KEY_Value, _api_key.API_KEY_Value));
         }
         //private  void  Login()
         //{

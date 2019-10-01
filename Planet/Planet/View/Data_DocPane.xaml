@@ -205,17 +205,17 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
+                                   
                                 </Grid.ColumnDefinitions>
-                                <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene3Band}" VerticalAlignment="Center" Height="22" >PSScene3Band</CheckBox>
-                                <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene4Band}" VerticalAlignment="Center" Height="22" >PSScene4Band</CheckBox>
-                                <CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSOrthoTile}" VerticalAlignment="Center" Height="22" >PSOrthoTile</CheckBox>
-                                <CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductREOrthoTile}" VerticalAlignment="Center" Height="22" >REOrthoTile</CheckBox>
-                                <CheckBox Grid.Row="1" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductREScene}" VerticalAlignment="Center" Height="22" >REScene</CheckBox>
-                                <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatScene}" VerticalAlignment="Center" Height="22" >SkySatScene</CheckBox>
-                                <CheckBox Grid.Row="0" Grid.Column="2" Padding ="5,0" IsChecked="{Binding ProductSkySatCollect}" VerticalAlignment="Center" Height="22" >SkySatCollect</CheckBox>
-                                <CheckBox Grid.Row="1" Grid.Column="2" Padding ="5,0" IsChecked="{Binding ProductLandsat8L1G}" VerticalAlignment="Center" Height="22" >Landsat8L1G</CheckBox>
-                                <CheckBox Grid.Row="2" Grid.Column="2" Padding ="5,0" IsChecked="{Binding ProductSentinel2L1C}" VerticalAlignment="Center" Height="22" >Sentinel2L1C</CheckBox>
+                                <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene4Band}" VerticalAlignment="Center" Height="22" >4 Band PlanetScope Scene</CheckBox>
+                                <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene3Band}" VerticalAlignment="Center" Height="22" >3 Band PlanetScope Scene</CheckBox>
+                                <!--<CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSOrthoTile}" VerticalAlignment="Center" Height="22" >PSOrthoTile</CheckBox>-->
+                                <!--<CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductREOrthoTile}" VerticalAlignment="Center" Height="22" >REOrthoTile</CheckBox>-->
+                                <CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductREScene}" VerticalAlignment="Center" Height="22" >RapidEye Scene</CheckBox>
+                                <!--<CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatScene}" VerticalAlignment="Center" Height="22" >SkySatScene</CheckBox>-->
+                                <CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatCollect}" VerticalAlignment="Center" Height="22" >SkySat Collect</CheckBox>
+                                <CheckBox Grid.Row="1" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductLandsat8L1G}" VerticalAlignment="Center" Height="22" >Landsat 8 Scene</CheckBox>
+                                <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSentinel2L1C}" VerticalAlignment="Center" Height="22" >Sentinel-2 Tile</CheckBox>
                             </Grid>
                         </TabItem>
                         <TabItem Header="Cloud Cover"  Style="{DynamicResource SubTabItemStyle}">

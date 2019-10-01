@@ -139,11 +139,20 @@ namespace Planet.Model
         {
             await QueuedTask.Run(() =>
             {
-                string rootGroup = Asset.RootGroup;
-                string dateGroup = parent.mapLayerName;
-                string[] stripParents = { dateGroup, rootGroup };
-                GroupLayer group = Asset.GetGroup(mapLayerName, stripParents);
-                group.SetVisibility(value);
+                try
+                {
+                    string rootGroup = Asset.RootGroup;
+                    string dateGroup = parent.mapLayerName;
+                    string[] stripParents = { dateGroup, rootGroup };
+                    GroupLayer group = Asset.GetGroup(mapLayerName, stripParents);
+                    group.SetVisibility(value);
+                }
+                catch (Exception)
+                {
+
+                    Console.WriteLine("Groupm not found to toggle");
+                }
+
             });
         }
 
