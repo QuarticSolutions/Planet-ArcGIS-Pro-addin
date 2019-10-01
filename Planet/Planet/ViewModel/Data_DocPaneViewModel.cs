@@ -32,6 +32,7 @@ using Planet.ViewModel;
 using Planet.Model.Item_assets;
 using System.IO;
 using System.Windows.Documents;
+using System.IO.Compression;
 
 namespace Planet
 {
@@ -615,14 +616,21 @@ namespace Planet
             {
                 ba.QuadCount = "";
             }
-            folderSelector.ShowDialog();
-            if ((bool)folderSelector.DialogResult)
+
+            OpenItemDialog downloadDialog = new OpenItemDialog();
+            downloadDialog.Title = "Download Location";
+            downloadDialog.MultiSelect = false;
+            downloadDialog.Filter = ItemFilters.folders;
+            downloadDialog.InitialLocation = Project.Current.URI;
+
+            bool? ok = downloadDialog.ShowDialog();
+            if (ok == true)
             {
-                string savelocation = folderSelector.SelectedPath;
+                string savelocation = downloadDialog.Items.First().Path;
 
                 OrderStatusItem download = new OrderStatusItem();
                 download.name = order2.name;
-                download.status = "Downloading";
+                download.status = "Downloading archive";
                 download.path = savelocation;
                 download.id = order2.id;
                 CurrentDownloads.Add(download);
@@ -631,7 +639,7 @@ namespace Planet
                 bool complete = await LoadImage(order2._links._self, savelocation);
                 if (complete)
                 {
-                    download.status = "Complete";
+                    
                     var notification = new NotificationItem("Planet_Download_Complete_Notification_" + order2.id, false,
                         "The download of Order: " + order2.name + " is complete" + Environment.NewLine + "The file is saved to: " + savelocation, NotificationType.Information);
                     NotificationManager.AddNotification(notification);
@@ -642,10 +650,38 @@ namespace Planet
                         ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
 
                     });
-                } else
-                {
-                    download.status = "Error";
+
+                    string fileName = String.Format("{0}.{1}", order2.name, order2.delivery.archive_type);
+                    string zipPath = Path.Combine(download.path, fileName);
+                    string extractPath = Path.Combine(download.path, order2.name);
+                    download.status = "Extracting archive";
+                    bool extracted = await ExtractDownload(zipPath, extractPath);
+                    if (extracted)
+                    {
+                        download.status = download.status = "Complete";
+                    } else
+                    {
+                        download.status = "Error extracting";
+                    }
+
                 }
+                else
+                {
+                    download.status = "Error downloading";
+                }
+            }
+        }
+
+        public async Task<bool> ExtractDownload(string archivePath, string extractPath)
+        {
+            try
+            {
+                
+                System.IO.Compression.ZipFile.ExtractToDirectory(archivePath, extractPath);
+                return true;
+            } catch (Exception e)
+            {
+                return false;
             }
         }
 
@@ -662,6 +698,7 @@ namespace Planet
                     client.DefaultRequestHeaders.Add("Connection", "keep-alive");
                     client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.16.3");
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    
                     try
                     {
                         using (HttpResponseMessage httpResponse = client.GetAsync(uri).Result)
@@ -711,6 +748,7 @@ namespace Planet
                                     {
                                         File.Delete(fileToWriteTo);
                                     }
+
                                     using (Stream streamToWriteTo = File.Open(fileToWriteTo, FileMode.Create))
                                     {
                                         await streamToReadFrom.CopyToAsync(streamToWriteTo);
