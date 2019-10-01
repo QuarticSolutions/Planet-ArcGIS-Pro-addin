@@ -849,7 +849,10 @@ namespace Planet
             SelectAssets.Clear();
             TreeEnabled = false;
             Polygon poly = (Polygon)AOIGeometry;
+            Polygon polyReporject = (Polygon)GeometryEngine.Instance.Project(poly, SpatialReferences.WGS84);
+            string geojson =  GeometryEngine.Instance.ExportToJSON(JSONExportFlags.jsonExportSkipCRS, polyReporject);
             IReadOnlyList<Coordinate2D> coordinates = poly.Copy2DCoordinatesToList();
+            IReadOnlyList<Coordinate2D> coordinates2 = polyReporject.Copy2DCoordinatesToList();
             string ejson = poly.ToJson(true);
             ToGeoCoordinateParameter ddParam = new ToGeoCoordinateParameter(GeoCoordinateType.DD);
             List<string> geocoords = new List<string>();
@@ -864,7 +867,7 @@ namespace Planet
             
             double x;
             double y;
-            foreach (Coordinate2D item in coordinates)
+            foreach (Coordinate2D item in coordinates2)
             {
                 MapPoint mapPoint = MapPointBuilder.CreateMapPoint(item, MapView.Active.Extent.SpatialReference);
                 List<Tuple<string, string>> pts = new List<Tuple<string, string>>();
@@ -888,7 +891,8 @@ namespace Planet
                     y = double.Parse(pts[0].Item2.Substring(0, pts[0].Item2.Length - 1));
                     //AllPts.Add(new Tuple<int, int>(int.Parse(pts[0].Item1.Substring(0, pts[0].Item1.Length - 1)), int.Parse(pts[0].Item2.Substring(0, pts[1].Item2.Length - 1))));
                 }
-                AllPts.Add(new Tuple<double, double>(x, y));
+                //AllPts.Add(new Tuple<double, double>(x, y));
+                AllPts.Add(new Tuple<double, double>(item.X, item.Y));
                 geocoords.Add(mapPoint.ToGeoCoordinateString(ddParam));
             }
 
