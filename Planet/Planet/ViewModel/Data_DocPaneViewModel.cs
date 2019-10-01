@@ -615,14 +615,24 @@ namespace Planet
             {
                 ba.QuadCount = "";
             }
-            folderSelector.ShowDialog();
-            if ((bool)folderSelector.DialogResult)
+
+            //folderSelector.ShowDialog();
+            OpenItemDialog downloadDialog = new OpenItemDialog();
+            downloadDialog.Title = "Download Location";
+            downloadDialog.MultiSelect = false;
+            downloadDialog.Filter = ItemFilters.folders;
+            downloadDialog.InitialLocation = Project.Current.URI;
+            bool? ok = downloadDialog.ShowDialog();
+
+            //if ((bool)folderSelector.DialogResult)
+            if (ok == true)
             {
-                string savelocation = folderSelector.SelectedPath;
+                //string savelocation = folderSelector.SelectedPath;
+                string savelocation = downloadDialog.Items.First().Path;
 
                 OrderStatusItem download = new OrderStatusItem();
                 download.name = order2.name;
-                download.status = "Downloading";
+                download.status = "Downloading archive";
                 download.path = savelocation;
                 download.id = order2.id;
                 CurrentDownloads.Add(download);
@@ -631,7 +641,7 @@ namespace Planet
                 bool complete = await LoadImage(order2._links._self, savelocation);
                 if (complete)
                 {
-                    download.status = "Complete";
+                    //download.status = "Complete";
                     var notification = new NotificationItem("Planet_Download_Complete_Notification_" + order2.id, false,
                         "The download of Order: " + order2.name + " is complete" + Environment.NewLine + "The file is saved to: " + savelocation, NotificationType.Information);
                     NotificationManager.AddNotification(notification);
@@ -642,16 +652,64 @@ namespace Planet
                         ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
 
                     });
+
+                    string fileName = String.Format("{0}.{1}", order2.name, order2.delivery.archive_type);
+                    string zipPath = Path.Combine(download.path, fileName);
+                    string extractPath = Path.Combine(download.path, order2.name);
+                    download.status = "Extracting archive";
+                    string status = await ExtractDownload(zipPath, extractPath);
+                    download.status = status;
                 } else
                 {
-                    download.status = "Error";
+                    download.status = "Error downloading archive";
                 }
+            }
+        }
+
+        public async Task<string> ExtractDownload(string archivePath, string extractPath)
+        {
+            try
+            {
+
+                System.IO.Compression.ZipFile.ExtractToDirectory(archivePath, extractPath);
+                string status = await QueuedTask.Run(() => {
+                    //Create the folder connection project item
+                    var item = ItemFactory.Instance.Create(extractPath) as IProjectItem;
+                    //If it is succesfully added to the project, return it otherwise null
+                    return Project.Current.AddItem(item) ? "Archive extracted; added to project" : "Archive extracted; could not add to project";
+                });
+                return status;
+            }
+            catch (DirectoryNotFoundException dirNotFoundEx)
+            {
+                return "Error extracting archive; invalid path";
+            }
+            catch (FileNotFoundException fileNotFoundEx)
+            {
+                return "Error extracting archive; not found";
+            }
+            catch (UnauthorizedAccessException unauthAccEx)
+            {
+                return "Error extracting archive; unauthorized access";
+            }
+            catch (InvalidDataException invalidDataEx)
+            {
+                return "Error extracting archive; invalid zip archive";
+            }
+            catch (IOException ioEx)
+            {
+                return "Error extracting archive; directory already exists";
+            }
+            catch (Exception e)
+            {
+                return "Error extracting archive";
             }
         }
 
         public async static Task<bool> LoadImage(string uri, string destination)
         {
             OrderDownload orderDownload = null;
+            bool status = true;
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -686,10 +744,12 @@ namespace Planet
                                 //Response.Write(sr.ReadToEnd());
                             }
                         }
+                        status = false;
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
+                        status = false;
                         //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
                     }
 
@@ -702,7 +762,8 @@ namespace Planet
                                 if (!response.IsSuccessStatusCode)
                                 {
                                     ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was a problem downloading your data" + Environment.NewLine + response.ReasonPhrase, "Download Error", MessageBoxButton.OK, MessageBoxImage.Information);
-                                    return false;
+                                    status = false;
+                                    return status;
                                 }
                                 using (Stream streamToReadFrom = await response.Content.ReadAsStreamAsync())
                                 {
@@ -722,22 +783,25 @@ namespace Planet
                         }
                         else
                         {
-                            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Order is not ready");
+                            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(String.Format("Order is not ready; {0}", orderDownload.state), "Download Error");
+                            status = false;
                         }
                     }
-
-
+                    else
+                    {
+                        status = false;
+                    }
                 }
-                return true;
+                return status;
             }
             catch (Exception ex)
             {
                 ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Error downloading \n" + ex.Message, "Download Problem", MessageBoxButton.OK, MessageBoxImage.Warning);
                 Console.WriteLine("Failed to Download the quad: {0}", ex.Message);
-
+                status = false;
             }
 
-            return false;
+            return status;
         }
 
 
