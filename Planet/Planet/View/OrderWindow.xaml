@@ -69,10 +69,10 @@
             <Expander Visibility="{Binding PSScene4BandVis}" Header="4-band PlanetScope Scene" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=1}">
                 <StackPanel Orientation="Vertical" Visibility="{Binding PSScene4BandVis}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                        <ComboBox ItemsSource="{Binding TempBundles.PlanetScope4}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding  Path=PSScene4Bandcurrselect}"   Margin="10,10,0,10" Width="300" />
+                        <ComboBox ItemsSource="{Binding TempBundles.PlanetScope4}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding  Path=PSScene4Bandcurrselect}"   Margin="10,10,0,10" Width="300" Background="{DynamicResource Esri_BackgroundPressedBrush}" Foreground="{DynamicResource Esri_TextMenuBrush}" />
                         <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="50,10"  IsChecked="{Binding Path=psscene4Bandselall, Mode=TwoWay}"/>
                     </StackPanel>
-                    <ListBox x:Name="PS42"  Visibility="{Binding PSScene4BandVis}"  Grid.Row="1" Width="Auto" MaxHeight="400"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSScene4Band}" Margin="10,2,0,0" >
+                    <ListBox x:Name="PS42"  Visibility="{Binding PSScene4BandVis}"  Grid.Row="1" Width="Auto" MaxHeight="400"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSScene4Band}" Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
                         <ListBox.ItemTemplate x:Uid="asdasd"  >
                             <DataTemplate  >
                                 <Grid>
@@ -114,7 +114,7 @@
                         <CheckBox Width="70" VerticalAlignment="Center" Margin="40,10"  IsChecked="{Binding Path=psscene3Bandselall, Mode=TwoWay}"/>
                        
                     </StackPanel>
-                    <ListBox Visibility="{Binding PSScene3BandVis}" MaxHeight="400"    Width="Auto"  Grid.Column="0"  ItemsSource="{Binding PSScene3Band}" Margin="10,2,0,0" >
+                    <ListBox Visibility="{Binding PSScene3BandVis}" MaxHeight="400"    Width="Auto"  Grid.Column="0"  ItemsSource="{Binding PSScene3Band}" Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
                         <ListBox.ItemTemplate x:Uid="asdasd"  >
                             <DataTemplate >
                                 <Grid>
@@ -438,7 +438,7 @@
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Vertical" Margin="10,10,10,10" Visibility="{Binding Resultsvis}" HorizontalAlignment="Left" >
             <Label>Results</Label>
-            <ListBox ItemsSource="{Binding Resultscoll}"  Width="500"/>
+            <ListBox ItemsSource="{Binding Resultscoll}"  Width="500"  Style="{DynamicResource Esri_}"/>
         </StackPanel>
         
     </Grid>

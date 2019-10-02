@@ -419,7 +419,7 @@ namespace Planet
                     return;
                 }
                 Project project = Project.Current;
-                var serverConnection = new CIMProjectServerConnection { URL = mosaic._links._self.Substring(0, mosaic._links._self.IndexOf("?")) + "/wmts?REQUEST=GetCapabilities&api_key=" + Module1.Current.API_KEY.API_KEY_Value };// "1fe575980e78467f9c28b552294ea410"
+                var serverConnection = new CIMProjectServerConnection { URL = mosaic._links._self.Substring(0, mosaic._links._self.IndexOf("?")) + "/wmts?REQUEST=GetCapabilities&api_key=" + Module1.Current.API_KEY.API_KEY_Value };
                 var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
                 await QueuedTask.Run(() =>
                 {

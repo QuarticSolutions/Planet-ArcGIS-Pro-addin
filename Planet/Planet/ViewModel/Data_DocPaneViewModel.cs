@@ -35,6 +35,7 @@ using System.Windows.Documents;
 using System.IO.Compression;
 using Planet.Utils;
 using Segment.Model;
+using System.Threading;
 
 namespace Planet
 {
@@ -81,76 +82,82 @@ namespace Planet
                 OnPropertyChanged("PastOrders");
             }
         }
-        private Task GetPastOrders()
+        private async  Task  GetPastOrders()
         {
             HttpClientHandler _handler = new HttpClientHandler()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                
             };
-
-            HttpClient _client = new HttpClient(_handler)
-            {
-                BaseAddress = new Uri("https://api.planet.com")
-
-            };
-            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":");
-            _client.DefaultRequestHeaders.Host = "api.planet.com";
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-            _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-            _client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.16.3");
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            //_client.DefaultRequestHeaders.ExpectContinue = false;
-            //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "compute/ops/orders/v2");
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "compute/ops/orders/v2");
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-            request.Headers.CacheControl = new CacheControlHeaderValue
-            {
-                NoCache = true
-            };
-            request.Headers.Host = "api.planet.com";
-            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
-            request.Headers.CacheControl = new CacheControlHeaderValue();
-            request.Headers.CacheControl.NoCache = true;
-            string json = "{\"name\":\"Pro1\",\"products\":[{\"item_ids\":[\"20190910_205244_101b\",\"20190908_195741_1048\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            content.Headers.Remove("Content-Type");
-            content.Headers.Add("Content-Type", "application/json");
-
-            //request.Content = content;
+            List<Order2> _orderstemplist = new List<Order2>();
+            ObservableCollection<Order2> _orderstempcol = new ObservableCollection<Order2>();
+            int counter = 0;
+            var nextUrl = "https://api.planet.com/compute/ops/orders/v2";
             try
             {
-                using (HttpResponseMessage httpResponse = _client.SendAsync(request).Result)
-                {
-                    using (HttpContent content2 = httpResponse.Content)
-                    {
-                        var json2 = content2.ReadAsStringAsync().Result;
-                        AllOrders2 allOrders2 = JsonConvert.DeserializeObject<AllOrders2>(json2);
-                        List<Order2> quickSearchResult =  allOrders2.orders.ToList();
-                        PastOrders = new ObservableCollection<Order2>(quickSearchResult);
-                    }
-                }
+                using (HttpClient _client = new HttpClient(_handler))
+                {  
+                    _client.BaseAddress = new Uri("https://api.planet.com");
+                    var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":");
+                    _client.DefaultRequestHeaders.Host = "api.planet.com";
+                    _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                    _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                    _client.DefaultRequestHeaders.Add("User-Agent", "ArcGISProC#");
+                    _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-            }
-            catch (WebException e)
-            {
-                if (e.Status == WebExceptionStatus.ProtocolError)
-                {
-                    WebResponse resp = e.Response;
-                    using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                    do
                     {
-                        string resps = sr.ReadToEnd();
-                        //Response.Write(sr.ReadToEnd());
-                    }
+                        await _client.GetAsync(nextUrl).ContinueWith(async (getmaoicstask2) =>
+                        {
+                            if(counter > 5)
+                            {
+                                Thread.Sleep(1000);
+                            }
+                            var response = await getmaoicstask2;
+                            if (response.IsSuccessStatusCode)
+                            {
+                                try
+                                {
+                                    string responseBody = await response.Content.ReadAsStringAsync();
+                                    AllOrders2 allOrders2 = JsonConvert.DeserializeObject<AllOrders2>(responseBody);
+                                    if (allOrders2 != null)
+                                    {
+                                        List<Order2> quickSearchResult = allOrders2.orders.ToList();
+                                        _orderstemplist.AddRange(quickSearchResult);
+                                        nextUrl = allOrders2._links.next ?? string.Empty;
+                                        counter = counter++;
+                                        PastOrders = new ObservableCollection<Order2>(_orderstemplist);
+                                    }
+
+                                }
+                                catch (Exception ex)
+                                {
+
+                                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+                                }
+
+                            }
+                            else
+                            {
+                                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Error getting past orders, the server returned an error: " + response.ReasonPhrase);
+                            }
+                        });
+                    } while (!string.IsNullOrEmpty(nextUrl));
+                    
+                    return;
                 }
+                //HttpClient _client = new HttpClient(_handler)
+                //{
+                //    BaseAddress = new Uri("https://api.planet.com")
+
+                //};
+                //return Task.FromResult<bool>(true);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
-            }
-            return Task.FromResult<bool>(true);
 
+                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Error Getting past orders");
+            }
         }
         #endregion
 
@@ -200,7 +207,16 @@ namespace Planet
             }
         }
 
-
+        private string _NoSearchResulrvis = "Collapsed";
+        public string NoSearchResulrvis
+        {
+            get { return _NoSearchResulrvis; }
+            set
+            {
+                _NoSearchResulrvis = value;
+                OnPropertyChanged("NoSearchResulrvis");
+            }
+        }
 
         private bool _treeEnabled = true;
         public bool TreeEnabled
@@ -395,13 +411,12 @@ namespace Planet
             get
             {
                 if (_viewordercommand == null)
-                    _viewordercommand = new CommandHandler3(() => GetPastOrders(), CanExecuteOrder);
+                    _viewordercommand = new CommandHandler3(async () => await GetPastOrders(), CanExecuteOrder);
                 return _viewordercommand;
             }
         }
         private void DoOrder()
         {
-
             OrderWindow orderWindow = new OrderWindow();
             OrderWindowViewModel orderWindowViewModel = new OrderWindowViewModel();
             ObservableCollection<Asset> permittedassets = new ObservableCollection<Asset>();
@@ -694,7 +709,7 @@ namespace Planet
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":");// "1fe575980e78467f9c28b552294ea410:");
+                    var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":");
                     client.DefaultRequestHeaders.Host = "api.planet.com";
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
                     client.DefaultRequestHeaders.Add("Connection", "keep-alive");
@@ -1083,9 +1098,15 @@ namespace Planet
                                 {
                                     var json2 = content2.ReadAsStringAsync().Result;
                                     QuickSearchResult quickSearchResult = JsonConvert.DeserializeObject<QuickSearchResult>(json2);
-                                    //if (_quickSearchResults is null )
-                                    //{
-                                    _quickSearchResults = new ObservableCollection<QuickSearchResult>();
+                                    if (quickSearchResult.features.Length == 0)
+                                    {
+                                        NoSearchResulrvis = "Visible";
+                                    }
+                                    else
+                                    {
+                                        NoSearchResulrvis = "Collapsed";
+                                    }
+                                        _quickSearchResults = new ObservableCollection<QuickSearchResult>();
                                     Items = new ObservableCollection<AcquiredDateGroup>();
                                     Pages = new List<Model.Page>();
                                     //}
@@ -1181,7 +1202,7 @@ namespace Planet
             }
         }
 
-        private bool _REOrthoTile = true;
+        private bool _REOrthoTile = false;
         public bool ProductREOrthoTile
         {
             get { return _REOrthoTile; }
