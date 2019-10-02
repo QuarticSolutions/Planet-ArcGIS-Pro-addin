@@ -33,6 +33,8 @@ using Planet.Model.Item_assets;
 using System.IO;
 using System.Windows.Documents;
 using System.IO.Compression;
+using Planet.Utils;
+using Segment.Model;
 
 namespace Planet
 {
@@ -883,247 +885,263 @@ namespace Planet
         /// </summary>
         private async void DoSearch()
         {
-            ShowCircularAnimation = Visibility.Visible;
-            SelectAssets.Clear();
-            TreeEnabled = false;
-            Polygon poly = (Polygon)AOIGeometry;
-            Polygon polyReporject = (Polygon)GeometryEngine.Instance.Project(poly, SpatialReferences.WGS84);
-            string geojson =  GeometryEngine.Instance.ExportToJSON(JSONExportFlags.jsonExportSkipCRS, polyReporject);
-            IReadOnlyList<Coordinate2D> coordinates = poly.Copy2DCoordinatesToList();
-            IReadOnlyList<Coordinate2D> coordinates2 = polyReporject.Copy2DCoordinatesToList();
-            string ejson = poly.ToJson(true);
-            ToGeoCoordinateParameter ddParam = new ToGeoCoordinateParameter(GeoCoordinateType.DD);
-            List<string> geocoords = new List<string>();
-            List<Tuple<double, double>> AllPts = new List<Tuple<double, double>>();
-            await QueuedTask.Run(() =>
+            try
             {
-                Polygon wgsPoly = PolygonBuilder.CreatePolygon(poly, SpatialReferences.WGS84);
-                
-                ejson = wgsPoly.ToJson();
-            });
-                
-            
-            double x;
-            double y;
-            foreach (Coordinate2D item in coordinates2)
-            {
-                MapPoint mapPoint = MapPointBuilder.CreateMapPoint(item, MapView.Active.Extent.SpatialReference);
-                List<Tuple<string, string>> pts = new List<Tuple<string, string>>();
-                string dd1 = mapPoint.ToGeoCoordinateString(ddParam).Split(' ')[0];
-                pts.Add(new Tuple<string, string>(mapPoint.ToGeoCoordinateString(ddParam).Split(' ')[1], mapPoint.ToGeoCoordinateString(ddParam).Split(' ')[0]));
-                if (pts[0].Item1.Contains("W"))
+                ShowCircularAnimation = Visibility.Visible;
+                SelectAssets.Clear();
+                TreeEnabled = false;
+                Polygon poly = (Polygon)AOIGeometry;
+                Polygon polyReporject = (Polygon)GeometryEngine.Instance.Project(poly, SpatialReferences.WGS84);
+                string geojson = GeometryEngine.Instance.ExportToJSON(JSONExportFlags.jsonExportSkipCRS, polyReporject);
+                IReadOnlyList<Coordinate2D> coordinates = poly.Copy2DCoordinatesToList();
+                IReadOnlyList<Coordinate2D> coordinates2 = polyReporject.Copy2DCoordinatesToList();
+                string ejson = poly.ToJson(true);
+                ToGeoCoordinateParameter ddParam = new ToGeoCoordinateParameter(GeoCoordinateType.DD);
+                List<string> geocoords = new List<string>();
+                List<Tuple<double, double>> AllPts = new List<Tuple<double, double>>();
+                await QueuedTask.Run(() =>
                 {
-                    x = double.Parse("-" + pts[0].Item1.Substring(0, pts[0].Item1.Length - 1));
-                    y = double.Parse(pts[0].Item2.Substring(0, pts[0].Item2.Length - 1));
-                    //AllPts.Add(new Tuple<int, int>(int.Parse("-" + pts[0].Item1.Substring(0, pts[0].Item1.Length - 1)), int.Parse(pts[0].Item2.Substring(0, pts[0].Item2.Length -1))));
+                    Polygon wgsPoly = PolygonBuilder.CreatePolygon(poly, SpatialReferences.WGS84);
+
+                    ejson = wgsPoly.ToJson();
+                });
+
+
+                double x;
+                double y;
+                foreach (Coordinate2D item in coordinates2)
+                {
+                    //MapPoint mapPoint = MapPointBuilder.CreateMapPoint(item, MapView.Active.Extent.SpatialReference);
+                    //List<Tuple<string, string>> pts = new List<Tuple<string, string>>();
+                    //string dd1 = mapPoint.ToGeoCoordinateString(ddParam).Split(' ')[0];
+                    //pts.Add(new Tuple<string, string>(mapPoint.ToGeoCoordinateString(ddParam).Split(' ')[1], mapPoint.ToGeoCoordinateString(ddParam).Split(' ')[0]));
+                    //if (pts[0].Item1.Contains("W"))
+                    //{
+                    //    x = double.Parse("-" + pts[0].Item1.Substring(0, pts[0].Item1.Length - 1));
+                    //    y = double.Parse(pts[0].Item2.Substring(0, pts[0].Item2.Length - 1));
+                    //    //AllPts.Add(new Tuple<int, int>(int.Parse("-" + pts[0].Item1.Substring(0, pts[0].Item1.Length - 1)), int.Parse(pts[0].Item2.Substring(0, pts[0].Item2.Length -1))));
+                    //}
+                    //else if (pts[1].Item2.Contains("S"))
+                    //{
+                    //    x = double.Parse(pts[0].Item1.Substring(0, pts[0].Item1.Length - 1));
+                    //    y = double.Parse("-" + pts[0].Item2.Substring(0, pts[1].Item2.Length - 1));
+                    //    //AllPts.Add(new Tuple<int, int>(int.Parse(pts[0].Item1.Substring(0, pts[0].Item1.Length - 1)), int.Parse("-" + pts[0].Item2.Substring(0, pts[1].Item2.Length - 1))));
+                    //}
+                    //else
+                    //{
+                    //    x = double.Parse(pts[0].Item1.Substring(0, pts[0].Item1.Length - 1));
+                    //    y = double.Parse(pts[0].Item2.Substring(0, pts[0].Item2.Length - 1));
+                    //    //AllPts.Add(new Tuple<int, int>(int.Parse(pts[0].Item1.Substring(0, pts[0].Item1.Length - 1)), int.Parse(pts[0].Item2.Substring(0, pts[1].Item2.Length - 1))));
+                    //}
+                    //AllPts.Add(new Tuple<double, double>(x, y));
+                    AllPts.Add(new Tuple<double, double>(item.X, item.Y));
+                    //geocoords.Add(mapPoint.ToGeoCoordinateString(ddParam));
                 }
-                else if (pts[1].Item2.Contains("S"))
+
+                double[,] sd = new double[AllPts.Count, 2];
+                for (int i = 0; i < AllPts.Count; i++)
                 {
-                    x = double.Parse(pts[0].Item1.Substring(0, pts[0].Item1.Length - 1));
-                    y = double.Parse("-" + pts[0].Item2.Substring(0, pts[1].Item2.Length - 1));
-                    //AllPts.Add(new Tuple<int, int>(int.Parse(pts[0].Item1.Substring(0, pts[0].Item1.Length - 1)), int.Parse("-" + pts[0].Item2.Substring(0, pts[1].Item2.Length - 1))));
+                    sd[i, 0] = AllPts[i].Item1; //+ "," + AllPts[i].Item2;
+                    sd[i, 1] = AllPts[i].Item2;
                 }
-                else
+                List<double[,]> ss = new List<double[,]>();
+                ss.Add(sd);
+                Config configPoints = new Config
                 {
-                    x = double.Parse(pts[0].Item1.Substring(0, pts[0].Item1.Length - 1));
-                    y = double.Parse(pts[0].Item2.Substring(0, pts[0].Item2.Length - 1));
-                    //AllPts.Add(new Tuple<int, int>(int.Parse(pts[0].Item1.Substring(0, pts[0].Item1.Length - 1)), int.Parse(pts[0].Item2.Substring(0, pts[1].Item2.Length - 1))));
-                }
-                //AllPts.Add(new Tuple<double, double>(x, y));
-                AllPts.Add(new Tuple<double, double>(item.X, item.Y));
-                geocoords.Add(mapPoint.ToGeoCoordinateString(ddParam));
-            }
-
-            double[,] sd = new double[AllPts.Count, 2];
-            for (int i = 0; i < AllPts.Count; i++)
-            {
-                sd[i, 0] = AllPts[i].Item1; //+ "," + AllPts[i].Item2;
-                sd[i, 1] = AllPts[i].Item2;
-            }
-            List<double[,]> ss = new List<double[,]>();
-            ss.Add(sd);
-            Config configPoints = new Config
-            {
-                type = "Polygon",
-                coordinates = ss.ToArray()
-            };
-            Config configGeom = new Config
-            {
-                type = "GeometryFilter",
-                field_name = "geometry",
-                config = configPoints
-            };
-
-            //areacovered filter
-            RangeFilterConfig areaconfig = new RangeFilterConfig()
-            {
-                gte = _AreaCoverLow,
-                lte = _AreaCoverHigh
-            };
-            Config areacoverfilter = new Config()
-            {
-                type = "RangeFilter",
-                field_name = "visible_percent"
-            };
-
-            //cloudcoverfiler
-            RangeFilterConfig cloudconfig = new RangeFilterConfig
-            {
-                gte = Convert.ToDouble( _CloudcoverLow) / 100,
-                lte = Convert.ToDouble(_CloudcoverHigh) / 100
-            };
-
-            Config cloudCoverFilter = new Config
-            {
-                type = "RangeFilter",
-                field_name = "cloud_cover",
-                config = cloudconfig
-
-            };
-
-            //DateFilter
-            Config dateconfigconfig2 = new Config
-            {
-                gte = _DateFrom.ToString("yyyy-MM-dd'T'HH:mm:ss.fffzzz", DateTimeFormatInfo.InvariantInfo),//"2019-05-19T16:51:19.926Z",
-                lte = _DateTo.ToString("yyyy-MM-dd'T'HH:mm:ss.fffzzz", DateTimeFormatInfo.InvariantInfo) //"2019-08-19T16:51:19.926Z"
-            };
-
-            Config dateconfigconfig = new Config
-            {
-                type = "DateRangeFilter",
-                field_name = "acquired",
-                config = dateconfigconfig2
-            };
-
-            Config dateconfig = new Config
-            {
-                type = "OrFilter",
-                config = new[] { dateconfigconfig }
-            };
-
-            SearchFilter searchFilter = new SearchFilter();
-            List<string> types = new List<string>();
-            //typoes.Add("PSScene4Band");
-            //typoes.Add("SkySatCollect");
-            //typoes.Add("REOrthoTile");
-            foreach (var prop in this.GetType().GetProperties())
-            {
-                if (prop.PropertyType.Name == "Boolean")
+                    type = "Polygon",
+                    coordinates = ss.ToArray()
+                };
+                Config configGeom = new Config
                 {
-                    if (((bool)prop.GetValue(this, null)) && (prop.Name.StartsWith("Product")))
+                    type = "GeometryFilter",
+                    field_name = "geometry",
+                    config = configPoints
+                };
+
+                //areacovered filter
+                RangeFilterConfig areaconfig = new RangeFilterConfig()
+                {
+                    gte = _AreaCoverLow,
+                    lte = _AreaCoverHigh
+                };
+                Config areacoverfilter = new Config()
+                {
+                    type = "RangeFilter",
+                    field_name = "visible_percent"
+                };
+
+                //cloudcoverfiler
+                RangeFilterConfig cloudconfig = new RangeFilterConfig
+                {
+                    gte = Convert.ToDouble(_CloudcoverLow) / 100,
+                    lte = Convert.ToDouble(_CloudcoverHigh) / 100
+                };
+
+                Config cloudCoverFilter = new Config
+                {
+                    type = "RangeFilter",
+                    field_name = "cloud_cover",
+                    config = cloudconfig
+
+                };
+
+                //DateFilter
+                Config dateconfigconfig2 = new Config
+                {
+                    gte = _DateFrom.ToString("yyyy-MM-dd'T'HH:mm:ss.fffzzz", DateTimeFormatInfo.InvariantInfo),//"2019-05-19T16:51:19.926Z",
+                    lte = _DateTo.ToString("yyyy-MM-dd'T'HH:mm:ss.fffzzz", DateTimeFormatInfo.InvariantInfo) //"2019-08-19T16:51:19.926Z"
+                };
+
+                Config dateconfigconfig = new Config
+                {
+                    type = "DateRangeFilter",
+                    field_name = "acquired",
+                    config = dateconfigconfig2
+                };
+
+                Config dateconfig = new Config
+                {
+                    type = "OrFilter",
+                    config = new[] { dateconfigconfig }
+                };
+
+                SearchFilter searchFilter = new SearchFilter();
+                List<string> types = new List<string>();
+                //typoes.Add("PSScene4Band");
+                //typoes.Add("SkySatCollect");
+                //typoes.Add("REOrthoTile");
+                foreach (var prop in this.GetType().GetProperties())
+                {
+                    if (prop.PropertyType.Name == "Boolean")
                     {
-                        types.Add(prop.Name.Substring(7));
+                        if (((bool)prop.GetValue(this, null)) && (prop.Name.StartsWith("Product")))
+                        {
+                            types.Add(prop.Name.Substring(7));
+                        }
+                        //Console.WriteLine(prop.MemberType.ToString());
                     }
-                    //Console.WriteLine(prop.MemberType.ToString());
                 }
-            }
 
-            List<Config> mainconfigs = new List<Config>
+                List<Config> mainconfigs = new List<Config>
             {
                 dateconfig,
                 cloudCoverFilter,
                 configGeom
             };
-            searchFilter.item_types = types.ToArray();
-            Filter topfilter = new Filter();
-            topfilter.type = "AndFilter";
-            searchFilter.filter = topfilter;
-            //Config mainConfig = new Config();
-            searchFilter.filter.config = mainconfigs.ToArray();
+                searchFilter.item_types = types.ToArray();
+                Filter topfilter = new Filter();
+                topfilter.type = "AndFilter";
+                searchFilter.filter = topfilter;
+                //Config mainConfig = new Config();
+                searchFilter.filter.config = mainconfigs.ToArray();
 
-            //string json = JsonConvert.SerializeObject(searchFilter);
-            string json = JsonConvert.SerializeObject(searchFilter, new JsonSerializerSettings()
-            {
-                NullValueHandling = NullValueHandling.Ignore
-
-            });
-            //string asas = "{\"filter\":{\"type\":\"AndFilter\",\"config\":[{\"type\":\"GeometryFilter\",\"field_name\":\"geometry\",\"config\":{\"type\":\"Polygon\",\"coordinates\":[[[-159.44149017333984,21.877787931279187],[-159.44998741149902,21.87679231243837],[-159.45372104644778,21.872769941600623],[-159.45217609405518,21.866835742000745],[-159.44372177124023,21.864207091531895],[-159.43561077117923,21.86930503623256],[-159.44149017333984,21.877787931279187]]]}},{\"type\":\"OrFilter\",\"config\":[{\"type\":\"DateRangeFilter\",\"field_name\":\"acquired\",\"config\":{\"gte\":\"2019-05-22T16:36:32.254Z\",\"lte\":\"2019-08-22T16:36:32.254Z\"}}]}]},\"item_types\":[\"PSScene4Band\",\"REOrthoTile\",\"SkySatCollect\"]}";
-            //var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.somewhere.com/v2/cases");
-            HttpClientHandler handler = new HttpClientHandler()
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-            HttpClient client = new HttpClient(handler)
-            {
-
-                BaseAddress = new Uri("https://api.planet.com")
-            };
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/quick-search?_sort=acquired desc&_page_size=250");
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            request.Headers.CacheControl = new CacheControlHeaderValue();
-
-            request.Headers.CacheControl.NoCache = true;
-            request.Headers.Host = "api.planet.com";
-            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-            //request.Headers.Remove("Content-Type");
-            //request.Headers.Add("Content-Type", "application/json");
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            request.Content = content;
-            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
-            client.DefaultRequestHeaders.Host = "api.planet.com";
-            //_client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            content.Headers.Remove("Content-Type");
-            content.Headers.Add("Content-Type", "application/json");
-            //client.DefaultRequestHeaders.AcceptEncoding.Add(StringWithQualityHeaderValue.Parse("gzip"));
-            client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-            client.DefaultRequestHeaders.Add("User-Agent", "ArcGISProC#");
-            //content.Headers.TryAddWithoutValidation("Authorization", "Basic " + Convert.ToBase64String(byteArray));
-            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "MWZlNTc1OTgwZTc4NDY3ZjljMjhiNTUyMjk0ZWE0MTA6");//Convert.ToBase64String(byteArray));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            try
-            {
-                using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
+                //string json = JsonConvert.SerializeObject(searchFilter);
+                string json = JsonConvert.SerializeObject(searchFilter, new JsonSerializerSettings()
                 {
-                    if (httpResponse.IsSuccessStatusCode)
+                    NullValueHandling = NullValueHandling.Ignore
+
+                });
+                //string asas = "{\"filter\":{\"type\":\"AndFilter\",\"config\":[{\"type\":\"GeometryFilter\",\"field_name\":\"geometry\",\"config\":{\"type\":\"Polygon\",\"coordinates\":[[[-159.44149017333984,21.877787931279187],[-159.44998741149902,21.87679231243837],[-159.45372104644778,21.872769941600623],[-159.45217609405518,21.866835742000745],[-159.44372177124023,21.864207091531895],[-159.43561077117923,21.86930503623256],[-159.44149017333984,21.877787931279187]]]}},{\"type\":\"OrFilter\",\"config\":[{\"type\":\"DateRangeFilter\",\"field_name\":\"acquired\",\"config\":{\"gte\":\"2019-05-22T16:36:32.254Z\",\"lte\":\"2019-08-22T16:36:32.254Z\"}}]}]},\"item_types\":[\"PSScene4Band\",\"REOrthoTile\",\"SkySatCollect\"]}";
+                //var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.somewhere.com/v2/cases");
+                HttpClientHandler handler = new HttpClientHandler()
+                {
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                };
+                using (HttpClient client = new HttpClient(handler))
+                {
+                    client.BaseAddress = new Uri("https://api.planet.com");
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/quick-search?_sort=acquired desc&_page_size=250");
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    request.Headers.CacheControl = new CacheControlHeaderValue();
+
+                    request.Headers.CacheControl.NoCache = true;
+                    request.Headers.Host = "api.planet.com";
+                    request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+                    //request.Headers.Remove("Content-Type");
+                    //request.Headers.Add("Content-Type", "application/json");
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    request.Content = content;
+                    var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
+                    client.DefaultRequestHeaders.Host = "api.planet.com";
+                    //_client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    content.Headers.Remove("Content-Type");
+                    content.Headers.Add("Content-Type", "application/json");
+                    //client.DefaultRequestHeaders.AcceptEncoding.Add(StringWithQualityHeaderValue.Parse("gzip"));
+                    client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                    client.DefaultRequestHeaders.Add("User-Agent", "ArcGISProC#");
+                    //content.Headers.TryAddWithoutValidation("Authorization", "Basic " + Convert.ToBase64String(byteArray));
+                    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", "MWZlNTc1OTgwZTc4NDY3ZjljMjhiNTUyMjk0ZWE0MTA6");//Convert.ToBase64String(byteArray));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    try
                     {
-                        using (HttpContent content2 = httpResponse.Content)
+                        using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
                         {
-                            var json2 = content2.ReadAsStringAsync().Result;
-                            QuickSearchResult quickSearchResult = JsonConvert.DeserializeObject<QuickSearchResult>(json2);
-                            //if (_quickSearchResults is null )
-                            //{
-                            _quickSearchResults = new ObservableCollection<QuickSearchResult>();
-                            Items = new ObservableCollection<AcquiredDateGroup>();
-                            Pages = new List<Model.Page>();
-                            //}
-                            _quickSearchResults.Add(quickSearchResult);
-                            Model.Page page = new Model.Page
+                            if (httpResponse.IsSuccessStatusCode)
                             {
-                                QuickSearchResult = quickSearchResult
-                            };
-                            List<AcquiredDateGroup> groupedItems = Model.Page.ProcessQuickSearchResults(quickSearchResult);
-                            page.Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
-                            Pages.Add(page);
-                            CurrentPage = page;
-                            Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
-                            //ProcessQuickSearchResults(quickSearchResult, page);
-                            HasPages = true;
-                            HasNextPage = quickSearchResult._links._next != null;
-                            IsNotFirstPage = false;
-                            PageNumber = 1;
-                            PageTotal = HasNextPage ? "many" : "1";
-                            PaginatorVisibility = Visibility.Visible;
-                            //Pages.AddRange(await Model.Page.GetAllPages(quickSearchResult));
+                                using (HttpContent content2 = httpResponse.Content)
+                                {
+                                    var json2 = content2.ReadAsStringAsync().Result;
+                                    QuickSearchResult quickSearchResult = JsonConvert.DeserializeObject<QuickSearchResult>(json2);
+                                    //if (_quickSearchResults is null )
+                                    //{
+                                    _quickSearchResults = new ObservableCollection<QuickSearchResult>();
+                                    Items = new ObservableCollection<AcquiredDateGroup>();
+                                    Pages = new List<Model.Page>();
+                                    //}
+                                    _quickSearchResults.Add(quickSearchResult);
+                                    Model.Page page = new Model.Page
+                                    {
+                                        QuickSearchResult = quickSearchResult
+                                    };
+                                    List<AcquiredDateGroup> groupedItems = Model.Page.ProcessQuickSearchResults(quickSearchResult);
+                                    page.Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
+                                    Pages.Add(page);
+                                    CurrentPage = page;
+                                    Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
+                                    //ProcessQuickSearchResults(quickSearchResult, page);
+                                    HasPages = true;
+                                    HasNextPage = quickSearchResult._links._next != null;
+                                    IsNotFirstPage = false;
+                                    PageNumber = 1;
+                                    PageTotal = HasNextPage ? "many" : "1";
+                                    PaginatorVisibility = Visibility.Visible;
+                                    AnalyticsReporter analyticsReporter = new AnalyticsReporter();
+                                    analyticsReporter.MakeReport("Search executed", new Traits() { {"query", json } });
+                                    //Pages.AddRange(await Model.Page.GetAllPages(quickSearchResult));
+                                }
+                            }
+                            else
+                            {
+                                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was a problem with the Search. PLease try again." + Environment.NewLine + httpResponse.StatusCode + Environment.NewLine + httpResponse.ReasonPhrase);
+                            }
+
                         }
+
+
                     }
-                    else
+                    catch (Exception e)
                     {
-                        ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was a problem with the Search. PLease try again." + Environment.NewLine + httpResponse.StatusCode  + Environment.NewLine + httpResponse.ReasonPhrase);
+                        ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(e.Message + Environment.NewLine + e.StackTrace);
+
                     }
-                    
                 }
+                //HttpClient client = new HttpClient(handler)
+                //{
 
+                //    BaseAddress = new Uri("https://api.planet.com")
+                //};
+               
 
+                ShowCircularAnimation = Visibility.Hidden;
+                TreeEnabled = true;
             }
             catch (Exception e)
             {
-                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(e.Message + Environment.NewLine + e.StackTrace);
 
+                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(e.Message + Environment.NewLine + e.StackTrace,"Error with the search query");
             }
-
-            ShowCircularAnimation = Visibility.Hidden;
-            TreeEnabled = true;
+            
         }
 
 
