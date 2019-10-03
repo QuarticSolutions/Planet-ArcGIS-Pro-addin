@@ -26,6 +26,8 @@ namespace Planet.Model
     class Asset : Feature, INotifyPropertyChanged
     {
         public static string RootGroup = "Planet Daily Imagery";
+        public static string BasemapsGroup = "Planet Basemaps";
+        public static string[] ValidTypes = { "TiledServiceLayer", "VectorTileLayer", "RasterLayer" };
         public Strip parent { get; set; }
         private string _image;
         public string image
@@ -236,7 +238,7 @@ namespace Planet.Model
                             return stripGroupLayer;
                         }
                         else {
-                            int index = MapView.Active.Map.Layers.Count;
+                            int index = FindRootIndex();
                             GroupLayer rootGroupLayer = LayerFactory.Instance.CreateGroupLayer(MapView.Active.Map, index, rootGroup);
                             GroupLayer dateGroupLayer = LayerFactory.Instance.CreateGroupLayer(rootGroupLayer as ILayerContainerEdit, 0, dateGroup);
                             GroupLayer itemGroupLayer = LayerFactory.Instance.CreateGroupLayer(dateGroupLayer as ILayerContainerEdit, 0, itemGroup);
@@ -249,6 +251,57 @@ namespace Planet.Model
                     }
                 }
             }
+        }
+
+        public static int FindRootIndex()
+        {
+            IEnumerable<Layer> layers = MapView.Active.Map.Layers;
+            int targetIndex = 0;
+            int lowestIndex = MapView.Active.Map.Layers.Count;
+            if (lowestIndex > 0)
+            {
+                lowestIndex = lowestIndex - 1;
+                foreach (Layer layer in layers)
+                {
+                    if (layer.Name == BasemapsGroup)
+                    {
+                        targetIndex = MapView.Active.Map.Layers.IndexOf(layer);
+                        if (targetIndex > 0)
+                        {
+                            targetIndex = targetIndex - 1;
+                        }
+                        return targetIndex;
+                    }
+                    if (layer is GroupLayer group)
+                    {
+                        IEnumerable<Layer> children = group.GetLayersAsFlattenedList();
+                        foreach (Layer child in children)
+                        {
+                            string childType = child.GetType().Name;
+                            if (ValidTypes.Contains(childType))
+                            {
+                                int layerIndex = MapView.Active.Map.Layers.IndexOf(group);
+                                if (layerIndex < lowestIndex)
+                                {
+                                    lowestIndex = layerIndex;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    string type = layer.GetType().Name;
+                    if (ValidTypes.Contains(type))
+                    {
+                        int layerIndex = MapView.Active.Map.Layers.IndexOf(layer);
+                        if (layerIndex < lowestIndex)
+                        {
+                            lowestIndex = layerIndex;
+                        }
+                    }
+                }
+            }
+
+            return lowestIndex == 0 ? lowestIndex : lowestIndex - 1; ;
         }
 
         public async void doRemoveFromMap()

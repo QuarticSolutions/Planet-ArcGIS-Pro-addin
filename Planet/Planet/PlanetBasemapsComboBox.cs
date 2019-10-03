@@ -185,7 +185,7 @@ namespace Planet
             List<Mosaic> filteredItems = ItemsClean.Where(i => i.name == name).ToList();
             Mosaic mosaic = filteredItems.First();
             OpenWebMapAsync(mosaic);
-
+            SelectedItem = null;
             // TODO  Code behavior when selection changes.    
         }
 
@@ -209,12 +209,58 @@ namespace Planet
                 await QueuedTask.Run(() =>
                 {
                     var extent = MapView.Active.Extent;
-                    string layerName = "Planet Basemaps";
+                    string layerName = Model.Asset.BasemapsGroup;
                     GroupLayer groupLayer = MapView.Active.Map.FindLayers(layerName).FirstOrDefault() as GroupLayer;
                     if (groupLayer == null)
                     {
-                        int index = MapView.Active.Map.Layers.Count;
-                        groupLayer = LayerFactory.Instance.CreateGroupLayer(MapView.Active.Map, index, layerName);
+                        //add basemap group above any existing basemap-type layers, but below planet daily
+                        //imagery group layer
+                        IEnumerable<Layer> layers = MapView.Active.Map.Layers;
+                        int targetIndex = 0;
+                        int lowestIndex = MapView.Active.Map.Layers.Count;
+                        if (lowestIndex > 0)
+                        {
+                            lowestIndex = lowestIndex - 1;
+                            foreach (Layer layer in layers)
+                            {
+                                if (layer.Name == Model.Asset.RootGroup)
+                                {
+                                    targetIndex = MapView.Active.Map.Layers.IndexOf(layer) + 1;
+                                    break;
+                                }
+                                if (layer is GroupLayer group)
+                                {
+                                    IEnumerable<Layer> children = group.GetLayersAsFlattenedList();
+                                    foreach (Layer child in children)
+                                    {
+                                        string childType = child.GetType().Name;
+                                        if (Model.Asset.ValidTypes.Contains(childType))
+                                        {
+                                            int layerIndex = MapView.Active.Map.Layers.IndexOf(group);
+                                            if (layerIndex < lowestIndex)
+                                            {
+                                                lowestIndex = layerIndex;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                string type = layer.GetType().Name;
+                                if (Model.Asset.ValidTypes.Contains(type))
+                                {
+                                    int layerIndex = MapView.Active.Map.Layers.IndexOf(layer);
+                                    if (layerIndex < lowestIndex)
+                                    {
+                                        lowestIndex = layerIndex;
+                                    }
+                                }
+                            }
+                        }
+                        if (targetIndex == 0)
+                        {
+                            targetIndex = lowestIndex == 0 ? lowestIndex : lowestIndex - 1;
+                        }
+                        groupLayer = LayerFactory.Instance.CreateGroupLayer(MapView.Active.Map, targetIndex, layerName);
                     }
                     BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, groupLayer, 0, mosaic.name);
                     MapView.Active.ZoomTo(extent, TimeSpan.Zero);
