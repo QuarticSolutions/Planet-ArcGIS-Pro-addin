@@ -20,6 +20,7 @@ using System.Windows.Input;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Threading;
 
 namespace Planet.ViewModel
 {
@@ -703,141 +704,244 @@ namespace Planet.ViewModel
 
         private void doUpdateItems()
         {
-            HttpClientHandler handler = new HttpClientHandler()
+            try
             {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-            HttpClient client = new HttpClient(handler)
-            {
-
-                BaseAddress = new Uri("https://api.planet.com")
-            };
-            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
-            client.DefaultRequestHeaders.Host = "api.planet.com";
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-            client.DefaultRequestHeaders.Add("User-Agent", "ArcGISProC#");
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            foreach (Asset asset in _selectedAssets)
-            {
-                HttpRequestMessage request = new HttpRequestMessage();
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                request.Headers.CacheControl = new CacheControlHeaderValue
+                foreach (Asset asset in _selectedAssets)
                 {
-                    NoCache = true
-                };
-                request.Headers.Host = "api.planet.com";
-                request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-                request.Method = HttpMethod.Get;
-                request.RequestUri = new Uri("https://api.planet.com/data/v1/item-types/" + asset.properties.item_type + "/items/" + asset.id + "/assets");
-                try
-                {
-                    using (HttpResponseMessage httpResponse = _client.SendAsync(request).Result)
+                    PSScene4Band psscene4Band = new PSScene4Band();
+                    psscene4Band.properties = asset.properties;
+                    psscene4Band.id = asset.id;
+                    psscene4Band._links = asset._links;
+                    psscene4Band._permissions = asset._permissions;
+                    switch (psscene4Band.properties.item_type)
                     {
-                        using (HttpContent content2 = httpResponse.Content)
-                        {
-                            var json2 = content2.ReadAsStringAsync().Result;
-                            PSScene4Band psscene4Band = JsonConvert.DeserializeObject<PSScene4Band>(json2);
-                            psscene4Band.properties = asset.properties;
-                            psscene4Band.id = asset.id;
-                            psscene4Band._links = asset._links;
-                            psscene4Band._permissions = asset._permissions;
-                            switch (psscene4Band.properties.item_type)
+                        case "PSScene4Band":
+                            PSScene4Band.Add(psscene4Band);
+                            if (PSScene4BandVis != "Visible")
                             {
-                                case "PSScene4Band":
-                                    PSScene4Band.Add(psscene4Band);
-                                    if (PSScene4BandVis != "Visible")
-                                    {
-                                        PSScene4BandVis = "Visible";
-                                        _products.Add(PSScene4Band);
-                                    }
-                                    break;
-                                case "PSScene3Band":
-                                    PSScene3Band.Add(psscene4Band);
-                                    if (PSScene3BandVis != "Visible")
-                                    {
-                                        PSScene3BandVis = "Visible";
-                                        _products.Add(PSScene3Band);
-                                    }
-                                    break;
-                                case "PSOrthoTile":
-                                    PSOrthoTile.Add(psscene4Band);
-                                    if (PSOrthoTileVis != "Visible")
-                                    {
-                                        PSOrthoTileVis = "Visible";
-                                        _products.Add(PSOrthoTile);
-                                    }
-                                    break;
-                                case "REOrthoTile":
-                                    REOrthoTile.Add(psscene4Band);
-                                    if (REOrthoTilevis != "Visible")
-                                    {
-                                        REOrthoTilevis = "Visible";
-                                        _products.Add(REOrthoTile);
-                                    }
-                                    break;
-                                case "REScene":
-                                    REScene.Add(psscene4Band);
-                                    if (REScenevis != "Visible")
-                                    {
-                                        REScenevis = "Visible";
-                                        _products.Add(REScene);
-                                    }
-                                    break;
-                                case "SkySatScene":
-                                    SkySatScene.Add(psscene4Band);
-                                    if (SkySatScenevis != "Visible")
-                                    {
-                                        SkySatScenevis = "Visible";
-                                        _products.Add(SkySatScene);
-                                    }
-                                    break;
-                                case "SkySatCollect":
-                                    SkySatCollect.Add(psscene4Band);
-                                    if (SkySatCollectvis != "Visible")
-                                    {
-                                        SkySatCollectvis = "Visible";
-                                        _products.Add(SkySatCollect);
-                                    }
-                                    break;
-                                case "Landsat8L1G":
-                                    Landsat8L1G.Add(psscene4Band);
-                                    if (Landsat8L1Gvis != "Visible")
-                                    {
-                                        Landsat8L1Gvis = "Visible";
-                                        _products.Add(Landsat8L1G);
-                                    }
-                                    break;
-                                case "Sentinel2L1C":
-                                    Sentinel2L1C.Add(psscene4Band);
-                                    if (Sentinel2L1Cvis != "Visible")
-                                    {
-                                        Sentinel2L1Cvis = "Visible";
-                                        _products.Add(Sentinel2L1C);
-                                    }
-                                    break;
-                                default:
-                                    break;
+                                PSScene4BandVis = "Visible";
+                                _products.Add(PSScene4Band);
                             }
-                            //if (psscene4Band.properties.item_type == "PSScene4Band")
-                            //{
-                            //    PSScene4Band.Add(psscene4Band);
-                            //}
-                            
-                            //if (psscene4Band.properties.item_type == "PSScene3Band")
-                            //{
-                            //    PSScene3Band.Add(psscene4Band);
-                            //}
-
-
-                        }
+                            break;
+                        case "PSScene3Band":
+                            PSScene3Band.Add(psscene4Band);
+                            if (PSScene3BandVis != "Visible")
+                            {
+                                PSScene3BandVis = "Visible";
+                                _products.Add(PSScene3Band);
+                            }
+                            break;
+                        case "PSOrthoTile":
+                            PSOrthoTile.Add(psscene4Band);
+                            if (PSOrthoTileVis != "Visible")
+                            {
+                                PSOrthoTileVis = "Visible";
+                                _products.Add(PSOrthoTile);
+                            }
+                            break;
+                        case "REOrthoTile":
+                            REOrthoTile.Add(psscene4Band);
+                            if (REOrthoTilevis != "Visible")
+                            {
+                                REOrthoTilevis = "Visible";
+                                _products.Add(REOrthoTile);
+                            }
+                            break;
+                        case "REScene":
+                            REScene.Add(psscene4Band);
+                            if (REScenevis != "Visible")
+                            {
+                                REScenevis = "Visible";
+                                _products.Add(REScene);
+                            }
+                            break;
+                        case "SkySatScene":
+                            SkySatScene.Add(psscene4Band);
+                            if (SkySatScenevis != "Visible")
+                            {
+                                SkySatScenevis = "Visible";
+                                _products.Add(SkySatScene);
+                            }
+                            break;
+                        case "SkySatCollect":
+                            SkySatCollect.Add(psscene4Band);
+                            if (SkySatCollectvis != "Visible")
+                            {
+                                SkySatCollectvis = "Visible";
+                                _products.Add(SkySatCollect);
+                            }
+                            break;
+                        case "Landsat8L1G":
+                            Landsat8L1G.Add(psscene4Band);
+                            if (Landsat8L1Gvis != "Visible")
+                            {
+                                Landsat8L1Gvis = "Visible";
+                                _products.Add(Landsat8L1G);
+                            }
+                            break;
+                        case "Sentinel2L1C":
+                            Sentinel2L1C.Add(psscene4Band);
+                            if (Sentinel2L1Cvis != "Visible")
+                            {
+                                Sentinel2L1Cvis = "Visible";
+                                _products.Add(Sentinel2L1C);
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
-                catch (Exception ex)
-                {
-                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
-                }
             }
+            catch (Exception ex)
+            {
+
+                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show( "There was an error processing the Itemes for ordering" + Environment.NewLine + "Please try again" + Environment.NewLine + ex.Message,"Processing error");
+            }
+            
+
+
+
+            //HttpClientHandler handler = new HttpClientHandler()
+            //{
+            //    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            //};
+            //int counter = 251;
+            //using (HttpClient client = new HttpClient(handler))
+            //{
+            //    client.BaseAddress = new Uri("https://api.planet.com");
+            //    var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
+            //    client.DefaultRequestHeaders.Host = "api.planet.com";
+            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            //    client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            //    client.DefaultRequestHeaders.Add("User-Agent", "ArcGISProC#");
+            //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            //    foreach (Asset asset in _selectedAssets)
+            //    {
+            //        HttpRequestMessage request = new HttpRequestMessage();
+            //        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            //        request.Headers.CacheControl = new CacheControlHeaderValue
+            //        {
+            //            NoCache = true
+            //        };
+            //        request.Headers.Host = "api.planet.com";
+            //        request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+            //        request.Method = HttpMethod.Get;
+            //        request.RequestUri = new Uri("https://api.planet.com/data/v1/item-types/" + asset.properties.item_type + "/items/" + asset.id + "/assets");
+            //        try
+            //        {
+            //            using (HttpResponseMessage httpResponse = _client.SendAsync(request).Result)
+            //            {
+            //                if (httpResponse.IsSuccessStatusCode)
+            //                {
+            //                    using (HttpContent content2 = httpResponse.Content)
+            //                    {
+            //                        var json2 = content2.ReadAsStringAsync().Result;
+            //                        PSScene4Band psscene4Band = JsonConvert.DeserializeObject<PSScene4Band>(json2);
+            //                        psscene4Band.properties = asset.properties;
+            //                        psscene4Band.id = asset.id;
+            //                        psscene4Band._links = asset._links;
+            //                        psscene4Band._permissions = asset._permissions;
+            //                        switch (psscene4Band.properties.item_type)
+            //                        {
+            //                            case "PSScene4Band":
+            //                                PSScene4Band.Add(psscene4Band);
+            //                                if (PSScene4BandVis != "Visible")
+            //                                {
+            //                                    PSScene4BandVis = "Visible";
+            //                                    _products.Add(PSScene4Band);
+            //                                }
+            //                                break;
+            //                            case "PSScene3Band":
+            //                                PSScene3Band.Add(psscene4Band);
+            //                                if (PSScene3BandVis != "Visible")
+            //                                {
+            //                                    PSScene3BandVis = "Visible";
+            //                                    _products.Add(PSScene3Band);
+            //                                }
+            //                                break;
+            //                            case "PSOrthoTile":
+            //                                PSOrthoTile.Add(psscene4Band);
+            //                                if (PSOrthoTileVis != "Visible")
+            //                                {
+            //                                    PSOrthoTileVis = "Visible";
+            //                                    _products.Add(PSOrthoTile);
+            //                                }
+            //                                break;
+            //                            case "REOrthoTile":
+            //                                REOrthoTile.Add(psscene4Band);
+            //                                if (REOrthoTilevis != "Visible")
+            //                                {
+            //                                    REOrthoTilevis = "Visible";
+            //                                    _products.Add(REOrthoTile);
+            //                                }
+            //                                break;
+            //                            case "REScene":
+            //                                REScene.Add(psscene4Band);
+            //                                if (REScenevis != "Visible")
+            //                                {
+            //                                    REScenevis = "Visible";
+            //                                    _products.Add(REScene);
+            //                                }
+            //                                break;
+            //                            case "SkySatScene":
+            //                                SkySatScene.Add(psscene4Band);
+            //                                if (SkySatScenevis != "Visible")
+            //                                {
+            //                                    SkySatScenevis = "Visible";
+            //                                    _products.Add(SkySatScene);
+            //                                }
+            //                                break;
+            //                            case "SkySatCollect":
+            //                                SkySatCollect.Add(psscene4Band);
+            //                                if (SkySatCollectvis != "Visible")
+            //                                {
+            //                                    SkySatCollectvis = "Visible";
+            //                                    _products.Add(SkySatCollect);
+            //                                }
+            //                                break;
+            //                            case "Landsat8L1G":
+            //                                Landsat8L1G.Add(psscene4Band);
+            //                                if (Landsat8L1Gvis != "Visible")
+            //                                {
+            //                                    Landsat8L1Gvis = "Visible";
+            //                                    _products.Add(Landsat8L1G);
+            //                                }
+            //                                break;
+            //                            case "Sentinel2L1C":
+            //                                Sentinel2L1C.Add(psscene4Band);
+            //                                if (Sentinel2L1Cvis != "Visible")
+            //                                {
+            //                                    Sentinel2L1Cvis = "Visible";
+            //                                    _products.Add(Sentinel2L1C);
+            //                                }
+            //                                break;
+            //                            default:
+            //                                break;
+            //                        }
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    if (httpResponse.ReasonPhrase == "Too Many Requests")
+            //                    {
+            //                        Thread.Sleep(counter);
+            //                        counter = counter * 2;
+            //                    }
+            //                    else
+            //                    {
+            //                        ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Error getting past orders, the server returned an error: " + httpResponse.ReasonPhrase);
+            //                    }
+            //                }
+            //            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
+            //        }
+            //    }
+            //}
+
+            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
