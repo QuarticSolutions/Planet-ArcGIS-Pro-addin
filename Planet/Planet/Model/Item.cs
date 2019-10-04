@@ -1,4 +1,5 @@
 ﻿using ArcGIS.Core.CIM;
+using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
 using Newtonsoft.Json;
@@ -265,50 +266,69 @@ namespace Planet.Model
 
         public static async void AddLayer(string targets, string name)
         {
-            HttpClientHandler handler = new HttpClientHandler()
+            try
             {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-            HttpClient client = new HttpClient(handler)
-            {
-
-                BaseAddress = new Uri("https://api.planet.com")
-            };
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/layers");
-            //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-            request.Headers.Host = "tiles2.planet.com";
-            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-            var nvc = new List<KeyValuePair<string, string>>();
-            //nvc.Add(new KeyValuePair<string, string>("ids", "PSScene4Band:20190603_205042_1042,PSScene4Band:20190528_205949_43_1061,PSScene4Band:20190818_205116_1009"));
-            nvc.Add(new KeyValuePair<string, string>("ids", targets));
-            //var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var content = new FormUrlEncodedContent(nvc);
-            request.Content = content;
-            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value +":hgvhgv");
-            client.DefaultRequestHeaders.Host = "api.planet.com";
-            //_client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-            content.Headers.Remove("Content-Type");
-            content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-            client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-            client.DefaultRequestHeaders.Add("User-Agent", "ArcGISProC#");
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
-            {
-                using (HttpContent content2 = httpResponse.Content)
+                HttpClientHandler handler = new HttpClientHandler()
                 {
-                    var json2 = content2.ReadAsStringAsync().Result;
-                    customwmts customwmts = JsonConvert.DeserializeObject<customwmts>(json2);
-                    customwmts.wmtsURL = new Uri("https://tiles.planet.com/data/v1/layers/wmts/" + customwmts.name + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value);
-                    //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
-                    var serverConnection = new CIMProjectServerConnection { URL = customwmts.wmtsURL.ToString() };
-                    var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
-                    await QueuedTask.Run(() =>
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                };
+                HttpClient client = new HttpClient(handler)
+                {
+
+                    BaseAddress = new Uri("https://api.planet.com")
+                };
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "data/v1/layers");
+                //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                request.Headers.Host = "tiles2.planet.com";
+                request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+                var nvc = new List<KeyValuePair<string, string>>();
+                //nvc.Add(new KeyValuePair<string, string>("ids", "PSScene4Band:20190603_205042_1042,PSScene4Band:20190528_205949_43_1061,PSScene4Band:20190818_205116_1009"));
+                nvc.Add(new KeyValuePair<string, string>("ids", targets));
+                //var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var content = new FormUrlEncodedContent(nvc);
+                request.Content = content;
+                var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
+                client.DefaultRequestHeaders.Host = "api.planet.com";
+                //_client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                content.Headers.Remove("Content-Type");
+                content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                client.DefaultRequestHeaders.Add("User-Agent", "ArcGISProC#");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                using (HttpResponseMessage httpResponse = client.SendAsync(request).Result)
+                {
+                    using (HttpContent content2 = httpResponse.Content)
                     {
-                        BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, MapView.Active.Map, 0, name);
-                    });
+                        var json2 = content2.ReadAsStringAsync().Result;
+                        customwmts customwmts = JsonConvert.DeserializeObject<customwmts>(json2);
+                        customwmts.wmtsURL = new Uri("https://tiles.planet.com/data/v1/layers/wmts/" + customwmts.name + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value);
+                        //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
+                        var serverConnection = new CIMProjectServerConnection { URL = customwmts.wmtsURL.ToString() };
+                        var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
+                        await QueuedTask.Run(() =>
+                        {
+                            Layer group = MapView.Active.Map.FindLayer(Asset.RootGroup);
+                            GroupLayer groupLayer = null;
+                            if (group != null)
+                            {
+                                groupLayer = group as GroupLayer;
+                            }
+                            else
+                            {
+                                int index = Asset.FindRootIndex();
+                                groupLayer = LayerFactory.Instance.CreateGroupLayer(MapView.Active.Map, index, Asset.RootGroup);
+                            }
+                            BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, groupLayer, 0, name);
+                        });
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error adding to Map", "Add to Map");
+            }
+            
         }
     }
 }
