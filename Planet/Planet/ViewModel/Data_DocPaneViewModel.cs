@@ -91,7 +91,7 @@ namespace Planet
             };
             List<Order2> _orderstemplist = new List<Order2>();
             ObservableCollection<Order2> _orderstempcol = new ObservableCollection<Order2>();
-            int counter = 0;
+            int counter = 251;
             var nextUrl = "https://api.planet.com/compute/ops/orders/v2";
             try
             {
@@ -109,10 +109,7 @@ namespace Planet
                     {
                         await _client.GetAsync(nextUrl).ContinueWith(async (getmaoicstask2) =>
                         {
-                            if(counter > 5)
-                            {
-                                Thread.Sleep(1000);
-                            }
+
                             var response = await getmaoicstask2;
                             if (response.IsSuccessStatusCode)
                             {
@@ -139,7 +136,16 @@ namespace Planet
                             }
                             else
                             {
-                                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Error getting past orders, the server returned an error: " + response.ReasonPhrase);
+                                if (response.ReasonPhrase == "Too Many Requests")
+                                {
+                                    Thread.Sleep(counter);
+                                    counter = counter * 2;
+                                }
+                                else
+                                {
+                                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Error getting past orders, the server returned an error: " + response.ReasonPhrase);
+                                }
+                                
                             }
                         });
                     } while (!string.IsNullOrEmpty(nextUrl));
