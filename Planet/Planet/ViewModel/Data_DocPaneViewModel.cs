@@ -1064,11 +1064,11 @@ namespace Planet
                 }
 
                 List<Config> mainconfigs = new List<Config>
-            {
-                dateconfig,
-                cloudCoverFilter,
-                configGeom
-            };
+                {
+                    dateconfig,
+                    cloudCoverFilter,
+                    configGeom
+                };
                 searchFilter.item_types = types.ToArray();
                 Filter topfilter = new Filter();
                 topfilter.type = "AndFilter";

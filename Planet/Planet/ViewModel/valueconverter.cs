@@ -155,8 +155,12 @@ namespace Planet.ViewModel
             {
                 foreach (object element in enumerable)
                 {
-                    show = "Collapsed";
-                    break;
+                    if (element.ToString().Contains("download"))
+                    {
+                        show = "Collapsed";
+                        break;
+                    }
+
                 }
             }
             return show;
