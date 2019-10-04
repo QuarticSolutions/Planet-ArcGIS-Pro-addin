@@ -38,13 +38,14 @@ namespace Planet.Model.Item_assets
 
     public class AllOrders2
     {
-        //public _Links2 _links { get; set; }
+        public _Links2 _links { get; set; }
         public Order2[] orders { get; set; }
     }
 
     public class _Links2
     {
         public string _self { get; set; }
+        public string next { get; set; }
     }
 
     public class Order2

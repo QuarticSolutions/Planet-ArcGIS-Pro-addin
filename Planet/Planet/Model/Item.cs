@@ -299,9 +299,9 @@ namespace Planet.Model
                 {
                     var json2 = content2.ReadAsStringAsync().Result;
                     customwmts customwmts = JsonConvert.DeserializeObject<customwmts>(json2);
-                    customwmts.wmtsURL = new Uri("https://tiles.planet.com/data/v1/layers/wmts/" + customwmts.name + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value);// 1fe575980e78467f9c28b552294ea410");
+                    customwmts.wmtsURL = new Uri("https://tiles.planet.com/data/v1/layers/wmts/" + customwmts.name + "?api_key=" + Module1.Current.API_KEY.API_KEY_Value);
                     //Geometry geometry2 = GeometryEngine.Instance.ImportFromJSON(JSONImportFlags.jsonImportDefaults, JsonConvert.SerializeObject( quickSearchResult.features[5].geometry));
-                    var serverConnection = new CIMProjectServerConnection { URL = customwmts.wmtsURL.ToString() };// "1fe575980e78467f9c28b552294ea410"
+                    var serverConnection = new CIMProjectServerConnection { URL = customwmts.wmtsURL.ToString() };
                     var connection = new CIMWMTSServiceConnection { ServerConnection = serverConnection };
                     await QueuedTask.Run(() =>
                     {

@@ -58,7 +58,6 @@ namespace Planet.ViewModel
             {
                 return "";
             }
-
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -69,11 +68,12 @@ namespace Planet.ViewModel
     public class MultiDataValueConverter : IMultiValueConverter
     {
 
-        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values[0].ToString() == "success" && values[1].ToString().Contains("http"))
             {
-                return values[1];
+                //return values[1];
+                return "Download";
             }
             else
             {

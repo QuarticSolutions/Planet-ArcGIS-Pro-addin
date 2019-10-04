@@ -310,6 +310,11 @@
                             </ComboBox>
                         </StackPanel>-->
                     </Grid>
+                    <StackPanel Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding NoSearchResulrvis}">
+                        <TextBlock Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{DynamicResource Esri_TextBlockH1}">Sorry, no results found.</TextBlock>
+                        <TextBlock Grid.Row="3" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{DynamicResource Esri_TextBlockH3}">Try relaxing your filters, extending the daterange, or searching in another location.</TextBlock>
+                    </StackPanel>
+                    
                     <TreeView Name="SearchResults" Grid.Row="3" Grid.Column="0" IsEnabled="{Binding TreeEnabled}" ItemsSource="{Binding Items}" Background="{x:Null}" BorderBrush="{x:Null}" >
                         <TreeView.Resources>
                             <HierarchicalDataTemplate DataType="{x:Type model:AcquiredDateGroup}" ItemsSource="{Binding Items}">
@@ -688,7 +693,15 @@
                                     <DataTemplate>
                                         <TextBlock>
                                           <Hyperlink Command="{Binding ElementName=Root, Path=DataContext.OpenDownloadHyperlink}" CommandParameter="{Binding}">
-                                            <TextBlock Text="{Binding _links._self}" />
+                                            <TextBlock >
+                                                    <TextBlock.Text>
+                                                        <MultiBinding Converter="{StaticResource multi}">
+                                                            <Binding Path="state"/>
+                                                            <Binding Path="_links._self"/>
+                                                            
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                            </TextBlock>
                                           </Hyperlink>
                                         </TextBlock>
                                     </DataTemplate>
