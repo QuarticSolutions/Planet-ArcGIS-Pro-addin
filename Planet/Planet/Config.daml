@@ -1,11 +1,11 @@
 ﻿<ArcGIS defaultAssembly="Planet.dll" defaultNamespace="Planet" xmlns="http://schemas.esri.com/DADF/Registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
-  <AddInInfo id="{232431fe-6db9-4d83-84bc-2ee7d7f55205}" version="2.0.4" desktopVersion="2.2.12813">
+  <AddInInfo id="{232431fe-6db9-4d83-84bc-2ee7d7f55205}" version="2.0.5" desktopVersion="2.2.12813">
     <Name>Planet Basemap Explorer</Name>
     <Description>Toolbar to display and download Planet basmaps</Description>
     <Image>Images\Planet_logo-dark.png</Image>
     <Author>Quartic Solutions</Author>
     <Company>Quartic Solutions</Company>
-    <Date>10/03/2019 10:24:48 AM, 2019</Date>
+    <Date>10/04/2019 10:24:48 AM, 2019</Date>
     <Subject>Framework</Subject>
     <!-- Note subject can be one or more of these topics:
                     Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
@@ -115,11 +115,11 @@
         </button>
       </controls>
       <galleries>
-        <gallery id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Basemap Mosaics" className="PlanetGalleryInline" itemsInRow="5" dataTemplateFile="pack://application:,,,/Planet;component//PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
+        <gallery id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Basemap Mosaics" className="PlanetGalleryInline" itemsInRow="5" dataTemplateFile="pack://application:,,,/Planet;component//View/PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
           <tooltip heading="Planet Rasters">Planet Rasters
             <disabledText>You must Enter a valid api key first</disabledText></tooltip>
         </gallery>
-        <gallery id="Planet_PlanetLogin" caption="Planet Login" className="PlanetLogin" itemsInRow="1" dataTemplateFile="pack://application:,,,/Planet;component//PlanetLoginTemplate.xaml" templateID="PlanetLoginItemTemplate" resizable="false" largeImage="Images\Clouddata.png">
+        <gallery id="Planet_PlanetLogin" caption="Planet Login" className="PlanetLogin" itemsInRow="1" dataTemplateFile="pack://application:,,,/Planet;component//View/PlanetLoginTemplate.xaml" templateID="PlanetLoginItemTemplate" resizable="false" largeImage="Images\Clouddata.png">
           <tooltip heading="Login">
             Open Login Details Panel<disabledText /></tooltip>
         </gallery>

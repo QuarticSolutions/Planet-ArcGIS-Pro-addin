@@ -181,8 +181,12 @@ namespace Planet.ViewModel
             {
                 foreach (object element in enumerable)
                 {
-                    show = "Visible";
-                    break;
+                    if (element.ToString().Contains("download"))
+                    {
+                        show = "Visible";
+                        break;
+                    }
+
                 }
             }
             return show;

@@ -140,7 +140,11 @@ namespace Planet.Model
                 string itemGroup = parent.mapLayerName;
                 string[] stripParents = { itemGroup, dateGroup, rootGroup };
                 GroupLayer group = Asset.GetGroup(mapLayerName, stripParents);
-                group.SetVisibility(value);
+                if (group != null)
+                {
+                    group.SetVisibility(value);
+                }
+                
             });
         }
 

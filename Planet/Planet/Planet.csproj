@@ -221,7 +221,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="PlanetGalleryInlineTemplate.xaml">
+    <Resource Include="View\PlanetGalleryInlineTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
@@ -292,7 +292,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Resource Include="PlanetLoginTemplate.xaml">
+    <Resource Include="View\PlanetLoginTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
