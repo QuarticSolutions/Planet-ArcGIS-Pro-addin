@@ -678,7 +678,7 @@ namespace Planet
                     string zipPath = Path.Combine(download.path, fileName);
                     string extractPath = Path.Combine(download.path, order2.name);
                     download.status = "Extracting archive";
-                    string status = await ExtractDownload(zipPath, extractPath);
+                    string status = await ExtractDownload(zipPath,  extractPath);
                     download.status = status;
                 } else
                 {
@@ -719,7 +719,7 @@ namespace Planet
             }
             catch (IOException ioEx)
             {
-                return "Error extracting archive; directory already exists";
+                return "Error extracting archive; " + ioEx.Message;
             }
             catch (Exception e)
             {
