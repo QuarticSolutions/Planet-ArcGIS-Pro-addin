@@ -61,26 +61,26 @@ namespace Planet
         {
             _selectedAssets.CollectionChanged += _selectedAssets_CollectionChanged;
             //GetPastOrders();
-            //APIKeyChangedEvent.Subscribe((args) =>
-            //{
-            //    if (Module1.Current.API_KEY == null || Module1.Current.API_KEY.API_KEY_Value == null || Module1.Current.API_KEY.API_KEY_Value == "")
-            //    {
-            //        QuickSearchResults = new ObservableCollection<QuickSearchResult>();
-            //        Items = new ObservableCollection<AcquiredDateGroup>();
-            //        Pages = new List<Model.Page>();
-            //        PastOrders = new ObservableCollection<Order2>();
-            //        CurrentDownloads = new ObservableCollection<OrderStatusItem>();
-            //        AOIGeometry = null;
-            //        HasGeom = false;
-            //        CurrentPage = null;
-            //        HasPages = false;
-            //        HasNextPage = false;
-            //        IsNotFirstPage = false;
-            //        PageNumber = 0;
-            //        PageTotal = null;
-            //        PaginatorVisibility = Visibility.Hidden;
-            //    }
-            //});
+            APIKeyChangedEvent.Subscribe((args) =>
+            {
+                if (Module1.Current.API_KEY == null || Module1.Current.API_KEY.API_KEY_Value == null || Module1.Current.API_KEY.API_KEY_Value == "")
+                {
+                    QuickSearchResults = new ObservableCollection<QuickSearchResult>();
+                    Items = new ObservableCollection<AcquiredDateGroup>();
+                    Pages = new List<Model.Page>();
+                    PastOrders = new ObservableCollection<Order2>();
+                    CurrentDownloads = new ObservableCollection<OrderStatusItem>();
+                    AOIGeometry = null;
+                    HasGeom = false;
+                    CurrentPage = null;
+                    HasPages = false;
+                    HasNextPage = false;
+                    IsNotFirstPage = false;
+                    PageNumber = 0;
+                    PageTotal = null;
+                    PaginatorVisibility = Visibility.Hidden;
+                }
+            });
         }
 
 

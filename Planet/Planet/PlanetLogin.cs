@@ -68,11 +68,10 @@ namespace Planet
         {
             //TODO - insert your code to manipulate the clicked gallery item here
             //System.Diagnostics.Debug.WriteLine("Remove this line after adding your custom behavior.");
-            this.Clear();
-            _isInitialized = false;
+            //this.Clear();
+            //_isInitialized = false;
             //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Gallery Clicked");
             //base.OnClick(item);
-
         }
         
     }

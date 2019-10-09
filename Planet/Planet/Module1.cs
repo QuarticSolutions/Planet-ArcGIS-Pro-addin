@@ -22,6 +22,7 @@ using System.Net.Http;
 using ArcGIS.Core.Events;
 using Segment;
 using Segment.Model;
+using Sentry;
 
 namespace Planet
 {
@@ -35,9 +36,12 @@ namespace Planet
         public bool IsTrial = false;
         private Module1()
         {
-            FrameworkApplication.State.Deactivate("planet_state_connection"); 
-            ProjectOpenedEvent.Subscribe(OnProjectOpen);
-            ProjectClosedEvent.Subscribe(OnProjectClose);
+            using (SentrySdk.Init("https://9a79c422479f4388a8252e833beb8a3a@sentry.io/1774797"))
+            {
+                FrameworkApplication.State.Deactivate("planet_state_connection");
+                ProjectOpenedEvent.Subscribe(OnProjectOpen);
+                ProjectClosedEvent.Subscribe(OnProjectClose);
+            }
         }
 
         private void OnProjectClose(ProjectEventArgs obj)
