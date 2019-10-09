@@ -1,15 +1,15 @@
 ﻿<UserControl x:Class="Clean_Tool_and_MV.Data_DocPaneView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"    
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ui="clr-namespace:Clean_Tool_and_MV"
              xmlns:models="clr-namespace:test_docing_Panel.Models"
              xmlns:model="clr-namespace:Clean_Tool_and_MV.Model"
              xmlns:excd ="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
              xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
              d:DesignHeight="300" d:DesignWidth="300"
@@ -122,9 +122,9 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Content="Cloud Cover:" Margin="5"/>
-                        <excd:RangeSlider Grid.Column="1" Name="sldCloudcover" 
-                            LowerValue="{Binding CloudcoverLow}" 
-                            HigherValue="{Binding CloudcoverHigh}" 
+                        <excd:RangeSlider Grid.Column="1" Name="sldCloudcover"
+                            LowerValue="{Binding CloudcoverLow}"
+                            HigherValue="{Binding CloudcoverHigh}"
                             Step="1"
                             Minimum="0"
                             Maximum="100"
@@ -133,10 +133,10 @@
                             TickFrequency="1"
                             IsSnapToTickEnabled="True"
                             Background="Transparent"
-                            Foreground="Transparent" 
-                            Margin="0,5,5,5" 
+                            Foreground="Transparent"
+                            Margin="0,5,5,5"
                             Height="22"
-                            TickPlacement="None"             
+                            TickPlacement="None"
                             LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
                             HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
                             RangeBackground="Transparent"
@@ -170,16 +170,16 @@
                     </Grid>
                 </TabItem>
             </TabControl>
-            <ListBox Grid.Row="1" x:Name="primaryNavigator" DockPanel.Dock="Left" 
+            <ListBox Grid.Row="1" x:Name="primaryNavigator" DockPanel.Dock="Left"
                Style="{DynamicResource Esri_ListBoxPanelIndicator}"
-               ItemsSource="{Binding MainTabs}" 
+               ItemsSource="{Binding MainTabs}"
                SelectedIndex="{Binding SelectedPanelHeaderIndex, Mode=TwoWay}"
                IsSynchronizedWithCurrentItem="True"/>
             <TreeView Name="SearchResults" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Items}" Background="{x:Null}" BorderBrush="{x:Null}">
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type model:AcquiredDateGroup}" ItemsSource="{Binding Items}" >
                         <TextBlock Text="{Binding Path=date, Mode=OneWay}" />
-                        
+
                     </HierarchicalDataTemplate>
                     <HierarchicalDataTemplate DataType="{x:Type model:Item}" ItemsSource="{Binding Items}">
                         <StackPanel Orientation="Horizontal">
@@ -191,12 +191,12 @@
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <Separator />
-                                    <MenuItem Header="Add all as WMTS Service" Command="{Binding Path=AddAllAsLayer}">
+                                    <MenuItem Header="Add all as WMTS layer" Command="{Binding Path=AddAllAsLayer}">
                                         <MenuItem.Icon>
                                             <Image Source="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/AddContent16.png" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="Add selected as WMTS Service" Command="{Binding Path=AddSelectedAsLayer}">
+                                    <MenuItem Header="Add selected as WMTS layer" Command="{Binding Path=AddSelectedAsLayer}">
                                         <MenuItem.Icon>
                                             <Image Source="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/AddContent16.png" />
                                         </MenuItem.Icon>
@@ -243,13 +243,13 @@
                             </StackPanel.ContextMenu>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseEnter">
-                                    <ei:CallMethodAction 
-                                        TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}" 
+                                    <ei:CallMethodAction
+                                        TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}"
                                         MethodName="AddFootprint" />
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="MouseLeave">
-                                    <ei:CallMethodAction 
-                                        TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}" 
+                                    <ei:CallMethodAction
+                                        TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}"
                                         MethodName="RemoveFootprint" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
