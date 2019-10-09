@@ -65,6 +65,19 @@ namespace Planet.Model
             }
         }
 
+        private bool _HasPermissions = false;
+        public bool HasPermissions
+        {
+            get
+            {
+                return _HasPermissions;
+            }
+            set
+            {
+                _HasPermissions = value;
+            }
+        }
+
         protected bool SetHasMapLayer<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;

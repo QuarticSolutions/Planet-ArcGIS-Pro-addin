@@ -429,6 +429,17 @@ namespace Planet.Model
             }
         }
 
+        public void determineParentPermissions()
+        {
+            bool permitted = _permissions.Count() > 0;
+            Strip parentStrip = parent;
+            parentStrip.HasPermissions = permitted;
+            Item parentItem = parentStrip.parent;
+            parentItem.HasPermissions = permitted;
+            AcquiredDateGroup parentDateGroup = parentItem.parent;
+            parentDateGroup.HasPermissions = permitted;
+        }
+
         public static Model.Asset FindAsset(ObservableCollection<AcquiredDateGroup> items, string id)
         {
             foreach (Model.AcquiredDateGroup group in items)

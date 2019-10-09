@@ -333,7 +333,7 @@
                             <HierarchicalDataTemplate DataType="{x:Type model:Item}" ItemsSource="{Binding Items}">
                                 <StackPanel Orientation="Horizontal" >
                                     <StackPanel.ContextMenu>
-                                        <ContextMenu StaysOpen="true">
+                                        <ContextMenu StaysOpen="False" IsEnabled="{Binding HasPermissions}">
                                             <MenuItem Header="Select all" Command="{Binding Path=SelectAll}">
                                                 <MenuItem.Icon>
                                                     <Image Source="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericCheckMark16.png" />
@@ -352,7 +352,7 @@
                                             </MenuItem>
                                         </ContextMenu>
                                     </StackPanel.ContextMenu>
-                                    <CheckBox IsChecked="{Binding IsChecked}" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Select All" />
+                                    <CheckBox IsChecked="{Binding IsChecked}" Margin="0,0,0,0" IsEnabled="{Binding HasPermissions}" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Select All" />
                                     <TextBlock Margin="5,0,0,0" Text="{Binding Path=title}" VerticalAlignment="Center">
                                         <TextBlock.Style>
                                             <Style TargetType="{x:Type TextBlock}">
@@ -377,7 +377,7 @@
                             <HierarchicalDataTemplate DataType="{x:Type model:Strip}" ItemsSource="{Binding Items}">
                                 <StackPanel Orientation="Horizontal" Tag="{Binding stripId}">
                                     <StackPanel.ContextMenu>
-                                        <ContextMenu StaysOpen="true">
+                                        <ContextMenu StaysOpen="False" IsEnabled="{Binding HasPermissions}">
                                             <MenuItem Header="Select all" Command="{Binding Path=SelectAll}">
                                                 <MenuItem.Icon>
                                                     <Image Source="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericCheckMark16.png" />
@@ -396,7 +396,7 @@
                                             </MenuItem>
                                         </ContextMenu>
                                     </StackPanel.ContextMenu>
-                                    <CheckBox IsChecked="{Binding IsChecked}" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Select All" Tag="{Binding Path=stripId}">
+                                    <CheckBox IsChecked="{Binding IsChecked}" Margin="0,0,0,0" IsEnabled="{Binding HasPermissions}" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Select All" Tag="{Binding Path=stripId}">
                                     </CheckBox>
                                     <TextBlock Margin="5,0,0,0" Text="{Binding Path=title}" VerticalAlignment="Center">
                                         <TextBlock.Style>
@@ -423,7 +423,7 @@
                                         <viewmodel:SelectCheckIconVisibiltyConverter x:Key="SelectCheckIconVisibiltyConverter"/>
                                     </StackPanel.Resources>
                                     <!--<StackPanel.ContextMenu>
-                                        <ContextMenu StaysOpen="true">
+                                        <ContextMenu StaysOpen="False">
                                             <MenuItem Header="View more information" />
                                         </ContextMenu>
                                     </StackPanel.ContextMenu>-->

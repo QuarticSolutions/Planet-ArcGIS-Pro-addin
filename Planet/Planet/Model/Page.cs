@@ -127,6 +127,7 @@ namespace Planet.Model
                 asset.setFootprintVertices();
                 asset.setFootprintSymbol();
                 asset.setPolygon();
+                asset.determineParentPermissions();
                 assets.Add(asset);
             }
 

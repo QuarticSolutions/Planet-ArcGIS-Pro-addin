@@ -103,6 +103,19 @@ namespace Planet.Model
             return true;
         }
 
+        private bool _HasPermissions = false;
+        public bool HasPermissions
+        {
+            get
+            {
+                return _HasPermissions;
+            }
+            set
+            {
+                _HasPermissions = value;
+            }
+        }
+
         private bool? _IsChecked = false;
         public bool? IsChecked
         {

@@ -30,6 +30,18 @@ namespace Planet
             IsSketchTool = true;
             SketchType = SketchGeometryType.Polygon;
             SketchOutputMode = SketchOutputMode.Map;
+
+            //APIKeyChangedEvent.Subscribe((args) =>
+            //{
+            //    if (Module1.Current.API_KEY == null || Module1.Current.API_KEY.API_KEY_Value == null || Module1.Current.API_KEY.API_KEY_Value == "")
+            //    {
+            //        if (_graphic != null)
+            //        {
+            //            _graphic.Dispose();
+            //            FrameworkApplication.SetCurrentToolAsync(null);
+            //        }
+            //    }
+            //});
         }
 
         /// <summary>
