@@ -97,7 +97,7 @@ namespace Planet
 
             if (polygone.PointCount > 500)
             {
-                MessageBox.Show("Too Many Vertices. Please simplify the selected Polygon or choose another one.");
+                MessageBox.Show("Too many vertices. Please simplify the selected Polygon or choose another one. Max vertices: 500");
                 return;
             }
 
