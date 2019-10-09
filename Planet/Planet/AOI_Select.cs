@@ -56,7 +56,7 @@ namespace Planet
                 Polygon polygon = (Polygon)geometry;
                 if (polygon.PointCount > 500)
                 {
-                    MessageBox.Show("Too Many Vertices. Please simplify your AOI");
+                    MessageBox.Show("Too many vertices. Please simplify your AOI. Max vertices: 500");
                     return base.OnSketchCompleteAsync(geometry);
                 }
             }

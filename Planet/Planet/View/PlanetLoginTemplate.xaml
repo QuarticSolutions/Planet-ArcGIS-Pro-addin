@@ -45,9 +45,9 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <!--<TextBlock Grid.Row="0" TextWrapping="Wrap">Please enter you API_Key below. 
-                        <LineBreak/> This can be found by logging into 
-                        <Hyperlink  xml:space="preserve" 
+                <!--<TextBlock Grid.Row="0" TextWrapping="Wrap">Please enter you API_Key below.
+                        <LineBreak/> This can be found by logging into
+                        <Hyperlink  xml:space="preserve"
                             NavigateUri="https://www.planet.com/account/#/"
                             Command="{Binding OpenHyperlinkCommand}">https://www.planet.com/account/#/
                         </Hyperlink>
@@ -56,7 +56,7 @@
                     <LineBreak/>
                         Copy and paste it into the box below and click the connect button to view your Raster Map Services
                 </TextBlock>-->
-                <TextBlock Grid.Row="0"   Text="Enter your Planet user name and password" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{DynamicResource Esri_TextBlockDialogHeader}"/>
+                <TextBlock Grid.Row="0"   Text="Welcome, Explorer!" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{DynamicResource Esri_TextBlockDialogHeader}"/>
                 <StackPanel Grid.Row="1" Orientation="Vertical" Margin="6,6,1,1" HorizontalAlignment="Center">
 
                     <!--<StackPanel  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,6,0,0">-->
@@ -73,7 +73,7 @@
 
                         <!--<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">-->
                         <TextBlock Grid.Row="0" Grid.Column="0"  Text="User Name:"  Style="{DynamicResource Esri_TextBlockRegular}"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" Name="txtUserName" Text="{Binding Path=UserName}" 
+                        <TextBox Grid.Row="0" Grid.Column="1" Name="txtUserName" Text="{Binding Path=UserName}"
                               Width="170" Height="23" Margin="1" />
                         <!--</StackPanel>-->
                         <!--<StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">-->
@@ -86,8 +86,8 @@
                     </Grid>
 
                     <!--</StackPanel>-->
-                    <TextBlock Grid.Row="0" Margin="0,5" TextWrapping="Wrap">Not a member?  
-                        <Hyperlink  xml:space="preserve" 
+                    <TextBlock Grid.Row="0" Margin="0,5" TextWrapping="Wrap">Not a member?
+                        <Hyperlink  xml:space="preserve"
                             NavigateUri="https://go.planet.com/basemaps-trial-esri"
                             Command="{Binding OpenHyperlinkCommand}">Sign up
                         </Hyperlink>
@@ -111,7 +111,7 @@
                 <Button Grid.Row="4" x:Name="btnClose" Content="Close" HorizontalAlignment="Center" Margin="6,6,0,0"  Style="{DynamicResource Esri_Button}"/>
             </Grid>
         </Grid>
-        
+
     </DataTemplate>
-          
+
 </ResourceDictionary>

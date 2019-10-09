@@ -67,7 +67,7 @@
                             <RowDefinition Height="310"/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
-                            <ComboBox ItemsSource="{Binding TempBundles.PlanetScope4}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding  Path=PSScene4Bandcurrselect}"   Margin="10,10,0,10" Width="300" Background="{DynamicResource Esri_BackgroundPressedBrush}" Foreground="{DynamicResource Esri_TextMenuBrush}" />
+                            <ComboBox ItemsSource="{Binding TempBundles.PlanetScope4}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding  Path=PSScene4Bandcurrselect}"   Margin="10,10,0,10" Width="300" />
                             <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="50,10"  IsChecked="{Binding Path=psscene4Bandselall, Mode=TwoWay}"/>
                         </StackPanel>
                         <ListBox x:Name="PS42" Visibility="{Binding PSScene4BandVis}"  Grid.Row="1" Width="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSScene4Band}" Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
@@ -489,7 +489,7 @@
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Vertical" Margin="10,10,10,10" Visibility="{Binding Resultsvis}" HorizontalAlignment="Left" >
             <Label>Results</Label>
-            <ListBox ItemsSource="{Binding Resultscoll}"  Width="500"  Style="{DynamicResource Esri_}"/>
+            <ListBox ItemsSource="{Binding Resultscoll}"  Width="500" />
         </StackPanel>
         
     </Grid>

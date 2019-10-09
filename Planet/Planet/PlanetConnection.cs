@@ -40,7 +40,7 @@ namespace Planet
                 _api_key = value;
                 Module1.Current.API_KEY = _api_key;
                 OnPropertyChanged("API_Key");
-                
+
                 //Module1.Current.API_KEY.API_KEY_Value = _api_key.API_KEY_Value;
                 //Module1.Current.API_KEY.EMAIL_Value = _api_key.EMAIL_Value;
             }
@@ -201,10 +201,16 @@ namespace Planet
                             jwtPayload += "}";
                             //string txtJwtOut = "\r\nPayload:\r\n" + JToken.Parse(jwtPayload).ToString(Formatting.Indented);
                             Data.Payload payload = JsonConvert.DeserializeObject<Data.Payload>(jwtPayload);
-                            API_Key.API_KEY_Value = payload.api_key;
-                            API_Key.EMAIL_Value = payload.email;
-                            API_Key.programId_Value = payload.program_id;
-                            API_Key.organizationId_Value = payload.organization_id;
+                            API_KEY aPI_KEY = new API_KEY()
+                            {
+
+                                API_KEY_Value = payload.api_key,
+                                EMAIL_Value = payload.email,
+                                programId_Value = payload.program_id,
+                                organizationId_Value = payload.organization_id
+                            };
+                            API_Key = aPI_KEY;
+
                             if (payload.program_id == "29")
                             {
                                 Module1.Current.IsTrial = true;
@@ -229,7 +235,7 @@ namespace Planet
                         //var response = await postResp.Content.ReadAsStringAsync();
                         Console.WriteLine(result.token);
                     }
-                   
+
 
                     LoginVisible = false;
                 }
@@ -268,7 +274,7 @@ namespace Planet
 
         private void ExecuteHyperlink()
         {
-            System.Diagnostics.Process.Start("https://go.planet.com/basemaps-trial-esri");
+            System.Diagnostics.Process.Start("https://go.planet.com/trial");
         }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)
@@ -303,7 +309,7 @@ namespace Planet
         //        var postResp =  client.PostAsync("auth/v1/experimental/public/users/authenticate", content);
         //        postResp.Wait();
         //        var response = postResp.Result;
-                
+
         //        var me = response.Content.ReadAsStringAsync();
         //        me.Wait();
         //        Data.Token result = JsonConvert.DeserializeObject<Data.Token>(me.Result);
