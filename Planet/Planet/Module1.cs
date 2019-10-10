@@ -47,10 +47,14 @@ namespace Planet
         private void OnProjectClose(ProjectEventArgs obj)
         {
             hasSettings = false;
-            if (!String.IsNullOrEmpty(API_KEY.EMAIL_Value))
+            if (API_KEY != null)
             {
-                Analytics.Client.Identify(API_KEY.EMAIL_Value, new Traits() { });
+                if (!String.IsNullOrEmpty(API_KEY.EMAIL_Value))
+                {
+                    Analytics.Client.Identify(API_KEY.EMAIL_Value, new Traits() { });
+                }
             }
+
         }
 
         private void OnProjectOpen(ProjectEventArgs obj)
@@ -187,32 +191,43 @@ namespace Planet
         /// <returns></returns>
         protected override Task OnWriteSettingsAsync(ModuleSettingsWriter settings)
         {
-            if (API_KEY.API_KEY_Value != "")
+            if (API_KEY != null)
             {
-                settings.Add("planet_api_key", API_KEY.API_KEY_Value);
+                if (API_KEY.API_KEY_Value != "")
+                {
+                    settings.Add("planet_api_key", API_KEY.API_KEY_Value);
+                }
+                if (IsTrial == true)
+                {
+                    settings.Add("IsTrial", "true");
+                }
+                if (API_KEY.EMAIL_Value != "")
+                {
+                    settings.Add("planet_email", API_KEY.EMAIL_Value);
+                }
+                if (API_KEY.organizationId_Value != "")
+                {
+                    settings.Add("planet_organizationId", API_KEY.organizationId_Value);
+                }
+                if (API_KEY.programId_Value != "")
+                {
+                    settings.Add("planet_programId", API_KEY.programId_Value);
+                }
+                //foreach (string key in _moduleSettings.Keys)
+                //{
+                //    settings.Add(key, _moduleSettings[key]);
+                //}
+               
             }
-            if (IsTrial==true)
+            else
             {
-                settings.Add("IsTrial", "true");
+                settings.Add("planet_api_key", "");
+                settings.Add("IsTrial", "");
+                settings.Add("planet_email", "");
+                settings.Add("planet_organizationId", "");
+                settings.Add("planet_programId", "");
             }
-            if (API_KEY.EMAIL_Value != "")
-            {
-                settings.Add("planet_email", API_KEY.EMAIL_Value);
-            }
-            if (API_KEY.organizationId_Value != "")
-            {
-                settings.Add("planet_organizationId", API_KEY.organizationId_Value);
-            }
-            if (API_KEY.programId_Value != "")
-            {
-                settings.Add("planet_programId", API_KEY.programId_Value);
-            }
-            //foreach (string key in _moduleSettings.Keys)
-            //{
-            //    settings.Add(key, _moduleSettings[key]);
-            //}
             return Task.FromResult(0);
-
         }
         #endregion Overrides
 
