@@ -23,7 +23,10 @@ using ArcGIS.Core.Events;
 using Segment;
 using Segment.Model;
 using Sentry;
-
+using Serilog;
+using Serilog.Context;
+using Serilog.Events;
+using ArcGIS.Desktop.Framework.Utilities;
 namespace Planet
 {
     /// <summary>
@@ -34,14 +37,71 @@ namespace Planet
         private static Module1 _this = null;
         public API_KEY API_KEY = new API_KEY();
         public bool IsTrial = false;
-        private Module1()
+        protected override bool Initialize()
         {
-            using (SentrySdk.Init("https://9a79c422479f4388a8252e833beb8a3a@sentry.io/1774797"))
+            Log.Logger = new LoggerConfiguration()
+                   .Enrich.FromLogContext()
+                   .MinimumLevel.Warning()
+                   .WriteTo.Console()
+                   .WriteTo.Sentry(o =>
+                   {
+                       o.MinimumBreadcrumbLevel = LogEventLevel.Warning;
+                       o.MinimumEventLevel = LogEventLevel.Warning;
+                       o.Dsn = new Dsn("https://9a79c422479f4388a8252e833beb8a3a@sentry.io/1774797");
+                       o.AttachStacktrace = true;
+                       o.SendDefaultPii = true;
+                   }).CreateLogger();
+
+            //using (SentrySdk.Init("https://9a79c422479f4388a8252e833beb8a3a@sentry.io/1774797"))
+            //using (SentrySdk.Init("https://9a79casdasdasd@sentry.io/17asdasd7"))
+            //{
+            using (LogContext.PushProperty("inventory", new
             {
+                SmallPotion = 3,
+                BigPotion = 0,
+                CheeseWheels = 512
+            }))
+            {
+                // Minimum Breadcrumb and Event log levels are set to levels higher than Verbose
+                // In this case, Verbose messages are ignored
+                Log.Verbose("Verbose message which is not sent.");
+
+                // Minimum Breadcrumb level is set to Debug so the following message is stored in memory
+                // and sent with following events of the same Scope
+                Log.Debug("Debug message stored as breadcrumb.");
+
+                // Sends an event and stores the message as a breadcrumb too, to be sent with any upcoming events.
+                Log.Error("Some event that includes the previous breadcrumbs");
+                Exception exception = new NotImplementedException();
+                try
+                {
+                    throw (exception);
+                }
+                catch (Exception ex)
+                {
+
+                    ex.Data.Add("ArcProAddin", "Module init error");
+                    Log.Fatal(ex, "ex message goes here");
+
+                    //throw;
+                }
+                finally
+                {
+                    Log.CloseAndFlush();
+                }
+
+            }
+            return true;
+        }
+            private Module1()
+        {
+
                 FrameworkApplication.State.Deactivate("planet_state_connection");
                 ProjectOpenedEvent.Subscribe(OnProjectOpen);
                 ProjectClosedEvent.Subscribe(OnProjectClose);
-            }
+            
+
+
         }
 
         private void OnProjectClose(ProjectEventArgs obj)
