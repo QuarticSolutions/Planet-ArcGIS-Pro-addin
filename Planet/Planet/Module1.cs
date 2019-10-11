@@ -93,15 +93,12 @@ namespace Planet
             }
             return true;
         }
-            private Module1()
+
+        private Module1()
         {
-
-                FrameworkApplication.State.Deactivate("planet_state_connection");
-                ProjectOpenedEvent.Subscribe(OnProjectOpen);
-                ProjectClosedEvent.Subscribe(OnProjectClose);
-            
-
-
+            FrameworkApplication.State.Deactivate("planet_state_connection");
+            ProjectOpenedEvent.Subscribe(OnProjectOpen);
+            ProjectClosedEvent.Subscribe(OnProjectClose);
         }
 
         private void OnProjectClose(ProjectEventArgs obj)
