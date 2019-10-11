@@ -67,6 +67,7 @@ namespace Planet
             InitializeComponent();
 
 			DataContext = new ItemsManager().Root;
+            var ff = this.tvFolders;
 
         }
 
@@ -91,8 +92,30 @@ namespace Planet
 		private void tvFolders_Selected(object sender, RoutedEventArgs e)
 		{
 			TreeViewItem tvi = e.OriginalSource as TreeViewItem;
-			tvi.BringIntoView();
+            
+
+            tvi.BringIntoView();
 		}
-		#endregion
-	}
+        #endregion
+
+        private void StackPanel_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (FrameworkApplication.ApplicationTheme == ApplicationTheme.Dark)
+            {
+                //Dark theme use white txt
+                StackPanel tvi = e.OriginalSource as StackPanel;
+                foreach (var item in tvi.Children)
+                {
+                    if (item is TextBlock)
+                    {
+                        TextBlock textBlock = (TextBlock)item;
+
+                        textBlock.Foreground = Brushes.White;
+                    }
+                }
+            }
+
+
+        }
+    }
 }

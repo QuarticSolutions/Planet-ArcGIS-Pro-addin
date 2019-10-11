@@ -1,11 +1,11 @@
 ﻿<ArcGIS defaultAssembly="Planet.dll" defaultNamespace="Planet" xmlns="http://schemas.esri.com/DADF/Registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
-  <AddInInfo id="{232431fe-6db9-4d83-84bc-2ee7d7f55205}" version="1.0" desktopVersion="2.2.12813">
+  <AddInInfo id="{232431fe-6db9-4d83-84bc-2ee7d7f55205}" version="2.0.6" desktopVersion="2.2.12813">
     <Name>Planet Basemap Explorer</Name>
-    <Description>Toolbar to display and download Planet basmaps</Description>
+    <Description>Toolbar to display and download Planet data</Description>
     <Image>Images\Planet_logo-dark.png</Image>
     <Author>Quartic Solutions</Author>
     <Company>Quartic Solutions</Company>
-    <Date>5/13/2019 7:55:48 AM, 2019</Date>
+    <Date>10/10/2019 08:55:12 AM, 2019</Date>
     <Subject>Framework</Subject>
     <!-- Note subject can be one or more of these topics:
                     Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
@@ -29,13 +29,27 @@
       <groups>
         <!-- comment this out if you have no controls on the Addin tab to avoid
               an empty group-->
-        <group id="Planet_Group1" caption="Show and Download Planet Basemaps" appearsOnAddInTab="false">
+        <group id="Planet_Group1" caption="Stream and Download Planet Basemaps" appearsOnAddInTab="false">
           <!-- host controls within groups -->
           <gallery refID="Planet_PlanetLogin" inline="false" size="large" />
-          <gallery refID="Planet_PlanetGalleryInline" inline="true" size="large" />
+          <!--<labelControl refID="Planet_PlanetBasemaps_Label"/>-->
+          <comboBox refID="Planet_PlanetBasemapsComboBox" />
+          <editBox refID="Planet_Gallery_FilterBox" size="middle" />
+          <button refID="Planet_PlanetBasemapsLoadMoreButton" size="middle" />
+          <!--<gallery refID="Planet_PlanetGalleryInline" inline="true" size="large" />
+          <button refID="Planet_GalleryNextButton" size="middle" />
+          <button refID="Planet_GalleryPrevButton" size="middle" />
+          <editBox refID="Planet_Gallery_FilterBox" size="middle" />-->
           <!--<button refID="Planet_LoginDetails_OpenButton" size="large" />-->
           <tool refID="Planet_DownloadData" size="large" />
           <!--<button refID="Planet_TrialWarning" size="large" />-->
+          <!--<button refID="Planet_Data_PocPane2_ShowButton" size="large" />-->
+          <!--<button refID="Planet_OrderWindow" size="large" />-->
+          <!--<button refID="Planet_GalleryFilterBox" size="large" />-->
+        </group>
+        <group id="Planet_Group2" caption="Search for Planet Imagery" appearsOnAddInTab="false">
+          <tool refID="Planet_AOI_Select" size="large" />
+          <tool refID="Planet_AOI_Selected" size="large" />
         </group>
       </groups>
       <controls>
@@ -43,10 +57,10 @@
         <!--<button id="Planet_Pane1_OpenButton" caption="Open Pane 1" className="Pane1_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen32.png">
           <tooltip heading="Open Pane">Open Pane<disabledText /></tooltip>
         </button>-->
-        <!--<button keytip="asdf" id="Planet_LoginDetails_OpenButton" caption="Open Login Details" className="LoginDetails_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="Images\Clouddata.png">
+        <!--<button keytip="asdf" id="Planet_LoginDetails_OpenButton" caption="Open login details panel" className="LoginDetails_OpenButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonGreen16.png" largeImage="Images\Clouddata.png">
           <tooltip heading="Open Pane">Open Pane<disabledText /></tooltip>
         </button>-->
-        <tool id="Planet_DownloadData" categoryRefID="esri_editing_construction_point" caption="Download Data" className="DownloadData" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" largeImage="Images\Download.png" condition="planet_condition_isconnected">
+        <tool id="Planet_DownloadData" categoryRefID="esri_editing_construction_point" caption="Download Basemaps" className="DownloadData" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" largeImage="Images\Download.png" condition="planet_condition_isconnected">
           <!--note: use esri_editing_construction_polyline,  esri_editing_construction_polygon for categoryRefID as needed-->
           <tooltip heading="Download">Download basemap quads as .tif files
             <disabledText>You must connect with a valid API_Key first</disabledText></tooltip>
@@ -54,15 +68,49 @@
         <!--<button id="Planet_TrialWarning" caption="TrialWarning" className="ShowTrialWarning" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
           <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
         </button>-->
+        <tool id="Planet_AOI_Select" categoryRefID="esri_editing_construction_point" caption="Search for Planet Imagery " className="AOI_Select" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonRed16.png" condition="planet_condition_isconnected" largeImage="Images\AOI.png">
+          <!--note: use esri_editing_construction_polyline,  esri_editing_construction_polygon for categoryRefID as needed-->
+          <tooltip heading="Search">Search for Planet Imagery by drawing a polygon<disabledText /></tooltip>
+        </tool>
+        <button id="Planet_Data_DocPane_ShowButton" caption="Show Data DocPane" className="Data_DocPane_ShowButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Show Dockpane">Show Dockpane<disabledText /></tooltip>
+        </button>
+        <button id="Planet_Data_DocPane_MenuButton" caption="Burger Menu Button" className="Data_DocPane_MenuButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
+        </button>
+        <button id="Planet_AOI_Selected" caption="Search by Selected Feature" className="AOI_Selected" loadOnClick="false" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/SelectionSelectUnselect16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/SelectionSelectUnselect32.png" condition="planet_condition_isconnected_and_Selection">
+          <tooltip heading="Search by Selected Feature">Search for Planet Daily Imagery by the selected map polygon(s)<disabledText /></tooltip>
+        </button>
+        <button id="Planet_OrderWindow" caption="OrderWindow" className="ShowOrderWindow" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Tooltip Heading">Tooltip text<disabledText /></tooltip>
+        </button>
+        <button id="Planet_GalleryNextButton" caption="Next Page" condition="planet_condition_isconnected" className="GalleryNextButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericBlueRightArrowLongTail16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericBlueRightArrowLongTail32.png">
+          <tooltip heading="Next 5 Basemaps">Show next 5 basemaps<disabledText /></tooltip>
+        </button>
+        <button id="Planet_GalleryPrevButton" caption="Previous Page" condition="planet_condition_isconnected" className="GalleryPrevButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericBlueLeftArrowLongTail16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericBlueLeftArrowLongTail32.png">
+          <tooltip heading="Previous 5 Basemaps">Show previous 5 basemaps<disabledText /></tooltip>
+        </button>
+        <editBox id="Planet_Gallery_FilterBox" caption="Filter" condition="planet_condition_isconnected" keytip="F" className="GalleryFilterBox" disableIfBusy="false" sizeString="123456789012345">
+          <tooltip heading="Filter">
+            Filter Basemaps by name
+            <disabledText></disabledText></tooltip>
+        </editBox>
+        <labelControl id="Planet_PlanetBasemaps_Label" condition="planet_condition_isconnected" caption="Planet Basemaps" hasTwoLines="false"/>
+        <comboBox id="Planet_PlanetBasemapsComboBox" condition="planet_condition_isconnected" caption="Basemaps" className="PlanetBasemapsComboBox" itemWidth="180" extendedCaption="Planet Basemaps" isEditable="false" isReadOnly="true" resizable="true">
+          <tooltip heading="Planet Basemaps">Planet Basemaps<disabledText /></tooltip>
+        </comboBox>
+        <button id="Planet_PlanetBasemapsLoadMoreButton" condition="planet_condition_isconnected" caption="Load More" className="PlanetBasemapsLoadMoreButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericImport16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericImport32.png">
+          <tooltip heading="Load More">Load 10 more basemaps<disabledText /></tooltip>
+        </button>
       </controls>
       <galleries>
-        <gallery id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Basemap Mosaics" className="PlanetGalleryInline" itemsInRow="4" dataTemplateFile="pack://application:,,,/Planet;component//PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
+        <gallery id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Basemap Mosaics" className="PlanetGalleryInline" itemsInRow="5" dataTemplateFile="pack://application:,,,/Planet;component//View/PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
           <tooltip heading="Planet Rasters">Planet Rasters
             <disabledText>You must Enter a valid api key first</disabledText></tooltip>
         </gallery>
-        <gallery id="Planet_PlanetLogin" caption="Planet Login" className="PlanetLogin" itemsInRow="1" dataTemplateFile="pack://application:,,,/Planet;component//PlanetLoginTemplate.xaml" templateID="PlanetLoginItemTemplate" resizable="false" largeImage="Images\Clouddata.png">
+        <gallery id="Planet_PlanetLogin" caption="Planet Login" className="PlanetLogin" itemsInRow="1" dataTemplateFile="pack://application:,,,/Planet;component//View/PlanetLoginTemplate.xaml" templateID="PlanetLoginItemTemplate" resizable="false" largeImage="Images\Clouddata.png">
           <tooltip heading="Login">
-            Open Login Details Panel<disabledText /></tooltip>
+            Open login details panel<disabledText /></tooltip>
         </gallery>
       </galleries>
       <panes>
@@ -73,6 +121,16 @@
           <content className="LoginDetailsView" />
         </pane>-->
       </panes>
+      <dockPanes>
+        <dockPane id="Planet_Data_DocPane" caption="Search For Planet Imagery" className="Data_DocPaneViewModel" dock="group" dockWith="esri_core_contentsDockPane">
+          <content className="Data_DocPaneView" />
+        </dockPane>
+      </dockPanes>
+      <menus>
+        <menu id="Planet_Data_DocPane_Menu" caption="Options" contextMenu="true">
+          <button refID="Planet_Data_DocPane_MenuButton" />
+        </menu>
+      </menus>
     </insertModule>
   </modules>
 </ArcGIS>

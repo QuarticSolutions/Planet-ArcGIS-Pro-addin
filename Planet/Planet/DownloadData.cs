@@ -29,7 +29,7 @@ using MessageBox = ArcGIS.Desktop.Framework.Dialogs.MessageBox;
 namespace Planet
 {
     /// <summary>
-    /// Tool that downloads the data. 
+    /// Tool that downloads the data.
     /// </summary>
     internal class DownloadData : MapTool
     {
@@ -37,8 +37,8 @@ namespace Planet
         {
             IsSketchTool = true;
             UseSnapping = true;
-            // Select the type of construction tool you wish to implement.  
-            // Make sure that the tool is correctly registered with the correct component category type in the daml 
+            // Select the type of construction tool you wish to implement.
+            // Make sure that the tool is correctly registered with the correct component category type in the daml
             //SketchType = SketchGeometryType.Point;
             // SketchType = SketchGeometryType.Line;
             SketchType = SketchGeometryType.Polygon;
@@ -48,7 +48,7 @@ namespace Planet
         /// Called when the sketch finishes. This is where we will create the sketch operation and then execute it.
         /// The sketch geometry will be turned into an envelope and used to query the Planet api for the relevant quads
         /// The FolderSelector view and various models will then be presented allowing the user to choose a save location
-        /// Finally, after the .tif files have been downloaded a raster mosic will be created in the project default FGDB and 
+        /// Finally, after the .tif files have been downloaded a raster mosic will be created in the project default FGDB and
         /// the downloaded .tif files added.
         /// </summary>
         /// <param name="geometry">The geometry created by the sketch.</param>
@@ -66,7 +66,7 @@ namespace Planet
             IReadOnlyList<Layer> ts = MapView.Active.GetSelectedLayers();
             if(ts.Count > 1)
             {
-                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("More than one layer selected \n Please only choose a single Planet Image layer","More than one layer selected",MessageBoxButton.OK,MessageBoxImage.Warning);
+                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("More than one layer selected \n Please only choose a single Planet Imagery layer","More than one layer selected",MessageBoxButton.OK,MessageBoxImage.Warning);
                 return Task.FromResult(false);
             }
 
@@ -94,9 +94,6 @@ namespace Planet
 
             }
 
-            //var response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics/48fff803-4104-49bc-b913-7467b7a5ffb5/quads?api_key=1fe575980e78467f9c28b552294ea410&bbox=" + geometry.Extent.XMin.ToString() + "," + geometry.Extent.YMin.ToString() + "," + geometry.Extent.XMax.ToString() + "," + geometry.Extent.YMax.ToString()).Result;
-            //SpatialReference sr = SpatialReferences.WGS84;
-            //SpatialReference sr2 = SpatialReferences.WebMercator;
             //Create min max points from the envelope and get the coords in Decimal Degrees
             MapPoint point0 = MapPointBuilder.CreateMapPoint(geometry.Extent.XMin, geometry.Extent.YMin, MapView.Active.Extent.SpatialReference);
             MapPoint point1 = MapPointBuilder.CreateMapPoint(geometry.Extent.XMax, geometry.Extent.YMax, MapView.Active.Extent.SpatialReference);
@@ -135,7 +132,7 @@ namespace Planet
         }
 
         /// <summary>
-        /// Downloads the quads from the Planet servers using a geometry, 
+        /// Downloads the quads from the Planet servers using a geometry,
         /// an array of DD coords, raster service name and raster serviceid.
         /// </summary>
         /// <param name="geometry"></param>
@@ -161,7 +158,6 @@ namespace Planet
             //with the geometry and points
             using (HttpClient client = new HttpClient())
             {
-                //var response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics/" + rasterseriesid + "/quads?api_key=1fe575980e78467f9c28b552294ea410&bbox=" + ff[1] + "," + ff[0] + "," + ff[3] + "," + ff[2] + ",").Result;
                 var response = client.GetAsync("https://api.planet.com/basemaps/v1/mosaics/" + rasterseriesid + "/quads?api_key=" + Module1.Current.API_KEY.API_KEY_Value  + "&bbox=" + ff[1] + "," + ff[0] + "," + ff[3] + "," + ff[2]).Result;
                 ObservableCollection<Data.GeoTiffs2> geotiffs = new ObservableCollection<Data.GeoTiffs2>();
                 if (response.IsSuccessStatusCode)
@@ -170,9 +166,9 @@ namespace Planet
                     Quads quads = JsonConvert.DeserializeObject<Quads>(responseContent.Result);
                     if (quads.items.Count() > 50)
                     {
-                        MessageBox.Show("More than 50 Quads delected, please download a smaller area.");
+                        MessageBox.Show("More than 50 quads selected, please download a smaller area.");
                         return;
-                    } 
+                    }
                     foreach (Item item in quads.items)
                     {
                         geotiffs.Add(new Data.GeoTiffs2() { Name = item.id, DownloadURL=item._links.download });
@@ -187,7 +183,7 @@ namespace Planet
                 string area = "";
                 if (geometry.GeometryType == GeometryType.Polygon )
                 {
-                    
+
                     Polygon polygon = (Polygon)geometry;
                     if (geometry.SpatialReference.Unit.Name == "Foot_US")
                     {
@@ -200,7 +196,7 @@ namespace Planet
                     }
 
                     area = " Approx Sqkm: " + area. Substring(0,area.IndexOf("."));
-                    
+
                 }
 
                 //set up the Folderselector view with a list of the quads and area
@@ -212,7 +208,7 @@ namespace Planet
                 object da = folderSelector.txtGrids.DataContext;
                 if(da is Data.BaseItem ba)
                 {
-                    ba.QuadCount = "Total Quads selected: " + geotiffs.Count.ToString() + area;
+                    ba.QuadCount = "Total basemap quads selected: " + geotiffs.Count.ToString() + area;
                 }
                 folderSelector.ShowDialog();
 
@@ -224,7 +220,7 @@ namespace Planet
                     List<string> tiffs = new List<string>() ;
                     int i = 0;
                     int total = geotiffs.Count();
-                    
+
                     foreach (Data.GeoTiffs2 quad in geotiffs)
                     {
                         if (string.IsNullOrEmpty(quad.DownloadURL))
@@ -256,8 +252,8 @@ namespace Planet
                     //Download Part finished, tell user
                     FrameworkApplication.AddNotification(new Notification()
                     {
-                        Title = "Downloading Finished",
-                        Message = String.Format("Successfully dowloaded {0} of {1} files ", i, total) + Environment.NewLine + "Sting the Mosic process",
+                        Title = "Downloading finished",
+                        Message = String.Format("Successfully dowloaded {0} of {1} files ", i, total) + Environment.NewLine + "Starting the mosaic dataset creation process",
                         ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
 
                     });
@@ -307,7 +303,7 @@ namespace Planet
                     //parameters = Geoprocessing.MakeValueArray(inpath + "\\" + in_mosaicdataset_name, "Raster Dataset", @"D:\Planet\global_monthly_2019_02_mosaic982-1377.tif;D:\Planet\global_monthly_2019_02_mosaic983-1377.tif");
                     try
                     {
-                        
+
                         IGPResult gPResult = await Geoprocessing.ExecuteToolAsync(tool_path, parameters, null, _cts2.Token, (event_name, o) =>  // implement delegate and handle events, o is message object.
                         {
                             switch (event_name)
@@ -344,10 +340,10 @@ namespace Planet
                     //Everything downloaded and added to the mosic
                     FrameworkApplication.AddNotification(new Notification()
                     {
-                        Title = "Download Successful",
-                        Message = "Successfully dowloaded the requesed quads",
+                        Title = "Download successful",
+                        Message = "Successfully dowloaded the basemap source quads",
                         ImageUrl = @"pack://application:,,,/Planet;component/Images/Planet_logo-dark.png"
-                        
+
                     });
                 }
             }
@@ -391,7 +387,7 @@ namespace Planet
             catch (Exception ex)
             {
                 ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Error downloading \n" + ex.Message,"Download Problem",MessageBoxButton.OK,MessageBoxImage.Warning);
-                Console.WriteLine("Failed to Download the quad: {0}", ex.Message);
+                Console.WriteLine("Failed to download the quad: {0}", ex.Message);
             }
 
             return false;

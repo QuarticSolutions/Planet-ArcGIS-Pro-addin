@@ -127,6 +127,7 @@ namespace Clean_Tool_and_MV.Model
                 asset.setFootprintVertices();
                 asset.setFootprintSymbol();
                 asset.setPolygon();
+                asset.determineParentPermissions();
                 assets.Add(asset);
             }
 
