@@ -229,6 +229,9 @@
     <Compile Include="Utils\AnalyticsReporter.cs" />
     <Compile Include="ViewModel\OrderWindowViewModel.cs" />
     <Compile Include="ViewModel\Valueconverter.cs" />
+    <Compile Include="View\Data_DocPane.xaml.cs">
+      <DependentUpon>Data_DocPane.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\OrderWindow.xaml.cs">
       <DependentUpon>OrderWindow.xaml</DependentUpon>
     </Compile>
