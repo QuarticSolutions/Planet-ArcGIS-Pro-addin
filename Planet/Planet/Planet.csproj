@@ -225,6 +225,7 @@
     <Compile Include="PlanetBasemapsComboBox.cs" />
     <Compile Include="PlanetBasemapsLoadMoreButton.cs" />
     <Compile Include="Utils\AnalyticsReporter.cs" />
+    <Compile Include="ViewModel\Data_DocPaneViewModel.cs" />
     <Compile Include="ViewModel\OrderWindowViewModel.cs" />
     <Compile Include="ViewModel\Valueconverter.cs" />
     <Compile Include="View\OrderWindow.xaml.cs">
@@ -306,6 +307,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Data_DocPane.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\OrderWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
