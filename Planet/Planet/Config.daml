@@ -47,7 +47,7 @@
           <!--<button refID="Planet_OrderWindow" size="large" />-->
           <!--<button refID="Planet_GalleryFilterBox" size="large" />-->
         </group>
-        <group id="Planet_Group2" caption="Search for Planet Imagery" appearsOnAddInTab="false">
+        <group id="Planet_Group2" caption="Search for Planet Imagery" appearsOnAddInTab="true">
           <tool refID="Planet_AOI_Select" size="large" />
           <tool refID="Planet_AOI_Selected" size="large" />
         </group>
