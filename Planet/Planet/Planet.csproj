@@ -227,7 +227,6 @@
     <Compile Include="PlanetBasemapsComboBox.cs" />
     <Compile Include="PlanetBasemapsLoadMoreButton.cs" />
     <Compile Include="Utils\AnalyticsReporter.cs" />
-    <Compile Include="ViewModel\Data_DocPaneViewModel.cs" />
     <Compile Include="ViewModel\OrderWindowViewModel.cs" />
     <Compile Include="ViewModel\Valueconverter.cs" />
     <Compile Include="View\Data_DocPane.xaml.cs">
@@ -246,6 +245,7 @@
       <DependentUpon>TrialWarning.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\SystemIconManager.cs" />
+    <Compile Include="ViewModel\Data_DocPaneViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="View\PlanetGalleryInlineTemplate.xaml">
