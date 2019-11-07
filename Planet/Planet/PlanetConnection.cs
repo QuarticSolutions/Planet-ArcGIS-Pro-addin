@@ -286,78 +286,7 @@ namespace Planet
         {
             APIKeyChangedEvent.Publish(new APIKeyChangedEventArgs(_api_key.API_KEY_Value, _api_key.API_KEY_Value));
         }
-        //private  void  Login()
-        //{
-        //    try
-        //    {
-        //        HttpClient client = new HttpClient();
-        //        client.BaseAddress = new Uri("https://api.planet.com/");
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //        client.DefaultRequestHeaders.Add("User-Agent", "C# App");
-        //        client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-        //        //client.DefaultRequestHeaders.Add("content-length", "application/json");
-        //        Data.User user = new Data.User
-        //        {
-        //            email = "drew@quarticsolutions.com",
-        //            password = "dawHmsPAtnlDeofD5yHe"
-        //        };
-        //        var requestMessage = JsonConvert.SerializeObject(user);
-        //        var content = new StringContent(requestMessage,Encoding.UTF8, "application/json");
-        //        content.Headers.Remove("Content-Type");
-        //        content.Headers.Add("Content-Type", "application/json");
-        //        var postResp =  client.PostAsync("auth/v1/experimental/public/users/authenticate", content);
-        //        postResp.Wait();
-        //        var response = postResp.Result;
-
-        //        var me = response.Content.ReadAsStringAsync();
-        //        me.Wait();
-        //        Data.Token result = JsonConvert.DeserializeObject<Data.Token>(me.Result);
-        //        var jwtHandler = new JwtSecurityTokenHandler();
-        //        var readableToken = jwtHandler.CanReadToken(result.token);
-        //        if (readableToken != true)
-        //        {
-        //            Console.WriteLine("The token doesn't seem to be in a proper JWT format.");
-        //        }
-        //        if (readableToken == true)
-        //        {
-        //            var token = jwtHandler.ReadJwtToken(result.token);
-
-        //            //Extract the headers of the JWT
-        //            var headers = token.Header;
-        //            var jwtHeader = "{";
-        //            foreach (var h in headers)
-        //            {
-        //                jwtHeader += '"' + h.Key + "\":\"" + h.Value + "\",";
-        //            }
-        //            jwtHeader += "}";
-        //            Console.WriteLine("Header:\r\n" + JToken.Parse(jwtHeader).ToString(Formatting.Indented));
-
-        //            //Extract the payload of the JWT
-        //            var claims = token.Claims;
-        //            var jwtPayload = "{";
-        //            foreach (Claim c in claims)
-        //            {
-        //                jwtPayload += '"' + c.Type + "\":\"" + c.Value + "\",";
-        //            }
-        //            jwtPayload += "}";
-        //            //string txtJwtOut = "\r\nPayload:\r\n" + JToken.Parse(jwtPayload).ToString(Formatting.Indented);
-        //            Data.Payload payload = JsonConvert.DeserializeObject<Data.Payload>( jwtPayload );
-        //            _api_key.API_KEY_Value = payload.api_key;
-        //            if (payload.program_id=="29")
-        //            {
-        //                Module1.Current.IsTrial = true;
-        //            }
-        //        }
-        //        getkey();
-        //        //var response = await postResp.Content.ReadAsStringAsync();
-        //        Console.WriteLine(result.token);
-        //    }
-        //    catch (WebException wex )
-        //    {
-        //        MessageBox.Show(wex.Message) ;
-        //    }
-        //}
+ 
         public bool CanExecute { get; set; } = true;
     }
     public class CommandHandler : ICommand
