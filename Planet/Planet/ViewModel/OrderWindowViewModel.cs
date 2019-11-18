@@ -1060,108 +1060,114 @@ namespace Planet.ViewModel
                     NullValueHandling = NullValueHandling.Ignore
 
                 });
-                HttpClientHandler _handler = new HttpClientHandler()
+                
+                using (HttpClient _client = new HttpClient(_handler))
                 {
-                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-                };
-                HttpClient _client = new HttpClient(_handler)
-                {
-                    BaseAddress = new Uri("https://api.planet.com")
-
-                };
-                var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":");
-                _client.DefaultRequestHeaders.Host = "api.planet.com";
-                _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-                _client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.16.3");
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-                //_client.DefaultRequestHeaders.ExpectContinue = false;
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "compute/ops/orders/v2");
-                //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "v0/orders/");
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-                request.Headers.CacheControl = new CacheControlHeaderValue
-                {
-                    NoCache = true
-                };
-                request.Headers.Host = "api.planet.com";
-                request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
-                request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
-                request.Headers.CacheControl = new CacheControlHeaderValue();
-                request.Headers.CacheControl.NoCache = true;
-                //string json = "{ \"name\":\"Prod5\",\"products\":[{\"item_ids\":[\"20190914_195736_0f2b\",\"20190914_195737_0f2b\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
-                //string json = "{\"name\":\"Pro4\",\"products\":[{\"item_ids\":[\"20190910_205244_101b\",\"20190908_195741_1048\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                content.Headers.Remove("Content-Type");
-                content.Headers.Add("Content-Type", "application/json");
-
-                request.Content = content;
-                try
-                {
-                    using (HttpResponseMessage httpResponse = _client.SendAsync(request).Result)
+                    _client.BaseAddress = new Uri("https://api.planet.com");
+                    HttpClientHandler _handler = new HttpClientHandler()
                     {
-                        if (httpResponse.IsSuccessStatusCode)
+                        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+                    };
+                    //HttpClient _client = new HttpClient(_handler)
+                    //{
+                    //    BaseAddress = new Uri("https://api.planet.com")
+
+                    //};
+                    var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":");
+                    _client.DefaultRequestHeaders.Host = "api.planet.com";
+                    _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                    _client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                    _client.DefaultRequestHeaders.Add("User-Agent", "PostmanRuntime/7.16.3");
+                    _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    //_client.DefaultRequestHeaders.ExpectContinue = false;
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "compute/ops/orders/v2");
+                    //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "v0/orders/");
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+                    request.Headers.CacheControl = new CacheControlHeaderValue
+                    {
+                        NoCache = true
+                    };
+                    request.Headers.Host = "api.planet.com";
+                    request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+                    request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
+                    request.Headers.CacheControl = new CacheControlHeaderValue();
+                    request.Headers.CacheControl.NoCache = true;
+                    //string json = "{ \"name\":\"Prod5\",\"products\":[{\"item_ids\":[\"20190914_195736_0f2b\",\"20190914_195737_0f2b\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
+                    //string json = "{\"name\":\"Pro4\",\"products\":[{\"item_ids\":[\"20190910_205244_101b\",\"20190908_195741_1048\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    content.Headers.Remove("Content-Type");
+                    content.Headers.Add("Content-Type", "application/json");
+
+                    request.Content = content;
+                    try
+                    {
+                        using (HttpResponseMessage httpResponse = _client.SendAsync(request).Result)
                         {
-                            using (HttpContent content2 = httpResponse.Content)
+                            if (httpResponse.IsSuccessStatusCode)
                             {
-                                var json2 = content2.ReadAsStringAsync().Result;
-                                OrderResponse2 orderResponse2 = JsonConvert.DeserializeObject<OrderResponse2>(json2);
-                                if (Resultscoll == null)
+                                using (HttpContent content2 = httpResponse.Content)
                                 {
-                                    Resultscoll = new ObservableCollection<string>();
+                                    var json2 = content2.ReadAsStringAsync().Result;
+                                    OrderResponse2 orderResponse2 = JsonConvert.DeserializeObject<OrderResponse2>(json2);
+                                    if (Resultscoll == null)
+                                    {
+                                        Resultscoll = new ObservableCollection<string>();
+                                    }
+                                    if (orderResponse2.state == "failed")
+                                    {
+                                        //_resultscoll
+                                        Resultscoll.Add(order2.name + " failed. There was an error placing the order. Possible problems are: " + orderResponse2.error_hints.ToString());
+                                        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Order Failed", MessageBoxButton.OK);
+                                    }
+                                    else if (orderResponse2.state == "initializing" || orderResponse2.state == "queued")
+                                    {
+                                        Resultscoll.Add(order2.name + " " + orderResponse2.state + ". The order has been placed and is being processed. Please see the Orders tab for details");
+                                        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("The order has been placed and is being processed." + Environment.NewLine + "Please see the Orders tab for details." + Environment.NewLine + "Order Name:" + orderResponse2.name.ToString(), "Order Success", System.Windows.MessageBoxButton.OK);
+                                    }
+                                    else if (orderResponse2.state == "partial")
+                                    {
+                                        Resultscoll.Add(order2.name + " " + orderResponse2.state + ". Your order was only partially successful. Possible problems are: " + orderResponse2.error_hints.ToString());
+                                        //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Your order was only partially successful. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Partial Success", System.Windows.MessageBoxButton.OK);
+                                    }
+                                    Utils.AnalyticsReporter analyticsReporter = new Utils.AnalyticsReporter();
+                                    analyticsReporter.MakeReport("Order", new Segment.Model.Traits() { { "name", order2.name }, { "numItems", order2.products.Length } });
                                 }
-                                if (orderResponse2.state == "failed")
-                                {
-                                    //_resultscoll
-                                    Resultscoll.Add(order2.name + " failed. There was an error placing the order. Possible problems are: "  + orderResponse2.error_hints.ToString());
-                                    //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Order Failed", MessageBoxButton.OK);
-                                }
-                                else if (orderResponse2.state == "initializing" || orderResponse2.state == "queued")
-                                {
-                                    Resultscoll.Add(order2.name + " " + orderResponse2.state + ". The order has been placed and is being processed. Please see the Orders tab for details");
-                                    //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("The order has been placed and is being processed." + Environment.NewLine + "Please see the Orders tab for details." + Environment.NewLine + "Order Name:" + orderResponse2.name.ToString(), "Order Success", System.Windows.MessageBoxButton.OK);
-                                }
-                                else if (orderResponse2.state == "partial")
-                                {
-                                    Resultscoll.Add(order2.name + " " + orderResponse2.state + ". Your order was only partially successful. Possible problems are: " + orderResponse2.error_hints.ToString());
-                                    //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Your order was only partially successful. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Partial Success", System.Windows.MessageBoxButton.OK);
-                                }
-                                Utils.AnalyticsReporter analyticsReporter = new Utils.AnalyticsReporter();
-                                analyticsReporter.MakeReport("Order", new Segment.Model.Traits() { { "name", order2.name },{ "numItems", order2.products.Length } });
                             }
-                        }
-                        else
-                        {
-                            Console.WriteLine(httpResponse.StatusCode);
-                            //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problem was:" + Environment.NewLine + httpResponse.StatusCode + ": " + httpResponse.ReasonPhrase);
-                            using (HttpContent content2 = httpResponse.Content)
+                            else
                             {
-                                var json2 = content2.ReadAsStringAsync().Result;
-                                Resultscoll.Add("There was an error placing the order for: " + order2.name + ". Problem was: " + json2.ToString());
-                                //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order for: " + order2.name + ". Problem was:" + Environment.NewLine + json2.ToString());
+                                Console.WriteLine(httpResponse.StatusCode);
+                                //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problem was:" + Environment.NewLine + httpResponse.StatusCode + ": " + httpResponse.ReasonPhrase);
+                                using (HttpContent content2 = httpResponse.Content)
+                                {
+                                    var json2 = content2.ReadAsStringAsync().Result;
+                                    Resultscoll.Add("There was an error placing the order for: " + order2.name + ". Problem was: " + json2.ToString());
+                                    //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order for: " + order2.name + ". Problem was:" + Environment.NewLine + json2.ToString());
+                                }
+                            }
+
+                        }
+
+                    }
+                    catch (WebException e)
+                    {
+                        if (e.Status == WebExceptionStatus.ProtocolError)
+                        {
+                            WebResponse resp = e.Response;
+                            using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                            {
+                                string resps = sr.ReadToEnd();
+                                //Response.Write(sr.ReadToEnd());
                             }
                         }
 
                     }
-
-                }
-                catch (WebException e)
-                {
-                    if (e.Status == WebExceptionStatus.ProtocolError)
+                    catch (Exception ex)
                     {
-                        WebResponse resp = e.Response;
-                        using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
-                        {
-                            string resps = sr.ReadToEnd();
-                            //Response.Write(sr.ReadToEnd());
-                        }
+                        Console.WriteLine(ex.Message);
+                        ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
                     }
-
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace);
-                }
+                
             }
         }
 

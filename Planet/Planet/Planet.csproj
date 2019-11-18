@@ -247,9 +247,6 @@
     </Compile>
     <Compile Include="Utils\SystemIconManager.cs" />
     <Compile Include="ViewModel\Data_DocPaneViewModel.cs" />
-    <Compile Include="View\Data_DocPane.xaml.cs">
-      <DependentUpon>Data_DocPane.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="View\PlanetGalleryInlineTemplate.xaml">

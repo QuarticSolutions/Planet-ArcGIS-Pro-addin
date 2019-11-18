@@ -120,11 +120,24 @@ namespace Planet
                 if (Module1.Current.API_KEY == null)
                 {
                     FrameworkApplication.State.Deactivate("planet_state_connection");
+                    Items = null;
+                    _Items = null;
+                    _ItemsClean = null;
+                    ItemsClean = null;
+                    Clear();
+                    _isInitialized = false;
                     return;
+                    
                 }
                 if (Module1.Current.API_KEY.API_KEY_Value == null || Module1.Current.API_KEY.API_KEY_Value == "")
                 {
                     FrameworkApplication.State.Deactivate("planet_state_connection");
+                    Items = null;
+                    ItemsClean = null;
+                    _Items = null;
+                    _ItemsClean = null;
+                    Clear();
+                    _isInitialized = false;
                     return;
                 }
                 else
@@ -171,6 +184,7 @@ namespace Planet
                     }
                 }
             }
+            _isInitialized = true;
             Enabled = true; //enables the ComboBox
             //SelectedItem = ItemCollection.FirstOrDefault(); //set the default item in the comboBox
 
