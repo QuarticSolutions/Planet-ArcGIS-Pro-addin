@@ -10,8 +10,7 @@
              xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
              xmlns:controls="clr-namespace:ArcGIS.Desktop.Framework.Controls;assembly=ArcGIS.Desktop.Framework"
              mc:Ignorable="d" 
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              xmlns:viewmodel="clr-namespace:Planet.ViewModel"
              d:DesignHeight="300" d:DesignWidth="300"
@@ -143,6 +142,12 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <Storyboard x:Key="showfilters">
+                <ThicknessAnimation Storyboard.TargetProperty="Margin" From="-300,0,0,0" To="0,0,0,0" DecelerationRatio=".8" Duration="0:0:1"/>
+            </Storyboard>
+            <Storyboard x:Key="hidefilters">
+                <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="-300,0,0,0" DecelerationRatio=".8" Duration="0:0:1"/>
+            </Storyboard>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid Name="Root">
@@ -172,7 +177,7 @@
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
                     <TabControl Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}">
-                        <TabItem Header="Date Acquired" Background="{x:Null}"  Style="{DynamicResource SubTabItemStyle}">
+                        <TabItem Header="Date Acquired" Background="{x:Null}"  Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
@@ -195,7 +200,7 @@
                                 </Grid>
                             </Grid>
                         </TabItem>
-                        <TabItem Header="Source"  Style="{DynamicResource SubTabItemStyle}">
+                        <TabItem Header="Source"  Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
                             <Grid Margin="0,5" VerticalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
@@ -207,18 +212,18 @@
                                     <ColumnDefinition Width="*"/>
                                    
                                 </Grid.ColumnDefinitions>
-                                <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene4Band}" VerticalAlignment="Center" Height="22" >4 Band PlanetScope Scene</CheckBox>
-                                <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene3Band}" VerticalAlignment="Center" Height="22" >3 Band PlanetScope Scene</CheckBox>
+                                <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene4Band, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >4 Band PlanetScope Scene</CheckBox>
+                                <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene3Band, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >3 Band PlanetScope Scene</CheckBox>
                                 <!--<CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSOrthoTile}" VerticalAlignment="Center" Height="22" >PSOrthoTile</CheckBox>-->
                                 <!--<CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductREOrthoTile}" VerticalAlignment="Center" Height="22" >REOrthoTile</CheckBox>-->
-                                <CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductREScene}" VerticalAlignment="Center" Height="22" >RapidEye Scene</CheckBox>
+                                <CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductREScene, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >RapidEye Scene</CheckBox>
                                 <!--<CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatScene}" VerticalAlignment="Center" Height="22" >SkySatScene</CheckBox>-->
-                                <CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatCollect}" VerticalAlignment="Center" Height="22" >SkySat Collect</CheckBox>
-                                <CheckBox Grid.Row="1" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductLandsat8L1G}" VerticalAlignment="Center" Height="22" >Landsat 8 Scene</CheckBox>
-                                <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSentinel2L1C}" VerticalAlignment="Center" Height="22" >Sentinel-2 Tile</CheckBox>
+                                <CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatCollect, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >SkySat Collect</CheckBox>
+                                <CheckBox Grid.Row="1" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductLandsat8L1G, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >Landsat 8 Scene</CheckBox>
+                                <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSentinel2L1C, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >Sentinel-2 Tile</CheckBox>
                             </Grid>
                         </TabItem>
-                        <TabItem Header="Cloud Cover"  Style="{DynamicResource SubTabItemStyle}">
+                        <TabItem Header="Cloud Cover"  Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
                             <Grid VerticalAlignment="Center" Margin="0,5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="56*"/>
@@ -258,7 +263,7 @@
                                 </excd:RangeSlider>
                             </Grid>
                         </TabItem>
-                        <!--<TabItem Header="Area Cover"  Style="{DynamicResource SubTabItemStyle}">
+                        <TabItem Header="Area Cover"  Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
                             <Grid VerticalAlignment="Center" Margin="0,5">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
@@ -270,9 +275,10 @@
                                 <Run Text="{Binding AreaCoverHigh}"/>
                                 <Run Text="%"/>
                                 </TextBlock>
-                                <excd:RangeSlider Grid.Row="1" 
-                                    LowerValue="{Binding AreaCoverLow}" 
-                                    HigherValue="{Binding AreaCoverHigh}" 
+                                <excd:RangeSlider Name="AreaCoverSlider"
+                                    Grid.Row="1" 
+                                    LowerValue="{Binding AreaCoverLow, Mode=TwoWay}" 
+                                    HigherValue="{Binding AreaCoverHigh, Mode=TwoWay}" 
                                     Step="1"
                                     Minimum="0"
                                     Maximum="100"
@@ -290,10 +296,23 @@
                                     RangeBackground="Transparent"
                                     HigherRangeBackground="Transparent"
                                     LowerRangeBackground="Transparent"
-                                    VerticalAlignment="Center">
+                                    VerticalAlignment="Center"
+                                                   >
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="HigherValueChanged">
+                                            <i:InvokeCommandAction Command="{Binding FilterChangedCommand}" PassEventArgsToCommand="True"/>
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="LowerValueChanged">
+                                            <i:InvokeCommandAction Command="{Binding FilterChangedCommand}" PassEventArgsToCommand="True"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
                                 </excd:RangeSlider>
                             </Grid>
-                        </TabItem>-->
+                        </TabItem>
+                        <TabItem Header="Other Filters" Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
+                            
+                        </TabItem>
+
                     </TabControl>
 
                     <Grid Grid.Row="2" Margin="5,0,5,5">
@@ -310,6 +329,82 @@
                             </ComboBox>
                         </StackPanel>-->
                     </Grid>
+                    <StackPanel Grid.Row="3" Panel.ZIndex="2" Orientation="Vertical" Name="advancedsearch" HorizontalAlignment="Left" Margin="-300,0,0,0">
+                        <Border  BorderThickness="1"   >
+                            <Grid Grid.Row="0" Margin="0,0,0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <!--<Label VerticalAlignment="Center" Grid.Column="0" Content="From:" Margin="0,0,5,0" Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
+                                <DatePicker VerticalAlignment="Center" Grid.Column="1" Name="dtpDateFrom2" SelectedDate="{Binding DateFrom}" Margin="0,0,5,0" Height="24" BorderBrush="{DynamicResource Esri_BorderBrush}" Background="{DynamicResource Esri_ControlBackgroundBrush}" Foreground="{DynamicResource Esri_TextControlBrush}"/>
+                                <Label VerticalAlignment="Center" Grid.Column="2" Content="to" Margin="0"/>
+                                <DatePicker VerticalAlignment="Center" Grid.Column="3" Name="dtpDateTo2" SelectedDate="{Binding DateTo}" Margin="5,0,0,0" Height="24" BorderBrush="{DynamicResource Esri_BorderBrush}" Background="{DynamicResource Esri_ControlBackgroundBrush}" Foreground="{DynamicResource Esri_TextControlBrush}"/>
+                            </Grid>
+                            
+                        </Border>
+                        <Grid Margin="0,5" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*"/>
+
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene4Band, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >4 Band PlanetScope Scene</CheckBox>
+                            <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene3Band, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >3 Band PlanetScope Scene</CheckBox>
+                            <!--<CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSOrthoTile}" VerticalAlignment="Center" Height="22" >PSOrthoTile</CheckBox>-->
+                            <!--<CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductREOrthoTile}" VerticalAlignment="Center" Height="22" >REOrthoTile</CheckBox>-->
+                            <CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductREScene, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >RapidEye Scene</CheckBox>
+                            <!--<CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatScene}" VerticalAlignment="Center" Height="22" >SkySatScene</CheckBox>-->
+                            <CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatCollect, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >SkySat Collect</CheckBox>
+                            <CheckBox Grid.Row="1" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductLandsat8L1G, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >Landsat 8 Scene</CheckBox>
+                            <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSentinel2L1C, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >Sentinel-2 Tile</CheckBox>
+                        </Grid>
+                        <Grid VerticalAlignment="Center" Margin="0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="56*"/>
+                                <ColumnDefinition Width="11*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Margin="0,0,4.2,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                <Run Text="{Binding CloudcoverLow}"/>
+                                <Run Text="-"/>
+                                <Run Text="{Binding CloudcoverHigh}"/>
+                                <Run Text="%"/>
+                            </TextBlock>
+                            <excd:RangeSlider Grid.Row="1" 
+                                    LowerValue="{Binding CloudcoverLow}" 
+                                    HigherValue="{Binding CloudcoverHigh}" 
+                                    Step="1"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    AutoToolTipPlacement="BottomRight"
+                                    AutoToolTipPrecision="1"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Background="Transparent"
+                                    Foreground="Transparent" 
+                                    Margin="0,5,0.2,0.2" 
+                                    Height="22"
+                                    TickPlacement="None"             
+                                    LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    RangeBackground="Transparent"
+                                    HigherRangeBackground="Transparent"
+                                    LowerRangeBackground="Transparent"
+                                    VerticalAlignment="Center" Grid.ColumnSpan="2">
+                            </excd:RangeSlider>
+                        </Grid>
+                    </StackPanel>
                     <StackPanel Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding NoSearchResulrvis}">
                         <TextBlock Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{DynamicResource Esri_TextBlockH1}">Sorry, no results found.</TextBlock>
                         <TextBlock Grid.Row="3" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{DynamicResource Esri_TextBlockH3}">Try relaxing your filters, extending the daterange, or searching in another location.</TextBlock>
@@ -435,12 +530,12 @@
                                     </StackPanel.ContextMenu>-->
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseEnter">
-                                            <ei:CallMethodAction 
+                                            <i:CallMethodAction 
                                                 TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}" 
                                                 MethodName="AddFootprint" />
                                         </i:EventTrigger>
                                         <i:EventTrigger EventName="MouseLeave">
-                                            <ei:CallMethodAction 
+                                            <i:CallMethodAction 
                                                 TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type TreeView}}, Path=DataContext}" 
                                                 MethodName="RemoveFootprint" />
                                         </i:EventTrigger>

@@ -20,6 +20,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -36,6 +37,38 @@ namespace Planet
         public Data_DocPaneView()
         {
             InitializeComponent();
+        }
+
+        private void RangeSlider_HigherValueChanged(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void TabItem_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TabItem tab)
+            {
+                menuslide(tab.Header.ToString(), advancedsearch);
+            }
+            //menuslide(sender., advancedsearch);
+        }
+
+        private void menuslide(string v, StackPanel advancedsearch)
+        {
+            //throw new NotImplementedException();
+            
+            Thickness margin = advancedsearch.Margin;
+            if (v == "Other Filters" && margin.Left == -300)
+            {
+                Storyboard sb = Resources["showfilters"] as Storyboard;
+                sb.Begin(advancedsearch);
+            }
+            else if (margin.Left == 0)
+            {
+                Storyboard sb = Resources["hidefilters"] as Storyboard;
+                sb.Begin(advancedsearch);
+            }
+
         }
         //private async void DG_Hyperlink_Click(object sender, RoutedEventArgs e)
         //{
@@ -217,7 +250,7 @@ namespace Planet
         //                }
         //            }
 
-                   
+
         //        }
         //        return true;
         //    }

@@ -21,11 +21,27 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Threading;
+using ArcGIS.Desktop.Framework;
+using System.Text.RegularExpressions;
 
 namespace Planet.ViewModel
 {
     class OrderWindowViewModel : INotifyPropertyChanged
     {
+        private string _btnOrdertext = "Place Order";
+        private bool _hasOrdered = false;
+        public string btnOrdertext
+        {
+            get
+            {
+                return _btnOrdertext;
+            }
+            set
+            {
+                _btnOrdertext = value;
+                OnPropertyChanged(btnOrdertext);
+            }
+        }
         private string _orderName;
         public string OrderName
         {
@@ -37,6 +53,10 @@ namespace Planet.ViewModel
             {
                 _orderName = value;
                 OnPropertyChanged("OrderName");
+                //if (!string.IsNullOrWhiteSpace(_orderName))
+                //{
+                //    CanExecuteOrder = true;
+                //}
             }
         }
         private static HttpClientHandler _handler = new HttpClientHandler()
@@ -49,17 +69,10 @@ namespace Planet.ViewModel
         };
         private ObservableCollection<Asset> _selectedAssets = new ObservableCollection<Asset>();
         //private string ResultsColl;
-        
+
 
         public OrderWindowViewModel()
         {
-            //Expanders = new ObservableCollection<ExpanderItem>
-            //{
-            //    new ExpanderItem { Header="Expander 1", ItemId="1", Content = new TextBlock { Text="Hello"} },
-            //    new ExpanderItem { Header="Expander 2", ItemId="2", Content = new System.Windows.Controls.Grid {  Width=200, Height=30, Background=Brushes.Yellow } },
-            //    new ExpanderItem { Header="Expander 3", ItemId="3", Content = new Label { Content="World"} },
-            //};
-
             var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":hgvhgv");
             _client.DefaultRequestHeaders.Host = "api.planet.com";
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
@@ -82,7 +95,7 @@ namespace Planet.ViewModel
                                 lstLandsat8L1G.Add(" ");
                             }
                             lstLandsat8L1G.Add(item.BundleName);
-                            
+
                             break;
                         case "PSScene4Band":
                             if (lstPSScene4Band == null)
@@ -180,26 +193,6 @@ namespace Planet.ViewModel
                 _selectedAssets = value;
                 OnPropertyChanged("SelectAssets");
                 doUpdateItems();
-                //PSScene3BandListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                //PSScene3BandListView.Filter = new Predicate<object>(FilterPSScene3Band);
-                //PSScene3BandListView.Refresh();
-                //PSScene4BandListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                //PSScene4BandListView.Filter = new Predicate<object>(FilterPSScene4Band);
-                //SkySatSceneListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                //SkySatSceneListView.Filter = new Predicate<object>(FilterMessageList);
-                //PSOrthoTileListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                //PSOrthoTileListView.Filter = new Predicate<object>(FilterMessageList2);
-                //SkySatCollectListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                //SkySatCollectListView.Filter = new Predicate<object>(FilterSkySatCollect);
-                //RESceneListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                //RESceneListView.Filter = new Predicate<object>(FilterREScene);
-                //REOrthoTileListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                //REOrthoTileListView.Filter = new Predicate<object>(FilterREOrthoTile);
-                //Landsat8L1GListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                //Landsat8L1GListView.Filter = new Predicate<object>(FilterLandsat8L1G);
-                //Sentinel2L1CListView = CollectionViewSource.GetDefaultView(SelectAssets);
-                //Sentinel2L1CListView.Filter = new Predicate<object>(FilterSentinel2L1C);
-
             }
         }
 
@@ -795,9 +788,9 @@ namespace Planet.ViewModel
             catch (Exception ex)
             {
 
-                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show( "There was an error processing the Itemes for ordering" + Environment.NewLine + "Please try again" + Environment.NewLine + ex.Message,"Processing error");
+                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error processing the Itemes for ordering" + Environment.NewLine + "Please try again" + Environment.NewLine + ex.Message, "Processing error");
             }
-            
+
 
 
 
@@ -941,25 +934,13 @@ namespace Planet.ViewModel
             //    }
             //}
 
-            
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public bool CanExecuteOrder { get; set; } = true;
-        private ICommand _ordercommand;
-        public ICommand OrderCommand
-        {
-            get
-            {
-                if (_ordercommand == null)
-                    _ordercommand = new CommandHandler3(() => DoOrder(), CanExecuteOrder);
-                return _ordercommand;
-            }
         }
 
         private void DoOrder()
@@ -980,7 +961,7 @@ namespace Planet.ViewModel
             //Dictionary<string, string> pppp = new Dictionary<string, string>;
             List<Tuple<string, string>> pppp = new List<Tuple<string, string>>();
 
-            var combined = PSScene4Band.Concat(PSScene3Band).Concat(PSOrthoTile).Concat(REOrthoTile).Concat(REScene).Concat(SkySatScene).Concat(SkySatCollect).Concat(Landsat8L1G).Concat(Sentinel2L1C) ;
+            var combined = PSScene4Band.Concat(PSScene3Band).Concat(PSOrthoTile).Concat(REOrthoTile).Concat(REScene).Concat(SkySatScene).Concat(SkySatCollect).Concat(Landsat8L1G).Concat(Sentinel2L1C);
             foreach (PSScene4Band pSScene4Band in combined)
             {
                 if (pSScene4Band.selectedBundle == " ")
@@ -1006,7 +987,7 @@ namespace Planet.ViewModel
                         pppp.Add(Tuple.Create(item, pSScene4Band.properties.item_type));
                     }
                 }
-                
+
 
             }
             var asdasd = pppp.Distinct();
@@ -1033,6 +1014,11 @@ namespace Planet.ViewModel
             foreach (Product product in productlist)
             {
                 Order order2 = new Order();
+                if (product.product_bundle == null)
+                {
+                    MessageBox.Show("No Product selected for " + product.item_type + Environment.NewLine + " Please select a Product type  or deselect the images and try again");
+                    return;
+                }
                 if (product.product_bundle.ToString().LastIndexOf(",") > -1)
                 {
                     order2.name = _orderName + "_" + product.item_type + "_" + product.product_bundle.ToString().Substring(0, product.product_bundle.ToString().LastIndexOf(","));
@@ -1041,7 +1027,7 @@ namespace Planet.ViewModel
                 {
                     order2.name = _orderName + "_" + product.item_type + "_" + product.product_bundle.ToString();
                 }
-                
+
                 Delivery delivery2 = new Delivery();
                 order2.delivery = delivery2;
                 order2.delivery.single_archive = true;
@@ -1060,6 +1046,8 @@ namespace Planet.ViewModel
                     NullValueHandling = NullValueHandling.Ignore
 
                 });
+
+                
                 HttpClientHandler _handler = new HttpClientHandler()
                 {
                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
@@ -1088,8 +1076,6 @@ namespace Planet.ViewModel
                 request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
                 request.Headers.CacheControl = new CacheControlHeaderValue();
                 request.Headers.CacheControl.NoCache = true;
-                //string json = "{ \"name\":\"Prod5\",\"products\":[{\"item_ids\":[\"20190914_195736_0f2b\",\"20190914_195737_0f2b\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
-                //string json = "{\"name\":\"Pro4\",\"products\":[{\"item_ids\":[\"20190910_205244_101b\",\"20190908_195741_1048\"],\"item_type\":\"PSScene4Band\",\"product_bundle\":\"analytic\"}],\"include_metadata_assets\":true,\"order_type\":\"partial\",\"delivery\":{\"single_archive\":true,\"archive_type\":\"zip\"}}";
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 content.Headers.Remove("Content-Type");
                 content.Headers.Add("Content-Type", "application/json");
@@ -1112,7 +1098,7 @@ namespace Planet.ViewModel
                                 if (orderResponse2.state == "failed")
                                 {
                                     //_resultscoll
-                                    Resultscoll.Add(order2.name + " failed. There was an error placing the order. Possible problems are: "  + orderResponse2.error_hints.ToString());
+                                    Resultscoll.Add(order2.name + " failed. There was an error placing the order. Possible problems are: " + orderResponse2.error_hints.ToString());
                                     //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There was an error placing the order. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Order Failed", MessageBoxButton.OK);
                                 }
                                 else if (orderResponse2.state == "initializing" || orderResponse2.state == "queued")
@@ -1126,8 +1112,10 @@ namespace Planet.ViewModel
                                     //ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Your order was only partially successful. Possible problems are:" + Environment.NewLine + orderResponse2.error_hints.ToString(), "Partial Success", System.Windows.MessageBoxButton.OK);
                                 }
                                 Utils.AnalyticsReporter analyticsReporter = new Utils.AnalyticsReporter();
-                                analyticsReporter.MakeReport("Order", new Segment.Model.Traits() { { "name", order2.name },{ "numItems", order2.products.Length } });
+                                analyticsReporter.MakeReport("Order", new Segment.Model.Traits() { { "name", order2.name }, { "numItems", order2.products.Length } });
                             }
+                            btnOrdertext = "Close";
+                            _hasOrdered = true;
                         }
                         else
                         {
@@ -1165,152 +1153,91 @@ namespace Planet.ViewModel
             }
         }
 
-        #region Collection views - not used
-        //private ICollectionView _SkySatSceneListView;
-        //public ICollectionView SkySatSceneListView
-        //{
-        //    get { return this._SkySatSceneListView; }
-        //    private set
-        //    {
-        //        if (value == this._SkySatSceneListView)
-        //        {
-        //            return;
-        //        }
 
-        //        this._SkySatSceneListView = value;
-        //        OnPropertyChanged("SkySatSceneListView");
-        //    }
-        //}
-        //private ICollectionView _PSOrthoTileListView;
-        //public ICollectionView PSOrthoTileListView
-        //{
-        //    get { return this._PSOrthoTileListView; }
-        //    private set
-        //    {
-        //        if (value == this._PSOrthoTileListView)
-        //        {
-        //            return;
-        //        }
+        #region Commands
+        private RelayCommand _executeOrder;
+        public RelayCommand ExecuteOrder
+        {
+            get
+            {
+                if (_executeOrder == null)
+                {
+                    _executeOrder = new RelayCommand(
+                        (parameter) => ExecuteOrder1(parameter),
+                        (parameter) => CanExecuteOrder1(parameter)
+                        );
+                }
+                return _executeOrder;
+            }
+        }
 
-        //        this._PSOrthoTileListView = value;
-        //        OnPropertyChanged("PSOrthoTileListView");
-        //    }
-        //}
+        private bool CanExecuteOrder1(object parameter)
+        {
+            if (!_hasOrdered && !string.IsNullOrWhiteSpace(OrderName))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-        //private ICollectionView _SkySatCollectListView;
-        //public ICollectionView SkySatCollectListView
-        //{
-        //    get { return this._SkySatCollectListView; }
-        //    private set
-        //    {
-        //        if (value == this._SkySatCollectListView)
-        //        {
-        //            return;
-        //        }
+        private void ExecuteOrder1(object parameter)
+        {
+            if (btnOrdertext == "Close")
+            {
+                foreach (Window item in Application.Current.Windows)
+                {
+                    if (item.DataContext == this) item.Close();
+                }
+            }
+            else
+            {
+                DoOrder();
+            }
+            
+        }
 
-        //        this._SkySatCollectListView = value;
-        //        OnPropertyChanged("SkySatCollectListView");
-        //    }
-        //}
-        //private ICollectionView _RESceneListView;
-        //public ICollectionView RESceneListView
-        //{
-        //    get { return this._RESceneListView; }
-        //    private set
-        //    {
-        //        if (value == this._RESceneListView)
-        //        {
-        //            return;
-        //        }
+        private RelayCommand _txtOrderNameChangedCommand;
+        public RelayCommand txtOrderNameChangedCommand
+        {
+            get
+            {
+                if (_txtOrderNameChangedCommand == null)
+                {
+                    _txtOrderNameChangedCommand = new RelayCommand(
+                        (parameter) => textChanged(parameter),
+                        (parameter) => IsValidtext(parameter)
+                    );
+                }
+                return _txtOrderNameChangedCommand;
+            }
+        }
 
-        //        this._RESceneListView = value;
-        //        OnPropertyChanged("RESceneListView");
-        //    }
-        //}
-        //private ICollectionView _PSScene3BandListView;
-        //public ICollectionView PSScene3BandListView
-        //{
-        //    get { return this._PSScene3BandListView; }
-        //    private set
-        //    {
-        //        if (value == this._PSScene3BandListView)
-        //        {
-        //            return;
-        //        }
+        public void textChanged(object parameter)
+        {
+            KeyEventArgs e = (KeyEventArgs)parameter;
+            if (e.Source is TextBox tb)
+            {
+                if (!string.IsNullOrWhiteSpace(tb.Text))
+                {
+                    OrderName = tb.Text;
+                }
+                   
+            }
+        }
 
-        //        this._PSScene3BandListView = value;
-        //        OnPropertyChanged("PSScene3BandListView");
-        //        _PSScene3BandListView.Refresh();
-        //    }
-        //}
-        //private ICollectionView _PSScene4BandListView;
-        //public ICollectionView PSScene4BandListView
-        //{
-        //    get { return this._PSScene4BandListView; }
-        //    private set
-        //    {
-        //        if (value == this._PSScene4BandListView)
-        //        {
-        //            return;
-        //        }
-
-        //        this._PSScene4BandListView = value;
-        //        OnPropertyChanged("PSScene4BandListView");
-        //    }
-        //}
-
-        //private ICollectionView _REOrthoTileListView;
-        //public ICollectionView REOrthoTileListView
-        //{
-        //    get { return this._REOrthoTileListView; }
-        //    private set
-        //    {
-        //        if (value == this._REOrthoTileListView)
-        //        {
-        //            return;
-        //        }
-
-        //        this._REOrthoTileListView = value;
-        //        OnPropertyChanged("REOrthoTileListView");
-        //    }
-        //}
-
-        //private ICollectionView _Landsat8L1GListView;
-        //public ICollectionView Landsat8L1GListView
-        //{
-        //    get { return this._Landsat8L1GListView; }
-        //    private set
-        //    {
-        //        if (value == this._Landsat8L1GListView)
-        //        {
-        //            return;
-        //        }
-
-        //        this._Landsat8L1GListView = value;
-        //        OnPropertyChanged("Landsat8L1GListView");
-        //    }
-        //}
-
-        //private ICollectionView _Sentinel2L1CListView;
-        //public ICollectionView Sentinel2L1CListView
-        //{
-        //    get { return this._Sentinel2L1CListView; }
-        //    private set
-        //    {
-        //        if (value == this._Sentinel2L1CListView)
-        //        {
-        //            return;
-        //        }
-
-        //        this._Sentinel2L1CListView = value;
-        //        OnPropertyChanged("Sentinel2L1CListView");
-        //    }
-        //}
-        #endregion
+        public bool IsValidtext(object parameter)
+        {
+            return true;
+        }
+    #endregion
 
 
-        #region Filters - not used
-        public bool FilterMessageList(object item)
+
+    #region Filters - not used
+    public bool FilterMessageList(object item)
         {
             bool ismatch = false;
             Asset asset = (Asset)item;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,18 @@ namespace Planet
         public OrderWindow()
         {
             InitializeComponent();
+        }
+
+        private void TxtOrderName_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            bool result = true;
+            Regex regex = new Regex(@"[^a-zA-Z0-9_-]+");
+            if (!regex.IsMatch(e.Text))
+            {
+                result = false;
+                
+            }
+            e.Handled = result;
         }
     }
 }
