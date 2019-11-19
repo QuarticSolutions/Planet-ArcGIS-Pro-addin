@@ -75,8 +75,8 @@ namespace Planet
         {
             APIKeyChangedEvent.Subscribe((args) =>
             {
-                Clear();
-                _isInitialized = false;
+                //Clear();
+                //_isInitialized = false;
                 UpdateCombo();
             });
 
@@ -99,15 +99,15 @@ namespace Planet
  
         private async void UpdateCombo()
         {
-            // TODO – customize this method to populate the combobox with your desired items  
-            if (_isInitialized)
-            {
-                //SelectedItem = ItemCollection.FirstOrDefault(); //set the default item in the comboBox
-            }
+            //// TODO – customize this method to populate the combobox with your desired items  
+            //if (_isInitialized)
+            //{
+            //    //SelectedItem = ItemCollection.FirstOrDefault(); //set the default item in the comboBox
+            //}
 
 
-            if (!_isInitialized)
-            {
+            //if (!_isInitialized)
+            //{
                 //Clear();
 
                 ////Add 6 items to the combobox
@@ -183,7 +183,7 @@ namespace Planet
                         ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message);
                     }
                 }
-            }
+            //}
             _isInitialized = true;
             Enabled = true; //enables the ComboBox
             //SelectedItem = ItemCollection.FirstOrDefault(); //set the default item in the comboBox
