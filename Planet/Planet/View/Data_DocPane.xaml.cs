@@ -150,7 +150,6 @@ namespace Planet
         //    { 
         //        using (HttpClient client = new HttpClient())
         //        {
-        //            var byteArray = Encoding.ASCII.GetBytes(Module1.Current.API_KEY.API_KEY_Value + ":");// "1fe575980e78467f9c28b552294ea410:");
         //            client.DefaultRequestHeaders.Host = "api.planet.com";
         //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
         //            client.DefaultRequestHeaders.Add("Connection", "keep-alive");

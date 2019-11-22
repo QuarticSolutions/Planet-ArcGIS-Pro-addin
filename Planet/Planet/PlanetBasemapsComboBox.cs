@@ -75,8 +75,8 @@ namespace Planet
         {
             APIKeyChangedEvent.Subscribe((args) =>
             {
-                Clear();
-                _isInitialized = false;
+                //Clear();
+                //_isInitialized = false;
                 UpdateCombo();
             });
 
@@ -99,15 +99,15 @@ namespace Planet
  
         private async void UpdateCombo()
         {
-            // TODO – customize this method to populate the combobox with your desired items  
-            if (_isInitialized)
-            {
-                //SelectedItem = ItemCollection.FirstOrDefault(); //set the default item in the comboBox
-            }
+            //// TODO – customize this method to populate the combobox with your desired items  
+            //if (_isInitialized)
+            //{
+            //    //SelectedItem = ItemCollection.FirstOrDefault(); //set the default item in the comboBox
+            //}
 
 
-            if (!_isInitialized)
-            {
+            //if (!_isInitialized)
+            //{
                 //Clear();
 
                 ////Add 6 items to the combobox
@@ -120,11 +120,24 @@ namespace Planet
                 if (Module1.Current.API_KEY == null)
                 {
                     FrameworkApplication.State.Deactivate("planet_state_connection");
+                    Items = null;
+                    _Items = null;
+                    _ItemsClean = null;
+                    ItemsClean = null;
+                    Clear();
+                    _isInitialized = false;
                     return;
+                    
                 }
                 if (Module1.Current.API_KEY.API_KEY_Value == null || Module1.Current.API_KEY.API_KEY_Value == "")
                 {
                     FrameworkApplication.State.Deactivate("planet_state_connection");
+                    Items = null;
+                    ItemsClean = null;
+                    _Items = null;
+                    _ItemsClean = null;
+                    Clear();
+                    _isInitialized = false;
                     return;
                 }
                 else
@@ -170,7 +183,8 @@ namespace Planet
                         ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message);
                     }
                 }
-            }
+            //}
+            _isInitialized = true;
             Enabled = true; //enables the ComboBox
             //SelectedItem = ItemCollection.FirstOrDefault(); //set the default item in the comboBox
 
