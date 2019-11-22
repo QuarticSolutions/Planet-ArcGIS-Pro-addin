@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ArcGIS.Core.Geometry;
+using ArcGIS.Desktop.Framework.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,35 +8,68 @@ using System.Threading.Tasks;
 
 namespace test_docing_Panel.Models
 {
+    public class QuickSearchResult
+    {
+        public _Links _links { get; set; }
+        public Feature[] features { get; set; }
+        public string type { get; set; }
+    }
 
+    public class _Links
+    {
+        public string _first { get; set; }
+        public string _next { get; set; }
+        public string _self { get; set; }
+    }
 
-        public class QuickSearchResult
+    public class Feature
+    {
+        public _Links1 _links { get; set; }
+        public object[] _permissions { get; set; }
+        public searchGeometry geometry { get; set; }
+        public string id { get; set; }
+        public Properties properties { get; set; }
+        public string type { get; set; }
+        public bool IsSelected { get; set; } = false;
+        public double AreaCover { get; set; } = 0;
+        //public int AreaCoverage { get; set; }
+        public async Task setAreaCoverageAsync(Geometry queryGeom)
         {
-            public _Links _links { get; set; }
-            public Feature[] features { get; set; }
-            public string type { get; set; }
+            var vertices = new List<Coordinate2D>();
+            object[][][] geom = geometry.coordinates;
+            object[][] coords = geom[0];
+            try
+            {
+                // Create a list of coordinates describing the polygon vertices.
+                for (int i = 0; i < coords.Length; i++)
+                {
+                    object[] xy = coords[i];
+                    object x = xy[0];
+                    object y = xy[1];
+                    double _x = Convert.ToDouble(x);
+                    double _y = Convert.ToDouble(y);
+                    vertices.Add(new Coordinate2D(_x, _y));
+                }
+
+                await QueuedTask.Run(() =>
+                {
+                    var sr = SpatialReferenceBuilder.CreateSpatialReference(4326);
+                    Geometry spurcepolygon = PolygonBuilder.CreatePolygon(vertices, sr).Clone();
+                    Polygon interse = (Polygon)GeometryEngine.Instance.Intersection(queryGeom, spurcepolygon);
+                    Polygon source = (Polygon)queryGeom;
+                    AreaCover = Math.Round((interse.Area / source.Area) * 100,1,MidpointRounding.AwayFromZero);
+
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+
         }
-
-        public class _Links
-        {
-            public string _first { get; set; }
-            public string _next { get; set; }
-            public string _self { get; set; }
-        }
-
-        public class Feature
-        {
-
-            public _Links1 _links { get; set; }
-            public object[] _permissions { get; set; }
-            public searchGeometry geometry { get; set; }
-            public string id { get; set; }
-            public Properties properties { get; set; }
-            public string type { get; set; }
-            public bool IsSelected { get; set; } = false;
-        }
-
-        public class _Links1
+    }
+    public class _Links1
         {
             public string _self { get; set; }
             public string assets { get; set; }
@@ -87,5 +122,5 @@ namespace test_docing_Panel.Models
             public float satellite_azimuth { get; set; }
         }
 
-
+    
 }

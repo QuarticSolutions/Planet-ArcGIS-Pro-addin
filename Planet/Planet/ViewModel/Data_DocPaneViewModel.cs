@@ -56,6 +56,14 @@ namespace Planet
         private int _AreaCoverHigh = 100;
         private int _SunElevationLow = 0;
         private int _SunElevationHigh = 90;
+        private int _groundSampleDistHigh = 30;
+        private int _groundSampleDistLow = 0;
+        private int _offNadireHigh = 60;
+        private int _offNadireLow = -60;
+        private int _sunAzHigh = 360;
+        private int _sunAzdireLow = 0;
+        private bool _groundCover = false;
+        private bool _permissionFilter = false; 
         private DateTime _DateFrom = DateTime.Now.AddMonths(-1);
         private DateTime _DateTo = DateTime.Now;
         public Data_DocPaneView View { get; set; }
@@ -321,6 +329,9 @@ namespace Planet
                 OnPropertyChanged("ShowCircularAnimation");
             }
         }
+
+
+        #region Filter Properties
         public DateTime DateFrom
         {
             get
@@ -404,7 +415,7 @@ namespace Planet
             {
                 _AreaCoverHigh = value;
                 OnPropertyChanged("AreaCoverHigh");
-                lock (_someValueLock) 
+                lock (_someValueLock)
                     Monitor.PulseAll(_someValueLock);
                 Task.Run(() =>
                 {
@@ -443,6 +454,108 @@ namespace Planet
             }
         }
 
+        public int GroundSampleDistHigh
+        {
+            get
+            {
+                return _groundSampleDistHigh;
+            }
+            set
+            {
+                _groundSampleDistHigh = value;
+                OnPropertyChanged("GroundSampleDistHigh");
+            }
+        }
+        public int GroundSampleDistLow
+        {
+            get
+            {
+                return _groundSampleDistLow;
+            }
+            set
+            {
+                _groundSampleDistLow = value;
+                OnPropertyChanged("GroundSampleDistLow");
+            }
+        }
+
+        public int OffNadireHigh
+        {
+            get
+            {
+                return _offNadireHigh;
+            }
+            set
+            {
+                _offNadireHigh = value;
+                OnPropertyChanged("OffNadireHigh");
+            }
+        }
+        public int OffNadireLow
+        {
+            get
+            {
+                return _offNadireLow;
+            }
+            set
+            {
+                _offNadireLow = value;
+                OnPropertyChanged("OffNadireLow");
+            }
+        }
+
+        public int SunAzHigh
+        {
+            get
+            {
+                return _sunAzHigh;
+            }
+            set
+            {
+                _sunAzHigh = value;
+                OnPropertyChanged("SunAzHigh");
+            }
+        }
+        public int SunAzLow
+        {
+            get
+            {
+                return _sunAzdireLow;
+            }
+            set
+            {
+                _sunAzdireLow = value;
+                OnPropertyChanged("SunAzLow");
+            }
+        }
+
+        public bool GroundCover
+        {
+            get
+            {
+                return _groundCover;
+            }
+            set
+            {
+                _groundCover = value;
+                OnPropertyChanged("GroundCover");
+            }
+        }
+
+        public bool PermissionFilter
+        {
+            get
+            {
+                return _permissionFilter;
+            }
+            set
+            {
+                _permissionFilter = value;
+                OnPropertyChanged("PermissionFilter");
+            }
+        }
+
+        #endregion
 
         private void doFilterUpdate2()
         {
@@ -450,10 +563,14 @@ namespace Planet
         }
         private void doFilterUpdate()
         {
-            QuickSearchResult quickSearchResult = _quickSearchResults.Last();
-            List<test_docing_Panel.Models.Feature> allFeats = new List<test_docing_Panel.Models.Feature>(_quickSearchResults.Last().features);
-            var result = allFeats.Where(x => x.properties.visible_percent >= AreaCoverLow && x.properties.visible_percent <= AreaCoverHigh);
-            quickSearchResult.features = result.ToArray();
+            //if (_quickSearchResults == null || _quickSearchResults.Count == 0)
+            //{
+            //    return;
+            //}
+            //QuickSearchResult quickSearchResult = _quickSearchResults.Last();
+            //List<test_docing_Panel.Models.Feature> allFeats = new List<test_docing_Panel.Models.Feature>(_quickSearchResults.Last().features);
+            //var result = allFeats.Where(x => x.properties.visible_percent >= AreaCoverLow && x.properties.visible_percent <= AreaCoverHigh);
+            //quickSearchResult.features = result.ToArray();
             //List<test_docing_Panel.Models.Feature> filteredFeat = (from feat in allFeats
             //                                                       where feat.properties.visible_percent >= AreaCoverHigh
 
@@ -469,30 +586,30 @@ namespace Planet
             //    }
             //}
 
-            if (quickSearchResult != null)
-            {
-                Items = new ObservableCollection<AcquiredDateGroup>();
-                Pages = new List<Model.Page>();
-                //}
-                //_quickSearchResults.Add(quickSearchResult);
-                Model.Page page = new Model.Page
-                {
-                    //QuickSearchResult = quickSearchResult
-                    QuickSearchResult = quickSearchResult
-                };
-                List<AcquiredDateGroup> groupedItems = Model.Page.ProcessQuickSearchResults(quickSearchResult);
-                page.Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
-                Pages.Add(page);
-                CurrentPage = page;
-                Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
-                //ProcessQuickSearchResults(quickSearchResult, page);
-                HasPages = true;
-                HasNextPage = quickSearchResult._links._next != null;
-                IsNotFirstPage = false;
-                PageNumber = 1;
-                PageTotal = HasNextPage ? "many" : "1";
-                PaginatorVisibility = Visibility.Visible;
-            }
+            //if (quickSearchResult != null)
+            //{
+            //    Items = new ObservableCollection<AcquiredDateGroup>();
+            //    Pages = new List<Model.Page>();
+            //    //}
+            //    //_quickSearchResults.Add(quickSearchResult);
+            //    Model.Page page = new Model.Page
+            //    {
+            //        //QuickSearchResult = quickSearchResult
+            //        QuickSearchResult = quickSearchResult
+            //    };
+            //    List<AcquiredDateGroup> groupedItems = Model.Page.ProcessQuickSearchResults(quickSearchResult);
+            //    page.Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
+            //    Pages.Add(page);
+            //    CurrentPage = page;
+            //    Items = new ObservableCollection<Model.AcquiredDateGroup>(groupedItems);
+            //    //ProcessQuickSearchResults(quickSearchResult, page);
+            //    HasPages = true;
+            //    HasNextPage = quickSearchResult._links._next != null;
+            //    IsNotFirstPage = false;
+            //    PageNumber = 1;
+            //    PageTotal = HasNextPage ? "many" : "1";
+            //    PaginatorVisibility = Visibility.Visible;
+            //}
 
         }
 
@@ -1148,6 +1265,66 @@ namespace Planet
                     config = sunelvconfig
 
                 };
+                //Ground Sample Distance filter
+                RangeFilterConfig groundsampledistconfig = new RangeFilterConfig()
+                {
+                    gte = _groundSampleDistLow,
+                    lte = _groundSampleDistHigh
+                };
+                Config groundsampledistvfilter = new Config()
+                {
+                    type = "RangeFilter",
+                    field_name = "gsd",
+                    config = groundsampledistconfig
+
+                };
+
+                //Sun Azimuth filter
+                RangeFilterConfig sunazconfig = new RangeFilterConfig()
+                {
+                    gte = _sunAzdireLow,
+                    lte = _sunAzHigh
+                };
+                Config sunazfilter = new Config()
+                {
+                    type = "RangeFilter",
+                    field_name = "sun_azimuth",
+                    config = sunazconfig
+
+                };
+
+                //Ground Control filter
+                
+                //if (_groundCover)
+                //{
+                //    string[] vval;
+                //    vval = new string[] { "true" };
+                //    StringinFilterConfig GroundCoverconfig = new StringinFilterConfig()
+                //    {
+                //        ss = vval
+                //    };
+                //    Config GroundCoverfilter = new Config()
+                //    {
+                //        type = "StringInFilter",
+                //        field_name = "ground_control",
+                //        config = GroundCoverconfig
+                //    };
+                //}
+                
+
+                //off nadir (view angle) filter
+                RangeFilterConfig offnadirconfig = new RangeFilterConfig()
+                {
+                    gte = _offNadireLow,
+                    lte = _offNadireHigh
+                };
+                Config offnadirfilter = new Config()
+                {
+                    type = "RangeFilter",
+                    field_name = "view_angle",
+                    config = offnadirconfig
+
+                };
 
                 //cloudcoverfiler
                 RangeFilterConfig cloudconfig = new RangeFilterConfig
@@ -1208,8 +1385,38 @@ namespace Planet
                     dateconfig,
                     sunelvfilter,
                     cloudCoverFilter,
+                    groundsampledistvfilter,
+                    offnadirfilter,
+                    sunazfilter,
                     configGeom
                 };
+
+                //Ground Control filter
+                if (_groundCover)
+                {
+                    string[] vval;
+                    vval = new string[] { "true" };
+                    Config GroundCoverconfig = new Config()
+                    {
+                        config = vval,
+                        field_name = "ground_control",
+                        type= "StringInFilter"
+                    };
+                    mainconfigs.Add(GroundCoverconfig);
+                }
+
+                //permissions filter
+                if (_permissionFilter)
+                {
+                    string[] vval;
+                    vval = new string[] { "assets:download" };
+                    Config permissionconfig = new Config()
+                    {
+                        config = vval,
+                        type = "PermissionFilter"
+                    };
+                    mainconfigs.Add(permissionconfig);
+                }
 
                 searchFilter.item_types = types.ToArray();
                 Filter topfilter = new Filter();
@@ -1255,18 +1462,14 @@ namespace Planet
                         {
                             if (httpResponse.IsSuccessStatusCode)
                             {
+                                
+                                var acceleratedPolygon = GeometryEngine.Instance.AccelerateForRelationalOperations(polyReporject);
+
                                 using (HttpContent content2 = httpResponse.Content)
                                 {
                                     var json2 = content2.ReadAsStringAsync().Result;
                                     QuickSearchResult quickSearchResult = JsonConvert.DeserializeObject<QuickSearchResult>(json2);
-                                    if (quickSearchResult.features.Length == 0)
-                                    {
-                                        NoSearchResulrvis = "Visible";
-                                    }
-                                    else
-                                    {
-                                        NoSearchResulrvis = "Collapsed";
-                                    }
+
                                     //Loop for tewsting results, comment out for prod
                                     //foreach (test_docing_Panel.Models.Feature item in quickSearchResult.features)
                                     //{
@@ -1276,7 +1479,22 @@ namespace Planet
                                     //        ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Didn't work");
                                     //    }
                                     //}
-                                        _quickSearchResults = new ObservableCollection<QuickSearchResult>();
+
+                                    //Loop through features to add Percentage cover
+                                    foreach (test_docing_Panel.Models.Feature item in quickSearchResult.features)
+                                    {
+                                        await item.setAreaCoverageAsync(acceleratedPolygon);
+                                    }
+                                    quickSearchResult.features = quickSearchResult.features.Where((source, index) => source.AreaCover >= AreaCoverLow && source.AreaCover <= AreaCoverHigh).ToArray();
+                                    if (quickSearchResult.features.Length == 0)
+                                    {
+                                        NoSearchResulrvis = "Visible";
+                                    }
+                                    else
+                                    {
+                                        NoSearchResulrvis = "Collapsed";
+                                    }
+                                    _quickSearchResults = new ObservableCollection<QuickSearchResult>();
                                     Items = new ObservableCollection<AcquiredDateGroup>();
                                     Pages = new List<Model.Page>();
                                     //}
@@ -1348,7 +1566,7 @@ namespace Planet
             {
                 if (_PSScene4Band == value) return;
                 _PSScene4Band = value;
-                NotifyPropertyChanged(() => ProductPSScene4Band);
+                OnPropertyChanged("ProductPSScene4Band");
             }
         }
 
@@ -1360,7 +1578,7 @@ namespace Planet
             {
                 if (_PSOrthoTile == value) return;
                 _PSOrthoTile = value;
-                NotifyPropertyChanged(() => ProductPSOrthoTile);
+                OnPropertyChanged("ProductPSOrthoTile");
             }
         }
 
@@ -1372,7 +1590,7 @@ namespace Planet
             {
                 if (_REOrthoTile == value) return;
                 _REOrthoTile = value;
-                NotifyPropertyChanged(() => ProductREOrthoTile);
+                OnPropertyChanged("ProductREOrthoTile");
             }
         }
 
@@ -1384,7 +1602,7 @@ namespace Planet
             {
                 if (_REScene == value) return;
                 _REScene = value;
-                NotifyPropertyChanged(() => ProductREScene);
+                OnPropertyChanged("ProductREScene");
             }
         }
         private bool _SkySatScene = false;
@@ -1395,7 +1613,7 @@ namespace Planet
             {
                 if (_SkySatScene == value) return;
                 _SkySatScene = value;
-                NotifyPropertyChanged(() => ProductSkySatScene);
+                OnPropertyChanged("ProductSkySatScene");
             }
         }
         private bool _SkySatCollect = true;
@@ -1406,7 +1624,7 @@ namespace Planet
             {
                 if (_SkySatCollect == value) return;
                 _SkySatCollect = value;
-                NotifyPropertyChanged(() => ProductSkySatCollect);
+                OnPropertyChanged("ProductSkySatCollect");
             }
         }
         private bool _Landsat8L1G = false;
@@ -1417,7 +1635,7 @@ namespace Planet
             {
                 if (_Landsat8L1G == value) return;
                 _Landsat8L1G = value;
-                NotifyPropertyChanged(() => ProductLandsat8L1G);
+                OnPropertyChanged("ProductLandsat8L1G");
             }
         }
         private bool _Sentinel2L1C = false;
@@ -1428,7 +1646,7 @@ namespace Planet
             {
                 if (_Sentinel2L1C == value) return;
                 _Sentinel2L1C = value;
-                NotifyPropertyChanged(() => ProductSentinel2L1C);
+                OnPropertyChanged("ProductSentinel2L1C");
             }
         }
         #endregion
@@ -1552,52 +1770,5 @@ namespace Planet
     }
 
 
-
-    //public class TreeViewHelper
-    //{
-    //    private static Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior> behaviors = new Dictionary<System.Windows.DependencyObject, TreeViewSelectedItemBehavior>();
-
-    //    public static object GetSelectedItem(System.Windows.DependencyObject obj)
-    //    {
-    //        return (object)obj.GetValue(SelectedItemProperty);
-    //    }
-
-    //    public static void SetSelectedItem(System.Windows.DependencyObject obj, object value)
-    //    {
-    //        obj.SetValue(SelectedItemProperty, value);
-    //    }
-
-    //    // Using a DependencyProperty as the backing store for SelectedItem.  This enables animation, styling, binding, etc...
-    //    public static readonly System.Windows.DependencyProperty SelectedItemProperty =
-    //        System.Windows.DependencyProperty.RegisterAttached("SelectedItem", typeof(object), typeof(TreeViewHelper), new System.Windows.UIPropertyMetadata(null, SelectedItemChanged));
-
-    //    private static void SelectedItemChanged(System.Windows.DependencyObject obj, System.Windows.DependencyPropertyChangedEventArgs e)
-    //    {
-    //        if (!(obj is System.Windows.Controls.TreeView))
-    //            return;
-
-    //        if (!behaviors.ContainsKey(obj))
-    //            behaviors.Add(obj, new TreeViewSelectedItemBehavior(obj as System.Windows.Controls.TreeView));
-
-    //        TreeViewSelectedItemBehavior view = behaviors[obj];
-    //        view.ChangeSelectedItem(e.NewValue);
-    //    }
-
-    //    private class TreeViewSelectedItemBehavior
-    //    {
-    //        System.Windows.Controls.TreeView view;
-    //        public TreeViewSelectedItemBehavior(System.Windows.Controls.TreeView view)
-    //        {
-    //            this.view = view;
-    //            view.SelectedItemChanged += (sender, e) => SetSelectedItem(view, e.NewValue);
-    //        }
-
-    //        internal void ChangeSelectedItem(object p)
-    //        {
-    //            System.Windows.Controls.TreeViewItem item = (System.Windows.Controls.TreeViewItem)view.ItemContainerGenerator.ContainerFromItem(p);
-    //            item.IsSelected = true;
-    //        }
-    //    }
-    //}
 
 }

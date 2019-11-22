@@ -50,23 +50,29 @@ namespace Planet
             {
                 menuslide(tab.Header.ToString(), advancedsearch);
             }
+            if (sender is System.Windows.Controls.Grid gd)
+            {
+                menuslide(gd.Name, advancedsearch);
+            }
             //menuslide(sender., advancedsearch);
         }
 
-        private void menuslide(string v, StackPanel advancedsearch)
+        private void menuslide(string v, ScrollViewer advancedsearch)
         {
             //throw new NotImplementedException();
             
             Thickness margin = advancedsearch.Margin;
-            if (v == "Other Filters" && margin.Left == -300)
+            if (v == "Other Filters" && margin.Left<0)
             {
                 Storyboard sb = Resources["showfilters"] as Storyboard;
+                advancedsearch.HorizontalAlignment = HorizontalAlignment.Stretch;
                 sb.Begin(advancedsearch);
             }
             else if (margin.Left == 0)
             {
                 Storyboard sb = Resources["hidefilters"] as Storyboard;
                 sb.Begin(advancedsearch);
+                advancedsearch.HorizontalAlignment = HorizontalAlignment.Left;
             }
 
         }

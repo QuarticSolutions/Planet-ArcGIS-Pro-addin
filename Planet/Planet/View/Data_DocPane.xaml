@@ -13,6 +13,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              xmlns:viewmodel="clr-namespace:Planet.ViewModel"
+             xmlns:controls1="clr-namespace:ArcGIS.Desktop.Internal.Framework.Controls;assembly=ArcGIS.Desktop.Framework"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{Binding Path=ui.Data_DocPaneViewModel}">
     <UserControl.Resources>
@@ -143,10 +144,10 @@
                 </Setter>
             </Style>
             <Storyboard x:Key="showfilters">
-                <ThicknessAnimation Storyboard.TargetProperty="Margin" From="-300,0,0,0" To="0,0,0,0" DecelerationRatio=".8" Duration="0:0:1"/>
+                <ThicknessAnimation Storyboard.TargetProperty="Margin" From="-600,0,0,0" To="0,0,0,0" DecelerationRatio=".8" Duration="0:0:.1"/>
             </Storyboard>
             <Storyboard x:Key="hidefilters">
-                <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="-300,0,0,0" DecelerationRatio=".8" Duration="0:0:1"/>
+                <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="-600,0,0,0" DecelerationRatio=".8" Duration="0:0:.5"/>
             </Storyboard>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -154,18 +155,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <!--<DockPanel Grid.Row="0" LastChildFill="true" KeyboardNavigation.TabNavigation="Local" Height="30">
-            <controls:BurgerButton DockPanel.Dock="Right"
-                ToolTip="{Binding BurgerButtonTooltip}"
-                PopupMenu="{Binding BurgerButtonMenu}"/>
-              <TextBlock Grid.Column="1" Text="{Binding Heading}" Style="{DynamicResource Esri_TextBlockDockPaneHeader}">
-                <TextBlock.ToolTip>
-                  <WrapPanel Orientation="Vertical" MaxWidth="300">
-                    <TextBlock Text="{Binding Heading}" TextWrapping="Wrap"/>
-                  </WrapPanel>
-                </TextBlock.ToolTip>
-              </TextBlock>
-            </DockPanel>-->
         <TabControl x:Name="MainTabs" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,0,0">
             <TabItem Style="{DynamicResource MainTabItemStyle}" Header="Search"  Padding="5,0,5,0">
                 <Grid>
@@ -210,7 +199,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*"/>
-                                   
+
                                 </Grid.ColumnDefinitions>
                                 <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene4Band, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >4 Band PlanetScope Scene</CheckBox>
                                 <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene3Band, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >3 Band PlanetScope Scene</CheckBox>
@@ -310,17 +299,17 @@
                             </Grid>
                         </TabItem>
                         <TabItem Header="Other Filters" Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
-                            
+
                         </TabItem>
 
                     </TabControl>
 
-                    <Grid Grid.Row="2" Margin="5,0,5,5">
+                    <Grid Grid.Row="2" Margin="5,0,5,5" MouseUp="TabItem_MouseUp" x:Name="OrderButtons">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Width="auto" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="22" Content="Search" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center"/>
+                        <Button Grid.Column="0" Width="auto" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="22" Content="Search" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center" MouseDown="TabItem_MouseUp" MouseUp="TabItem_MouseUp"/>
                         <Button Grid.Column="1" Width="auto" Command="{Binding OrderCommand}" Content="Order"  IsEnabled="{Binding HasSelectedAssets}" Style="{DynamicResource Esri_Button}" Margin="5,0,0,0" VerticalAlignment="Center"  />
                         <!--<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="False">
                             <Label Content="Page Size:" Margin="5,0,0,0" VerticalAlignment="Center" />
@@ -329,59 +318,141 @@
                             </ComboBox>
                         </StackPanel>-->
                     </Grid>
-                    <StackPanel Grid.Row="3" Panel.ZIndex="2" Orientation="Vertical" Name="advancedsearch" HorizontalAlignment="Left" Margin="-300,0,0,0">
-                        <Border  BorderThickness="1"   >
-                            <Grid Grid.Row="0" Margin="0,0,0,5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <!--<Label VerticalAlignment="Center" Grid.Column="0" Content="From:" Margin="0,0,5,0" Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
-                                <DatePicker VerticalAlignment="Center" Grid.Column="1" Name="dtpDateFrom2" SelectedDate="{Binding DateFrom}" Margin="0,0,5,0" Height="24" BorderBrush="{DynamicResource Esri_BorderBrush}" Background="{DynamicResource Esri_ControlBackgroundBrush}" Foreground="{DynamicResource Esri_TextControlBrush}"/>
-                                <Label VerticalAlignment="Center" Grid.Column="2" Content="to" Margin="0"/>
-                                <DatePicker VerticalAlignment="Center" Grid.Column="3" Name="dtpDateTo2" SelectedDate="{Binding DateTo}" Margin="5,0,0,0" Height="24" BorderBrush="{DynamicResource Esri_BorderBrush}" Background="{DynamicResource Esri_ControlBackgroundBrush}" Foreground="{DynamicResource Esri_TextControlBrush}"/>
+                    <ScrollViewer Grid.Row="3"  Panel.ZIndex="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" Name="advancedsearch" Margin="-600,10,10,10" HorizontalAlignment="Left">
+                        <StackPanel  Orientation="Vertical" Name="advancedsearchc" HorizontalAlignment="Stretch" Margin="10" Background="{DynamicResource Esri_DialogClientAreaBackgroundBrush}" ScrollViewer.VerticalScrollBarVisibility="Visible" >
+                            <!--<Label Content="Date Aquired" Background="{DynamicResource Esri_BackgroundPressedBrush}" 
+                          Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Date Aquired"/>
+                            <Border  BorderThickness="1" Grid.Row="1"   >
+                                <Grid Grid.Row="0" Margin="0,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <!--<Label VerticalAlignment="Center" Grid.Column="0" Content="From:" Margin="0,0,5,0" Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
+                                    <DatePicker VerticalAlignment="Center" Grid.Column="1" Name="dtpDateFrom2" SelectedDate="{Binding DateFrom}" Margin="0,0,5,0" Height="24" BorderBrush="{DynamicResource Esri_BorderBrush}" Background="{DynamicResource Esri_ControlBackgroundBrush}" Foreground="{DynamicResource Esri_TextControlBrush}"/>
+                                    <Label VerticalAlignment="Center" Grid.Column="2" Content="to" Margin="0"/>
+                                    <DatePicker VerticalAlignment="Center" Grid.Column="3" Name="dtpDateTo2" SelectedDate="{Binding DateTo}" Margin="5,0,0,0" Height="24" BorderBrush="{DynamicResource Esri_BorderBrush}" Background="{DynamicResource Esri_ControlBackgroundBrush}" Foreground="{DynamicResource Esri_TextControlBrush}"/>
+                                </Grid>
+                            </Border>
+                            </Grid>
+                            <!--<Label Content="Sources" Background="{DynamicResource Esri_BackgroundPressedBrush}" 
+                          Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Sources"/>
+                                <Grid Grid.Row="1" Margin="0,5" VerticalAlignment="Center">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*"/>
+
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene4Band, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >4 Band PlanetScope Scene</CheckBox>
+                                    <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene3Band, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >3 Band PlanetScope Scene</CheckBox>
+                                    <!--<CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSOrthoTile}" VerticalAlignment="Center" Height="22" >PSOrthoTile</CheckBox>-->
+                                    <!--<CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductREOrthoTile}" VerticalAlignment="Center" Height="22" >REOrthoTile</CheckBox>-->
+                                    <CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductREScene, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >RapidEye Scene</CheckBox>
+                                    <!--<CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatScene}" VerticalAlignment="Center" Height="22" >SkySatScene</CheckBox>-->
+                                    <CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatCollect, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >SkySat Collect</CheckBox>
+                                    <CheckBox Grid.Row="1" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductLandsat8L1G, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >Landsat 8 Scene</CheckBox>
+                                    <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSentinel2L1C, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >Sentinel-2 Tile</CheckBox>
+                                </Grid>
                             </Grid>
                             
-                        </Border>
-                        <Grid Margin="0,5" VerticalAlignment="Center">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*"/>
+                            <!--<Label Content="Area Cover" Background="{DynamicResource Esri_BackgroundPressedBrush}" 
+                          Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Area Cover"/>
+                                <Grid Grid.Row="1" VerticalAlignment="Center" Margin="0,5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}">
+                                <Run Text="{Binding AreaCoverLow}"/>
+                                <Run Text="-"/>
+                                <Run Text="{Binding AreaCoverHigh}"/>
+                                <Run Text="%"/>
+                                    </TextBlock>
+                                    <excd:RangeSlider Name="AreaCoverSlider2"
+                                    Grid.Row="1" 
+                                    LowerValue="{Binding AreaCoverLow, Mode=TwoWay}" 
+                                    HigherValue="{Binding AreaCoverHigh, Mode=TwoWay}" 
+                                    Step="1"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    AutoToolTipPlacement="BottomRight"
+                                    AutoToolTipPrecision="1"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Background="Transparent"
+                                    Foreground="Transparent" 
+                                    Margin="0,5,0,0" 
+                                    Height="22"
+                                    TickPlacement="None"             
+                                    LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    RangeBackground="Transparent"
+                                    HigherRangeBackground="Transparent"
+                                    LowerRangeBackground="Transparent"
+                                    VerticalAlignment="Center">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="HigherValueChanged">
+                                                <i:InvokeCommandAction Command="{Binding FilterChangedCommand}" PassEventArgsToCommand="True"/>
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="LowerValueChanged">
+                                                <i:InvokeCommandAction Command="{Binding FilterChangedCommand}" PassEventArgsToCommand="True"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </excd:RangeSlider>
+                                </Grid>
+                            </Grid>
+                            
+                            <!--<Label Content="Cloud Cover" Background="{DynamicResource Esri_BackgroundPressedBrush}" 
+                          Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Cloud Cover"/>
+                                <Grid Grid.Row="1" VerticalAlignment="Center" Margin="0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="56*"/>
+                                        <ColumnDefinition Width="11*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
 
-                            </Grid.ColumnDefinitions>
-                            <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene4Band, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >4 Band PlanetScope Scene</CheckBox>
-                            <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene3Band, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >3 Band PlanetScope Scene</CheckBox>
-                            <!--<CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSOrthoTile}" VerticalAlignment="Center" Height="22" >PSOrthoTile</CheckBox>-->
-                            <!--<CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductREOrthoTile}" VerticalAlignment="Center" Height="22" >REOrthoTile</CheckBox>-->
-                            <CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductREScene, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >RapidEye Scene</CheckBox>
-                            <!--<CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatScene}" VerticalAlignment="Center" Height="22" >SkySatScene</CheckBox>-->
-                            <CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatCollect, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >SkySat Collect</CheckBox>
-                            <CheckBox Grid.Row="1" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductLandsat8L1G, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >Landsat 8 Scene</CheckBox>
-                            <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSentinel2L1C, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >Sentinel-2 Tile</CheckBox>
-                        </Grid>
-                        <Grid VerticalAlignment="Center" Margin="0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="56*"/>
-                                <ColumnDefinition Width="11*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Margin="0,0,4.2,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                    <TextBlock Margin="0,0,4.2,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
                                 <Run Text="{Binding CloudcoverLow}"/>
                                 <Run Text="-"/>
                                 <Run Text="{Binding CloudcoverHigh}"/>
                                 <Run Text="%"/>
-                            </TextBlock>
-                            <excd:RangeSlider Grid.Row="1" 
+                                    </TextBlock>
+                                    <excd:RangeSlider Grid.Row="1" 
                                     LowerValue="{Binding CloudcoverLow}" 
                                     HigherValue="{Binding CloudcoverHigh}" 
                                     Step="1"
@@ -402,14 +473,249 @@
                                     HigherRangeBackground="Transparent"
                                     LowerRangeBackground="Transparent"
                                     VerticalAlignment="Center" Grid.ColumnSpan="2">
-                            </excd:RangeSlider>
-                        </Grid>
-                    </StackPanel>
+                                    </excd:RangeSlider>
+                                </Grid>
+                            </Grid>
+                            
+                            <!--<Label Content="Ground sample distance" Background="{DynamicResource Esri_BackgroundPressedBrush}" 
+                          Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Ground sample distance"/>
+                                <Grid Grid.Row="1" VerticalAlignment="Center" Margin="0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="56*"/>
+                                        <ColumnDefinition Width="11*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Margin="0,0,4.2,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                <Run Text="{Binding GroundSampleDistLow}"/>
+                                <Run Text="-"/>
+                                <Run Text="{Binding GroundSampleDistHigh}"/>
+                                <Run Text="m"/>
+                                    </TextBlock>
+                                    <excd:RangeSlider Grid.Row="1" 
+                                    LowerValue="{Binding GroundSampleDistLow}" 
+                                    HigherValue="{Binding GroundSampleDistHigh}" 
+                                    Step="1"
+                                    Minimum="0"
+                                    Maximum="30"
+                                    AutoToolTipPlacement="BottomRight"
+                                    AutoToolTipPrecision="1"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Background="Transparent"
+                                    Foreground="Transparent" 
+                                    Margin="0,5,0.2,0.2" 
+                                    Height="22"
+                                    TickPlacement="None"             
+                                    LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    RangeBackground="Transparent"
+                                    HigherRangeBackground="Transparent"
+                                    LowerRangeBackground="Transparent"
+                                    VerticalAlignment="Center" Grid.ColumnSpan="2">
+                                    </excd:RangeSlider>
+                                </Grid>
+                            </Grid>
+                            
+                            <!--<Label Content="Off-nadir angle" Background="{DynamicResource Esri_BackgroundPressedBrush}" 
+                          Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+
+                                </Grid.RowDefinitions>
+                                <!--<TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Off-nadir angle"/>-->
+                                <Grid Grid.Row="0" VerticalAlignment="Center" Margin="0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="56*"/>
+                                        <ColumnDefinition Width="11*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextControlBrush}" Text="Off-nadir angle"/>
+                                    <TextBlock Margin="110,0,4.2,0" VerticalAlignment="Bottom" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                <Run Text="{Binding OffNadireLow}"/>
+                                <Run Text="-"/>
+                                <Run Text="{Binding OffNadireHigh}"/>
+                                <Run Text="&#186;"/>
+                                    </TextBlock>
+                                    <excd:RangeSlider Grid.Row="1" 
+                                    LowerValue="{Binding OffNadireLow}" 
+                                    HigherValue="{Binding OffNadireHigh}" 
+                                    Step="1"
+                                    Minimum="-60"
+                                    Maximum="60"
+                                    AutoToolTipPlacement="BottomRight"
+                                    AutoToolTipPrecision="1"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Background="Transparent"
+                                    Foreground="Transparent" 
+                                    Margin="0,5,0.2,0.2" 
+                                    Height="22"
+                                    TickPlacement="None"             
+                                    LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    RangeBackground="Transparent"
+                                    HigherRangeBackground="Transparent"
+                                    LowerRangeBackground="Transparent"
+                                    VerticalAlignment="Center" Grid.ColumnSpan="2">
+                                    </excd:RangeSlider>
+                                </Grid>
+                            </Grid>
+                            
+                            <!--<Label Content="Sun azimuth" Background="{DynamicResource Esri_BackgroundPressedBrush}" 
+                          Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+
+                                </Grid.RowDefinitions>
+                                <!--<TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Off-nadir angle"/>-->
+                                <Grid Grid.Row="0" VerticalAlignment="Center" Margin="0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="56*"/>
+                                        <ColumnDefinition Width="11*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextControlBrush}" Text="Sun azimuth"/>
+                                    <TextBlock Margin="100,0,4.2,0" VerticalAlignment="Bottom" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                <Run Text="{Binding SunAzLow}"/>
+                                <Run Text="-"/>
+                                <Run Text="{Binding SunAzHigh}"/>
+                                <Run Text="&#186;"/>
+                                    </TextBlock>
+                                    <excd:RangeSlider Grid.Row="1" 
+                                    LowerValue="{Binding SunAzLow}" 
+                                    HigherValue="{Binding SunAzHigh}" 
+                                    Step="1"
+                                    Minimum="0"
+                                    Maximum="360"
+                                    AutoToolTipPlacement="BottomRight"
+                                    AutoToolTipPrecision="1"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Background="Transparent"
+                                    Foreground="Transparent" 
+                                    Margin="0,5,0.2,0.2" 
+                                    Height="22"
+                                    TickPlacement="None"             
+                                    LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    RangeBackground="Transparent"
+                                    HigherRangeBackground="Transparent"
+                                    LowerRangeBackground="Transparent"
+                                    VerticalAlignment="Center" Grid.ColumnSpan="2">
+                                    </excd:RangeSlider>
+                                </Grid>
+                            </Grid>
+                            <!--<Label Content="Sun Elevation" Background="{DynamicResource Esri_BackgroundPressedBrush}" Margin="0,10,0,0" 
+                          Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+
+                                </Grid.RowDefinitions>
+                                <!--<TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Off-nadir angle"/>-->
+                                <Grid Grid.Row="0" VerticalAlignment="Center" Margin="0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="56*"/>
+                                        <ColumnDefinition Width="11*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextControlBrush}" Text="Sun Elevation"/>
+                                    <TextBlock Margin="100,0,4.2,0" VerticalAlignment="Bottom" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                <Run Text="{Binding SunElevationHLow}"/>
+                                <Run Text="-"/>
+                                <Run Text="{Binding SunElevationHigh}"/>
+                                <Run Text="&#186;"/>
+                                    </TextBlock>
+                                    <excd:RangeSlider Grid.Row="1" 
+                                    LowerValue="{Binding SunElevationHLow}" 
+                                    HigherValue="{Binding SunElevationHigh}" 
+                                    Step="1"
+                                    Minimum="-90"
+                                    Maximum="90"
+                                    AutoToolTipPlacement="BottomRight"
+                                    AutoToolTipPrecision="1"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Background="Transparent"
+                                    Foreground="Transparent" 
+                                    Margin="0,5,0.2,0.2" 
+                                    Height="22"
+                                    TickPlacement="None"             
+                                    LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
+                                    RangeBackground="Transparent"
+                                    HigherRangeBackground="Transparent"
+                                    LowerRangeBackground="Transparent"
+                                    VerticalAlignment="Center" Grid.ColumnSpan="2">
+                                    </excd:RangeSlider>
+                                </Grid>
+                            </Grid>
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextControlBrush}" Text="Ground Control"/>
+
+                                <Grid Grid.Row="1" Margin="10">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80*"/>
+                                        <ColumnDefinition Width="20*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Style="{DynamicResource Esri_TextBlockRegular}"  >When active, only images with ground control will be shown</TextBlock>
+                                    <controls1:ToggleSwitch Grid.Row="0"  Grid.Column="1"  CheckedText="" UncheckedText=""  HorizontalAlignment="Right" IsChecked="{Binding GroundCover}"  />
+                                </Grid>
+                            </Grid>
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextControlBrush}" Text="Access Filter"/>
+
+                                <Grid Grid.Row="1" Margin="10">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80*"/>
+                                        <ColumnDefinition Width="20*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Style="{DynamicResource Esri_TextBlockRegular}"  >When active, only display imagery you have access to download</TextBlock>
+                                    <controls1:ToggleSwitch Grid.Row="0"  Grid.Column="1"  CheckedText="" UncheckedText=""  HorizontalAlignment="Right" IsChecked="{Binding PermissionFilter}"  />
+                                </Grid>
+                            </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
+                    
                     <StackPanel Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding NoSearchResulrvis}">
                         <TextBlock Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{DynamicResource Esri_TextBlockH1}">Sorry, no results found.</TextBlock>
                         <TextBlock Grid.Row="3" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{DynamicResource Esri_TextBlockH3}">Try relaxing your filters, extending the daterange, or searching in another location.</TextBlock>
                     </StackPanel>
-                    
+
                     <TreeView Name="SearchResults" Grid.Row="3" Grid.Column="0" IsEnabled="{Binding TreeEnabled}" ItemsSource="{Binding Items}" Background="{x:Null}" BorderBrush="{x:Null}" >
                         <TreeView.Resources>
                             <HierarchicalDataTemplate DataType="{x:Type model:AcquiredDateGroup}" ItemsSource="{Binding Items}">
@@ -611,144 +917,6 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <!--<TabItem Header="Filter" Style="{DynamicResource MainTabItemStyle}" Padding="5,0,0,0">
-
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="1" Header="Sources" IsExpanded="True">
-                        <Grid Margin="15,5,5,5" VerticalAlignment="Center">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <CheckBox Grid.Row="0" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene3Band}" VerticalAlignment="Center" Height="22" >PSScene3Band</CheckBox>
-                            <CheckBox Grid.Row="1" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSScene4Band}" VerticalAlignment="Center" Height="22" >PSScene4Band</CheckBox>
-                            <CheckBox Grid.Row="2" Grid.Column="0" Padding ="5,0" IsChecked="{Binding ProductPSOrthoTile}" VerticalAlignment="Center" Height="22" >PSOrthoTile</CheckBox>
-                            <CheckBox Grid.Row="0" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductREOrthoTile}" VerticalAlignment="Center" Height="22" >REOrthoTile</CheckBox>
-                            <CheckBox Grid.Row="1" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductREScene}" VerticalAlignment="Center" Height="22" >REScene</CheckBox>
-                            <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSkySatScene}" VerticalAlignment="Center" Height="22" >SkySatScene</CheckBox>
-                            <CheckBox Grid.Row="0" Grid.Column="2" Padding ="5,0" IsChecked="{Binding ProductSkySatCollect}" VerticalAlignment="Center" Height="22" >SkySatCollect</CheckBox>
-                            <CheckBox Grid.Row="1" Grid.Column="2" Padding ="5,0" IsChecked="{Binding ProductLandsat8L1G}" VerticalAlignment="Center" Height="22" >Landsat8L1G</CheckBox>
-                            <CheckBox Grid.Row="2" Grid.Column="2" Padding ="5,0" IsChecked="{Binding ProductSentinel2L1C}" VerticalAlignment="Center" Height="22" >Sentinel2L1C</CheckBox>
-                        </Grid>
-                    </Expander>
-                    <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="2" Header="Cloud cover" IsExpanded="True">
-                        <Grid VerticalAlignment="Center" Margin="15,5,5,5">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}">
-                                <Run Text="{Binding CloudcoverLow}"/>
-                                <Run Text="-"/>
-                                <Run Text="{Binding CloudcoverHigh}"/>
-                                <Run Text="%"/>
-                            </TextBlock>
-                            <excd:RangeSlider Grid.Row="1" 
-                                    LowerValue="{Binding CloudcoverLow}" 
-                                    HigherValue="{Binding CloudcoverHigh}" 
-                                    Step="1"
-                                    Minimum="0"
-                                    Maximum="100"
-                                    AutoToolTipPlacement="BottomRight"
-                                    AutoToolTipPrecision="1"
-                                    TickFrequency="1"
-                                    IsSnapToTickEnabled="True"
-                                    Background="Transparent"
-                                    Foreground="Transparent" 
-                                    Margin="0,5,0,0" 
-                                    Height="22"
-                                    TickPlacement="None"             
-                                    LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
-                                    HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
-                                    RangeBackground="Transparent"
-                                    HigherRangeBackground="Transparent"
-                                    LowerRangeBackground="Transparent"
-                                    VerticalAlignment="Center">
-                            </excd:RangeSlider>
-                        </Grid>
-                    </Expander>
-                    <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="3" Header="Area coverage" IsExpanded="False">
-                        <Grid VerticalAlignment="Center" Margin="15,5,5,5">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}">
-                                <Run Text="{Binding AreaCoverLow}"/>
-                                <Run Text="-"/>
-                                <Run Text="{Binding AreaCoverHigh}"/>
-                                <Run Text="%"/>
-                            </TextBlock>
-                            <excd:RangeSlider Grid.Row="1" 
-                                    LowerValue="{Binding AreaCoverLow}" 
-                                    HigherValue="{Binding AreaCoverHigh}" 
-                                    Step="1"
-                                    Minimum="0"
-                                    Maximum="100"
-                                    AutoToolTipPlacement="BottomRight"
-                                    AutoToolTipPrecision="1"
-                                    TickFrequency="1"
-                                    IsSnapToTickEnabled="True"
-                                    Background="Transparent"
-                                    Foreground="Transparent" 
-                                    Margin="0,5,0,0" 
-                                    Height="22"
-                                    TickPlacement="None"             
-                                    LowerThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
-                                    HigherThumbBackground="{DynamicResource Esri_ControlBackgroundBrush}"
-                                    RangeBackground="Transparent"
-                                    HigherRangeBackground="Transparent"
-                                    LowerRangeBackground="Transparent"
-                                    VerticalAlignment="Center">
-                            </excd:RangeSlider>
-                        </Grid>
-                    </Expander>
-                    -->
-            <!--<Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="4" Header="Ground sample distance" IsExpanded="False">
-                    </Expander>
-                    <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="5" Header="Off-nadir angle" IsExpanded="False">
-                    </Expander>
-                    <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="6" Header="Sun azimuth" IsExpanded="False">
-                    </Expander>
-                    <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="7" Header="Sun elevation" IsExpanded="False">
-                    </Expander>
-                    <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="8" Header="Ground control" IsExpanded="False">
-                    </Expander>
-                    <Expander Style="{DynamicResource Esri_ExpanderBorderless}" Grid.Row="9" Header="Access Filter" IsExpanded="False">
-                    </Expander>-->
-            <!--
-
-                    <Grid Grid.Row="10" VerticalAlignment="Bottom" Margin="5">
-                        <StackPanel Orientation="Horizontal">
-                            <Button Grid.Column="0" Width="auto" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="22" Content="Search" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center" VerticalContentAlignment="Center">
-                            </Button>
-                            
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-
-
-            </TabItem>-->
 
             <TabItem Header="Orders" Style="{DynamicResource LastTabItemStyle}" Padding="5,0" >
                 <Grid Margin="5">
