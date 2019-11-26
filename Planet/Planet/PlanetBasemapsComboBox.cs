@@ -20,7 +20,7 @@ using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
 using Newtonsoft.Json;
-using Sentry;
+
 
 namespace Planet
 {
@@ -175,11 +175,6 @@ namespace Planet
                     }
                     catch (Exception ex)
                     {
-                        using (SentrySdk.Init("https://9a79c422479f4388a8252e833beb8a3a@sentry.io/1774797"))
-                        {
-                            Sentry.Protocol.SentryId sentryId = SentrySdk.CaptureException(ex);
-                            Console.WriteLine(sentryId);
-                        }
                         ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show(ex.Message);
                     }
                 }
