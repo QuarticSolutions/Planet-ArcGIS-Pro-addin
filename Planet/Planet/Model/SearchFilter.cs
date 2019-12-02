@@ -37,7 +37,6 @@ namespace test_docing_Panel.Models
         public double gte { get; set; }
         public double lte { get; set; }
     }
-
     public class RangeFilter
     {
         public string type { get; set; }

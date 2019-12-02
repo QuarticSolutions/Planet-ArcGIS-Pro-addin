@@ -6,11 +6,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:extensions="clr-namespace:ArcGIS.Desktop.Extensions;assembly=ArcGIS.Desktop.Extensions"
         mc:Ignorable="d"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         xmlns:model="clr-namespace:Planet.Model"
         xmlns:viewmodel="clr-namespace:Planet.ViewModel"
-        Title="Order Window" Height="auto"  Width="600"   ResizeMode="CanResizeWithGrip" ScrollViewer.VerticalScrollBarVisibility="Visible"
+        Title="Order Window" Height="auto"   Width="800"   ResizeMode="CanResizeWithGrip" ScrollViewer.VerticalScrollBarVisibility="Visible"
         WindowStartupLocation="CenterOwner"
         xmlns:ui="clr-namespace:Planet"
                     DataContext="{Binding Path=viewmodel.OrderWindowViewModel}">
@@ -19,8 +19,10 @@
         <ResourceDictionary >
             <ResourceDictionary.MergedDictionaries>
                 <extensions:DesignOnlyResourceDictionary Source="pack://application:,,,/ArcGIS.Desktop.Framework;component\Themes\Default.xaml"/>
+                <ResourceDictionary Source="OrderItem.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
+        
 
     </controls:ProWindow.Resources>
     <Grid ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Width="Auto">
@@ -42,400 +44,130 @@
                 </Expander>
             </DataTemplate>
         </Grid.Resources>
-        <!--<Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>-->
         <Grid.RowDefinitions>
-            <RowDefinition Height="500"/>
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="75"/>
         </Grid.RowDefinitions>
-        <!--<StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Width="600" Margin="0,0,0,0"  >
-            <Label Width="415" Content="" BorderBrush="Aqua"></Label>
-            <TextBlock Width="50" Margin="10,0,0,0" HorizontalAlignment="Left"  TextWrapping="WrapWithOverflow" Text="Analytic" Foreground="{DynamicResource Esri_TextControlBrush}"/>
-            <TextBlock Width="50"  TextWrapping="Wrap" Text="Visual" HorizontalAlignment="Left" Foreground="{DynamicResource Esri_TextControlBrush}" ></TextBlock>
-            <TextBlock Width="50"  TextWrapping="Wrap" Text="Basic" HorizontalAlignment="Left" Foreground="{DynamicResource Esri_TextControlBrush}" ></TextBlock>
-        </StackPanel>-->
-        <StackPanel Margin="20" Grid.Row="0" >
-            <Expander Visibility="{Binding PSScene4BandVis}"  Header="4-band PlanetScope Scene" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=1}">
-                <StackPanel Orientation="Vertical" Visibility="{Binding PSScene4BandVis}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="310"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
-                            <ComboBox ItemsSource="{Binding TempBundles.PlanetScope4}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding  Path=PSScene4Bandcurrselect}"   Margin="10,10,0,10" Width="300" />
+        <StackPanel Margin="20,5,25,5" Grid.Row="0" ScrollViewer.VerticalScrollBarVisibility="Visible" >
+            <Expander  Visibility="{Binding PSScene4BandVis}"  Header="4-band PlanetScope Scene" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=1}">
+                <StackPanel Orientation="Vertical" Visibility="{Binding PSScene4BandVis}" >
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
+                            <ComboBox ItemsSource="{Binding TempBundles.PlanetScope4}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding  Path=PSScene4Bandcurrselect}"   Margin="10,0,0,0" Width="300" />
                             <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="50,10"  IsChecked="{Binding Path=psscene4Bandselall, Mode=TwoWay}"/>
                         </StackPanel>
-                        <ListBox x:Name="PS42" Visibility="{Binding PSScene4BandVis}"  Grid.Row="1" Width="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSScene4Band}" Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
-                            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                                <DataTemplate  >
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-
-                                        </Grid.ColumnDefinitions>
-                                        <Image Grid.Column="0"  Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                                            <Image.Style>
-                                                <Style TargetType="{x:Type Image}">
-                                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                                </Style>
-                                            </Image.Style>
-                                        </Image>
-                                        <!--<TextBlock Grid.Column="1" Width="90" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
-                                        <TextBlock Grid.Column ="1" Width="250" Text="{Binding Path=id }" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10"/>
-                                        <CheckBox Grid.Column ="2" Width="50" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}" />
-                                        <!--<TextBox Text="{Binding Path=DataContext.PSScene4Bandcurrselect , ElementName=PS4 }"  />-->
-                                        <!--<ComboBox Grid.Column="4" ItemsSource="{Binding Path=DataContext.PSScene4Bandcurrselect , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Margin="10,10,10,10" Width="100"/>
-                                    <ComboBox Grid.Column="5" ItemsSource="{Binding Path=DataContext.lstPSScene4Band , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Margin="10,10,10,10" Width="100" />-->
-                                        <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>-->
-                                        <!--<CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
-                    
+                    <ListBox x:Name="PS42"  Visibility="{Binding PSScene4BandVis}" ItemTemplate="{StaticResource OrderItemTemplate}" Height="auto" MaxHeight="250" Grid.Row="1" Width="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSScene4Band}" Margin="10,0,0,5" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel  Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
                 </StackPanel>
             </Expander>
-            <Expander Visibility="{Binding PSScene3BandVis}" Header="3-band PlanetScope Scene"  IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=2}">
-
-                    <StackPanel Orientation="Vertical" Visibility="{Binding PSScene3BandVis}" >
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="310"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="0" >
-                            <ComboBox ItemsSource="{Binding TempBundles.PlanetScope3}"  DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=PSScene3Bandcurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="300"/>
-                            <CheckBox Width="70" VerticalAlignment="Center" Margin="40,10"  IsChecked="{Binding Path=psscene3Bandselall, Mode=TwoWay}"/>
-
-                        </StackPanel>
-                        <ListBox Visibility="{Binding PSScene3BandVis}"   Width="Auto" Grid.Row="1" ItemsSource="{Binding PSScene3Band}" Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
-                            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                                <DataTemplate >
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-
-
-                                        <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                                            <Image.Style>
-                                                <Style TargetType="{x:Type Image}">
-                                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                                </Style>
-                                            </Image.Style>
-                                        </Image>
-                                        <!--<TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
-                                        <TextBlock Grid.Column ="1" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Width="250"/>
-                                        <!--<ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstPSScene3Band , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>-->
-                                        <CheckBox Grid.Column ="2" Width="50" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                                        <!--<CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
+            <Expander Visibility="{Binding PSScene3BandVis}"   Header="3-band PlanetScope Scene"  IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=2}">
+                <StackPanel Orientation="Vertical" Visibility="{Binding PSScene3BandVis}" >
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="0" >
+                        <ComboBox ItemsSource="{Binding TempBundles.PlanetScope3}"  DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=PSScene3Bandcurrselect, Mode=TwoWay}" Margin="10,0,0,0" Width="300"/>
+                        <CheckBox Width="70" VerticalAlignment="Center" Margin="40,0,0,0"  IsChecked="{Binding Path=psscene3Bandselall, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <ListBox Visibility="{Binding PSScene3BandVis}" ItemTemplate="{StaticResource OrderItemTemplate}" Height="auto" MaxHeight="250" Grid.Row="1" Width="auto" ItemsSource="{Binding PSScene3Band}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="10,0,0,5" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel  Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
                 </StackPanel>
-                
-                
             </Expander>
             <Expander Visibility="{Binding SkySatScenevis}" Header="SkySat Scene" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource  ExpandedConverter} , ConverterParameter=3}">
                 <StackPanel Orientation="Vertical" Visibility="{Binding SkySatScenevis}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="310"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-
-                            <CheckBox Width="70" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=SkySatSceneselall, Mode=TwoWay}"/>
-                            <ComboBox ItemsSource="{Binding PathlstSkySatScene}" SelectedItem="{Binding Path=SkySatScenecurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="100"/>
-                        </StackPanel>
-                        <ListBox  Visibility="{Binding SkySatScenevis}" MaxHeight="400"   Width="Auto"  Grid.Column="0"  ItemsSource="{Binding SkySatScene}" Margin="10,2,0,0" >
-                            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                                <DataTemplate >
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="60"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-
-
-                                        <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                                            <Image.Style>
-                                                <Style TargetType="{x:Type Image}">
-                                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                                </Style>
-                                            </Image.Style>
-                                        </Image>
-                                        <!--<TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
-                                        <TextBlock Grid.Column ="1" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Width="250"/>
-                                        <CheckBox Grid.Column ="2" Width="50" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                                        <!--<ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstSkySatScene , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>-->
-                                        <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <CheckBox Width="70" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=SkySatSceneselall, Mode=TwoWay}"/>
+                        <ComboBox ItemsSource="{Binding PathlstSkySatScene}" SelectedItem="{Binding Path=SkySatScenecurrselect, Mode=TwoWay}" Margin="10,0,0,0" Width="100"/>
+                    </StackPanel>
+                    <ListBox  Visibility="{Binding SkySatScenevis}" ItemTemplate="{StaticResource OrderItemTemplate}" Height="auto" MaxHeight="250" Grid.Row="1" Width="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding SkySatScene}" Margin="10,2,0,0" >
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel  Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
                 </StackPanel>
             </Expander>
             <Expander Visibility="{Binding SkySatCollectvis}" Header="SkySat Collect" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource  ExpandedConverter} , ConverterParameter=4}">
                 <StackPanel Orientation="Vertical">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="310"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="0">
-                            <ComboBox ItemsSource="{Binding TempBundles.SkySatCollect}" DisplayMemberPath="Value" SelectedValuePath="Key"  SelectedValue="{Binding Path=SkySatCollectcurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="300"/>
-                            <CheckBox Width="70" VerticalAlignment="Center" Margin="40,10"  IsChecked="{Binding Path=SkySatCollectselall, Mode=TwoWay}"/>
-
-                        </StackPanel>
-                        <ListBox  Visibility="{Binding SkySatCollectvis}" Grid.Row="1"  Width="Auto" ItemsSource="{Binding SkySatCollect}"  Margin="10,2,0,0" >
-                            <ListBox.ItemTemplate  >
-                                <DataTemplate >
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="60"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                                            <Image.Style>
-                                                <Style TargetType="{x:Type Image}">
-                                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                                </Style>
-                                            </Image.Style>
-                                        </Image>
-                                        <!--<TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
-                                        <TextBlock Grid.Column ="1" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Width="250"/>
-                                        <CheckBox Grid.Column ="2" Width="50" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                                        <!--<ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstSkySatCollect , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>-->
-                                        <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
-                    
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="0">
+                            <ComboBox ItemsSource="{Binding TempBundles.SkySatCollect}" DisplayMemberPath="Value" SelectedValuePath="Key"  SelectedValue="{Binding Path=SkySatCollectcurrselect, Mode=TwoWay}" Margin="10,0,0,0" Width="300"/>
+                        <CheckBox Width="70" VerticalAlignment="Center" Margin="40,10"  IsChecked="{Binding Path=SkySatCollectselall, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <ListBox  Visibility="{Binding SkySatCollectvis}" ItemTemplate="{StaticResource OrderItemTemplate}" Height="auto" MaxHeight="250" Grid.Row="1" Width="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding SkySatCollect}"  Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1" >
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel  Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
                 </StackPanel>
             </Expander>
             <Expander Visibility="{Binding REScenevis}" Header="Rapid Eye Scene" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource  ExpandedConverter} , ConverterParameter=5}">
                 <StackPanel Orientation="Vertical">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="310"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="0">
-                            <ComboBox ItemsSource="{Binding TempBundles.REScene}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=REScenecurrselect, Mode=TwoWay}" Margin="10,10,10,10" Width="300"/>
-                            <CheckBox Width="70" VerticalAlignment="Center" Margin="40,10"  IsChecked="{Binding Path=RESceneselall, Mode=TwoWay}"/>
-
-                        </StackPanel>
-                        <ListBox  Visibility="{Binding REScenevis}" Grid.Row="1"  Width="Auto" ItemsSource="{Binding REScene}"   Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
-                            <ListBox.ItemTemplate  >
-                                <DataTemplate >
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="60"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Grid.Column="0" Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                                            <Image.Style>
-                                                <Style TargetType="{x:Type Image}">
-                                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                                </Style>
-                                            </Image.Style>
-                                        </Image>
-                                        <!--<TextBlock Grid.Column="1" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
-                                        <TextBlock Grid.Column ="1" Text="{Binding Path=id }" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Width="250"/>
-                                        <CheckBox Grid.Column ="2" Width="50" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                                        <!--<ComboBox Grid.Column="3" ItemsSource="{Binding Path=DataContext.lstSkySatCollect , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Text="Pick a product" Width="100"/>-->
-                                        <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
-
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="0">
+                        <ComboBox ItemsSource="{Binding TempBundles.REScene}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=REScenecurrselect, Mode=TwoWay}" Margin="10,0,10,0" Width="300"/>
+                        <CheckBox Width="70" VerticalAlignment="Center" Margin="40,10"  IsChecked="{Binding Path=RESceneselall, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <ListBox   Visibility="{Binding REScenevis}" ItemTemplate="{StaticResource OrderItemTemplate}" Height="auto" MaxHeight="250" Grid.Row="1" Width="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding REScene}"   Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel  Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
                 </StackPanel>
             </Expander>
             <Expander Visibility="{Binding PSOrthoTileVis}" Header="Planet Scope Ortho Tile " IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=6}">
                 <StackPanel Orientation="Vertical" Visibility="{Binding PSOrthoTileVis}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="310"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="0">
-                            <Label Content="4-band PlanetScope Scene"/>
-                            <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10"  IsChecked="{Binding Path=PSOrthoTileselall, Mode=TwoWay}"/>
-                            <ComboBox ItemsSource="{Binding lstPSOrthoTile}" SelectedItem="{Binding Path=PSOrthoTilecurrselect}" Margin="10,10,10,10" Width="100" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="0">
+                        <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10"  IsChecked="{Binding Path=PSOrthoTileselall, Mode=TwoWay}"/>
+                            <ComboBox ItemsSource="{Binding lstPSOrthoTile}" SelectedItem="{Binding Path=PSOrthoTilecurrselect}" Margin="10,0,10,0" Width="100" />
                         </StackPanel>
-                        <ListBox  Visibility="{Binding PSOrthoTileVis}"  Grid.Row="1" Width="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding PSOrthoTile}" Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
-                            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                                <DataTemplate  >
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Grid.Column="0"  Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                                            <Image.Style>
-                                                <Style TargetType="{x:Type Image}">
-                                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                                </Style>
-                                            </Image.Style>
-                                        </Image>
-                                        <!--<TextBlock Grid.Column="1" Width="90" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
-                                        <TextBlock Grid.Column ="1" Text="{Binding Path=id }" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,10,10,10" Width="250"/>
-                                        <CheckBox Grid.Column ="2" Width="50" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}" />
-                                        <!--<TextBox Text="{Binding Path=DataContext.PSScene4Bandcurrselect , ElementName=PS4 }"  />-->
-                                        <!--<ComboBox Grid.Column="4" ItemsSource="{Binding Path=DataContext.PSScene4Bandcurrselect , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Margin="10,10,10,10" Width="100"/>
-                                    <ComboBox Grid.Column="5" ItemsSource="{Binding Path=DataContext.lstPSScene4Band , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Margin="10,10,10,10" Width="100" />-->
-                                        <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>-->
-                                        <!--<CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
-                    
+                    <ListBox  Visibility="{Binding PSOrthoTileVis}"  ItemTemplate="{StaticResource OrderItemTemplate}" Height="auto" MaxHeight="250" Grid.Row="1" Width="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ItemsSource="{Binding PSOrthoTile}" Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel  Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
                 </StackPanel>
             </Expander>
             <Expander Visibility="{Binding Landsat8L1Gvis}" Header="Landsat 8" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=7}">
                 <StackPanel Orientation="Vertical" Visibility="{Binding Landsat8L1Gvis}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="310"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="0">
-                            <ComboBox x:Name="cmbbox_years"  ItemsSource="{Binding TempBundles.LandSat8L1C}" ToolTip="{Binding Path=SelectedItem,ElementName=cmbbox_years}"  DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=Landsat8L1Gcurrselect}" Margin="10,10,10,10" Width="300" />
-                            <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40,10"  IsChecked="{Binding Path=Landsat8L1Gselall, Mode=TwoWay}"/>
-
-                        </StackPanel>
-                        <ListBox  Visibility="{Binding Landsat8L1Gvis}"  Grid.Row="1" Width="Auto" MaxHeight="400"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Landsat8L1G}" Margin="10,2,0,0"  ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
-                            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                                <DataTemplate  >
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Grid.Column="0"  Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                                            <Image.Style>
-                                                <Style TargetType="{x:Type Image}">
-                                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                                </Style>
-                                            </Image.Style>
-                                        </Image>
-                                        <!--<TextBlock Grid.Column="1" Width="90" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
-                                        <TextBlock Grid.Column ="1" Text="{Binding Path=id }" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10" Width="250"/>
-                                        <CheckBox Grid.Column ="2" Width="50" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}" />
-                                        <!--<TextBox Text="{Binding Path=DataContext.PSScene4Bandcurrselect , ElementName=PS4 }"  />-->
-                                        <!--<ComboBox Grid.Column="4" ItemsSource="{Binding Path=DataContext.PSScene4Bandcurrselect , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Margin="10,10,10,10" Width="100"/>
-                                    <ComboBox Grid.Column="5" ItemsSource="{Binding Path=DataContext.lstPSScene4Band , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Margin="10,10,10,10" Width="100" />-->
-                                        <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>-->
-                                        <!--<CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
-                        
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="0">
+                        <ComboBox x:Name="cmbbox_years"  ItemsSource="{Binding TempBundles.LandSat8L1C}" ToolTip="{Binding Path=SelectedItem,ElementName=cmbbox_years}"  DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=Landsat8L1Gcurrselect}" Margin="10,0,10,0" Width="300" />
+                        <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40,10"  IsChecked="{Binding Path=Landsat8L1Gselall, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <ListBox  Visibility="{Binding Landsat8L1Gvis}"  ItemTemplate="{StaticResource OrderItemTemplate}" Height="auto" MaxHeight="250" Grid.Row="1" Width="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ItemsSource="{Binding Landsat8L1G}" Margin="10,2,0,0"  ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel  Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
                 </StackPanel>
             </Expander>
             <Expander Visibility="{Binding Sentinel2L1Cvis}" Header="Sentinel 2" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=8}">
                 <StackPanel Orientation="Vertical" Visibility="{Binding Sentinel2L1Cvis}" HorizontalAlignment="Left">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="310"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="0">
-                            <ComboBox ItemsSource="{Binding Path=TempBundles.Sentinel2L1C}"  DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=Sentinel2L1Ccurrselect}" Margin="10,10,10,10" Width="290" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="0">
+                            <ComboBox ItemsSource="{Binding Path=TempBundles.Sentinel2L1C}"  DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=Sentinel2L1Ccurrselect}" Margin="10,0,10,0" Width="290" />
                             <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="50,10"  IsChecked="{Binding Path=Sentinel2L1Cselall, Mode=TwoWay}"/>
                         </StackPanel>
-                        <ListBox  Visibility="{Binding Sentinel2L1Cvis}"  Grid.Row="1" Width="Auto" MaxHeight="400"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Sentinel2L1C}" Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
-                            <ListBox.ItemTemplate x:Uid="asdasd"  >
-                                <DataTemplate >
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Image Grid.Column="0"  Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                                            <Image.Style>
-                                                <Style TargetType="{x:Type Image}">
-                                                    <Setter Property="Source" Value="{Binding Path=image}"/>
-                                                </Style>
-                                            </Image.Style>
-                                        </Image>
-                                        <!--<TextBlock Grid.Column="1" Width="90" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
-                                        <TextBlock Grid.Column ="1" Width="250" Text="{Binding Path=id }" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,10,10,10"/>
-                                        <CheckBox Grid.Column ="2" Width="50" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}" />
-                                        <!--<TextBox Text="{Binding Path=DataContext.PSScene4Bandcurrselect , ElementName=PS4 }"  />-->
-                                        <!--<ComboBox Grid.Column="4" ItemsSource="{Binding Path=DataContext.PSScene4Bandcurrselect , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Margin="10,10,10,10" Width="100"/>
-                                    <ComboBox Grid.Column="5" ItemsSource="{Binding Path=DataContext.lstPSScene4Band , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Margin="10,10,10,10" Width="100" />-->
-                                        <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>-->
-                                        <!--<CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
-                    
+                    <ListBox  Visibility="{Binding Sentinel2L1Cvis}"   ItemTemplate="{StaticResource OrderItemTemplate}" Height="auto" MaxHeight="250" Grid.Row="1" Width="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled"  ItemsSource="{Binding Sentinel2L1C}" Margin="10,2,0,0" ItemContainerStyle="{DynamicResource Esri_ListBoxItemHighlightBrush}" BorderBrush="{DynamicResource Esri_TextControlBrush}" BorderThickness="1">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel  Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
                 </StackPanel>
             </Expander>
             <Expander Visibility="{Binding REOrthoTilevis}" Header="Rapid Eye Ortho Tile" IsExpanded="{Binding CurrentExpanded, Converter={StaticResource ExpandedConverter}, ConverterParameter=9}">
@@ -444,53 +176,37 @@
                         <CheckBox Width="70" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10"  IsChecked="{Binding Path=REOrthoTileselall, Mode=TwoWay}"/>
                         <ComboBox ItemsSource="{Binding Path=DataContext.lstREOrthoTile}" SelectedItem="{Binding Path=REOrthoTilecurrselect}" Margin="10,10,10,10" Width="100" />
                     </StackPanel>
-                    <ListBox  Visibility="{Binding REOrthoTilevis}"  Grid.Row="1" Width="Auto" MaxHeight="400"  Grid.Column="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding REOrthoTile}" Margin="10,2,0,0" >
-                        <ListBox.ItemTemplate x:Uid="asdasd"  >
-                            <DataTemplate  >
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image Grid.Column="0"  Height="64" HorizontalAlignment="Left" Tag="{Binding Path=title}" OverridesDefaultStyle="True"  >
-                                        <Image.Style>
-                                            <Style TargetType="{x:Type Image}">
-                                                <Setter Property="Source" Value="{Binding Path=image}"/>
-                                            </Style>
-                                        </Image.Style>
-                                    </Image>
-                                    <!--<TextBlock Grid.Column="1" Width="90" Text="{Binding Path=properties.item_type}" TextWrapping="Wrap" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
-                                    <TextBlock Grid.Column ="1" Width="250" Text="{Binding Path=id }" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,10,10,10"/>
-                                    <CheckBox Grid.Column ="2" Width="50" VerticalAlignment="Center" Margin="10"  IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}" />
-                                    <!--<TextBox Text="{Binding Path=DataContext.PSScene4Bandcurrselect , ElementName=PS4 }"  />-->
-                                    <!--<ComboBox Grid.Column="4" ItemsSource="{Binding Path=DataContext.PSScene4Bandcurrselect , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Margin="10,10,10,10" Width="100"/>
-                                    <ComboBox Grid.Column="5" ItemsSource="{Binding Path=DataContext.lstPSScene4Band , ElementName=PS4}" SelectedItem="{Binding Path=selectedBundle, Mode=TwoWay}" Margin="10,10,10,10" Width="100" />-->
-                                    <!--<CheckBox Grid.Column ="3" Width="50" VerticalAlignment="Center" Margin="10" Visibility="{Binding Path=analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=analytic_dn._permissions[0], Converter={StaticResource Download2Bool}}" IsChecked="{Binding Path=oAnalytic, Mode=TwoWay}"/>-->
-                                    <!--<CheckBox Grid.Column ="4" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=basic_analytic._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oVisual, Mode=TwoWay}"/>
-                                <CheckBox Grid.Column ="5" Width="50" VerticalAlignment="Center"  Visibility="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}" IsThreeState="True" IsEnabled="{Binding Path=udm._permissions[0], Converter={StaticResource Download2Bool}}"  IsChecked="{Binding Path=oBasic, Mode=TwoWay}"/>-->
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
+                    <ListBox  Visibility="{Binding REOrthoTilevis}" ItemTemplate="{StaticResource OrderItemTemplate}" Height="auto" MaxHeight="250" Grid.Row="1" Width="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding REOrthoTile}" Margin="10,2,0,0" >
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel  Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
                     </ListBox>
                 </StackPanel>
             </Expander>
         </StackPanel>
 
 
- 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="center" Margin="0,0,0,0" >
-            <Label Content="Order Name:" VerticalAlignment="Center"/>
-            <TextBox Text="{Binding Path=OrderName}" Width="200" Height="25" />
-            <Button Command="{Binding OrderCommand}" Content="Place Order" Height="Auto"   Style="{DynamicResource Esri_Button}" Margin="20" VerticalAlignment="Center"/>
+        <StackPanel Grid.Row="2" Orientation="Vertical" VerticalAlignment="Bottom">
+            <StackPanel  Orientation="Horizontal" HorizontalAlignment="center" Margin="0,0,0,0"  >
+                <Label Content="Order Name:" VerticalAlignment="Center"/>
+                <TextBox Name="txtOrderName" Text="{Binding OrderName, Mode=TwoWay}" Width="200" Height="25"  PreviewTextInput="TxtOrderName_PreviewTextInput"  >
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="KeyUp">
+                            <i:InvokeCommandAction Command="{Binding txtOrderNameChangedCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </TextBox>
+                <!--<Button Name="btnOrder" Command="{Binding OrderCommand}" IsEnabled="{Binding CanExecuteOrder}"  Content="Place Order" Height="Auto"   Style="{DynamicResource Esri_Button}" Margin="20" VerticalAlignment="Center"/>-->
+                <Button Name="btnOrder2" Command="{Binding ExecuteOrder}"   Height="Auto"   Style="{DynamicResource Esri_Button}" Margin="10" VerticalAlignment="Center" Content="{Binding btnOrdertext}"/>
+            </StackPanel>
+            <StackPanel  Orientation="Vertical" Margin="25,0,0,10" Visibility="{Binding Resultsvis}" HorizontalAlignment="Left" VerticalAlignment="Bottom" >
+                <Label>Results</Label>
+                <ListBox ItemsSource="{Binding Resultscoll}"  Width="500" />
+            </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="2" Orientation="Vertical" Margin="10,10,10,10" Visibility="{Binding Resultsvis}" HorizontalAlignment="Left" >
-            <Label>Results</Label>
-            <ListBox ItemsSource="{Binding Resultscoll}"  Width="500" />
-        </StackPanel>
+
         
     </Grid>
 </controls:ProWindow>
