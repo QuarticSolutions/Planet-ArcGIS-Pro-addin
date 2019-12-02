@@ -99,6 +99,7 @@ namespace Planet
             FrameworkApplication.State.Deactivate("planet_state_connection");
             ProjectOpenedEvent.Subscribe(OnProjectOpen);
             ProjectClosedEvent.Subscribe(OnProjectClose);
+            ProjectSavingEvent.Subscribe(OnProjectSaving);
         }
 
         private void OnProjectClose(ProjectEventArgs obj)
@@ -117,6 +118,26 @@ namespace Planet
         private void OnProjectOpen(ProjectEventArgs obj)
         {
             
+        }
+
+        private async Task OnProjectSaving(ProjectEventArgs obj)
+        {
+            await QueuedTask.Run(() =>
+            {
+                var mapProjectItems = Project.Current.GetItems<MapProjectItem>();
+                foreach (var mapProjectItem in mapProjectItems)
+                {
+                    Map map = mapProjectItem.GetMap();
+                    //check for any planet layers
+                    IEnumerable<TiledServiceLayer> tiledServiceLayers = map.GetLayersAsFlattenedList().OfType<TiledServiceLayer>().Where(layer =>
+                        layer.URL.Contains("planet.com") &&
+                        layer.URL.Contains("api_key"));
+                    if (tiledServiceLayers.Count() > 0)
+                    {
+                        MessageBox.Show("Planet layers contain your API key which will be saved within the project. To protect your API key, remove all Planet layers before saving.", "Saving Planet layers");
+                    }
+                }
+            });
         }
 
         /// <summary>
