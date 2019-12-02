@@ -45,7 +45,7 @@ namespace Planet
                 bool didwarn = false;
                 if (Module1.Current.API_KEY != null && Module1.Current.API_KEY.API_KEY_Value != null)
                 {
-                    MessageBox.Show("Please be aware that sharing ArcGIS Pro projects may expose your Planet api key if the projects contains Planet map layers.");
+                    MessageBox.Show("Please be aware that sharing ArcGIS Pro projects may expose your Planet api key if the projects contains Planet imagery.");
                     didwarn = true;
                 }
                 if (!didwarn)
@@ -60,7 +60,7 @@ namespace Planet
                             layer.URL.Contains("api_key"));
                         if (tiledServiceLayers.Count() > 0)
                         {
-                            MessageBox.Show("Planet layers contain your API key which will be saved within the project. To protect your API key, remove all Planet layers before saving.", "Saving Planet layers");
+                            MessageBox.Show("Please be aware that sharing ArcGIS Pro projects may expose your Planet api key if the projects contains Planet imagery", "Saving Planet layers");
                         }
                     }
                 }
@@ -69,17 +69,15 @@ namespace Planet
 
         private void OnProjectClose(ProjectEventArgs obj)
         {
-            hasSettings = false;
-            if (API_KEY != null)
-            {
-                if (!String.IsNullOrEmpty(API_KEY.EMAIL_Value))
-                {
-                    Analytics.Client.Identify(API_KEY.EMAIL_Value, new Traits() { });
-                    MessageBox.Show("Please be aware that sharing ArcGIS Pro projects may expose your Planet api key if the projects contains Planet map layers.");
-                }
-            }
-           
-
+            //hasSettings = false;
+            //if (API_KEY != null)
+            //{
+            //    if (!String.IsNullOrEmpty(API_KEY.EMAIL_Value))
+            //    {
+            //        Analytics.Client.Identify(API_KEY.EMAIL_Value, new Traits() { });
+            //        MessageBox.Show("Please be aware that sharing ArcGIS Pro projects may expose your Planet api key if the projects contains Planet map layers.");
+            //    }
+            //}
         }
 
         private void OnProjectOpen(ProjectEventArgs obj)

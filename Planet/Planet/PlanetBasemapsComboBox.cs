@@ -201,7 +201,14 @@ namespace Planet
             string name = item.Text;
             List<Mosaic> filteredItems = ItemsClean.Where(i => i.name == name).ToList();
             Mosaic mosaic = filteredItems.First();
-            OpenWebMapAsync(mosaic);
+            if (Module1.Current.IsTrial)
+            {
+                ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Basemaps cannot be added to the TOC using trial accounts");
+            }
+            else
+            {
+                OpenWebMapAsync(mosaic);
+            }
             SelectedItem = null;
             // TODO  Code behavior when selection changes.    
         }
@@ -279,8 +286,16 @@ namespace Planet
                         }
                         groupLayer = LayerFactory.Instance.CreateGroupLayer(MapView.Active.Map, targetIndex, layerName);
                     }
-                    BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, groupLayer, 0, mosaic.name);
-                    MapView.Active.ZoomTo(extent, TimeSpan.Zero);
+                    try
+                    {
+                        BasicRasterLayer layer2 = LayerFactory.Instance.CreateRasterLayer(connection, groupLayer, 0, mosaic.name);
+                        MapView.Active.ZoomTo(extent, TimeSpan.Zero);
+                    }
+                    catch (Exception)
+                    {
+                        ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("There is a problem loading the basemap. This is mostly likely due to a permissions issue.");
+                    }
+
                 });
 
             }
