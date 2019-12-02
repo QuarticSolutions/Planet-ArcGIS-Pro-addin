@@ -1,16 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Windows.Input;
 using System.Threading.Tasks;
-using ArcGIS.Core.CIM;
-using ArcGIS.Core.Data;
-using ArcGIS.Core.Geometry;
-using ArcGIS.Desktop.Catalog;
 using ArcGIS.Desktop.Core;
-using ArcGIS.Desktop.Editing;
-using ArcGIS.Desktop.Extensions;
 using ArcGIS.Desktop.Framework;
 using ArcGIS.Desktop.Framework.Contracts;
 using ArcGIS.Desktop.Framework.Dialogs;
@@ -18,7 +10,6 @@ using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
 using ArcGIS.Desktop.Core.Events;
 using System.ComponentModel;
-using System.Net.Http;
 using ArcGIS.Core.Events;
 using Segment;
 using Segment.Model;
@@ -51,12 +42,28 @@ namespace Planet
         {
             return QueuedTask.Run(() =>
             {
+                bool didwarn = false;
                 if (Module1.Current.API_KEY != null && Module1.Current.API_KEY.API_KEY_Value != null)
                 {
                     MessageBox.Show("Please be aware that sharing ArcGIS Pro projects may expose your Planet api key if the projects contains Planet map layers.");
-
+                    didwarn = true;
                 }
-                
+                if (!didwarn)
+                {
+                    var mapProjectItems = Project.Current.GetItems<MapProjectItem>();
+                    foreach (var mapProjectItem in mapProjectItems)
+                    {
+                        Map map = mapProjectItem.GetMap();
+                        //check for any planet layers
+                        IEnumerable<TiledServiceLayer> tiledServiceLayers = map.GetLayersAsFlattenedList().OfType<TiledServiceLayer>().Where(layer =>
+                            layer.URL.Contains("planet.com") &&
+                            layer.URL.Contains("api_key"));
+                        if (tiledServiceLayers.Count() > 0)
+                        {
+                            MessageBox.Show("Planet layers contain your API key which will be saved within the project. To protect your API key, remove all Planet layers before saving.", "Saving Planet layers");
+                        }
+                    }
+                }
             });
         }
 
@@ -79,6 +86,26 @@ namespace Planet
         {
             
         }
+
+        //private async Task OnProjectSaving(ProjectEventArgs obj)
+        //{
+        //    await QueuedTask.Run(() =>
+        //    {
+        //        var mapProjectItems = Project.Current.GetItems<MapProjectItem>();
+        //        foreach (var mapProjectItem in mapProjectItems)
+        //        {
+        //            Map map = mapProjectItem.GetMap();
+        //            //check for any planet layers
+        //            IEnumerable<TiledServiceLayer> tiledServiceLayers = map.GetLayersAsFlattenedList().OfType<TiledServiceLayer>().Where(layer =>
+        //                layer.URL.Contains("planet.com") &&
+        //                layer.URL.Contains("api_key"));
+        //            if (tiledServiceLayers.Count() > 0)
+        //            {
+        //                MessageBox.Show("Planet layers contain your API key which will be saved within the project. To protect your API key, remove all Planet layers before saving.", "Saving Planet layers");
+        //            }
+        //        }
+        //    });
+        //}
 
         /// <summary>
         /// Retrieve the singleton instance to this module here

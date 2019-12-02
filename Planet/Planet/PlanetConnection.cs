@@ -147,6 +147,8 @@ namespace Planet
 
             //remove all planet data from contents
             RemovePlanetLayers();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
 
         private ICommand _clicklogin2;
@@ -267,7 +269,7 @@ namespace Planet
 
                         getkey();
                         //var response = await postResp.Content.ReadAsStringAsync();
-                        Console.WriteLine(result.token);
+                        //Console.WriteLine(result.token);
                     }
 
 
