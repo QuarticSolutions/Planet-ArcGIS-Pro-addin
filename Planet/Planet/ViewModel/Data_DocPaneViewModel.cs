@@ -185,6 +185,9 @@ namespace Planet
                                 else
                                 {
                                     ArcGIS.Desktop.Framework.Dialogs.MessageBox.Show("Error getting past orders, the server returned an error: " + response.ReasonPhrase);
+                                    nextUrl = null;
+                                    return;
+                                    
                                 }
                                 
                             }

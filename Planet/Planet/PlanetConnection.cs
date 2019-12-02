@@ -1,5 +1,8 @@
-﻿using ArcGIS.Desktop.Framework;
+﻿using ArcGIS.Desktop.Core;
+using ArcGIS.Desktop.Framework;
 using ArcGIS.Desktop.Framework.Dialogs;
+using ArcGIS.Desktop.Framework.Threading.Tasks;
+using ArcGIS.Desktop.Mapping;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -105,6 +108,34 @@ namespace Planet
                 return _LogOut;
             }
         }
+        private static async void RemovePlanetLayers()
+        {
+            await QueuedTask.Run(() =>
+            {
+                var mapProjectItems = Project.Current.GetItems<MapProjectItem>();
+                foreach (var mapProjectItem in mapProjectItems)
+                {
+                    Map map = mapProjectItem.GetMap();
+                    //remove planet group layers created by basemaps combobox and daily imagery search
+                    IEnumerable<GroupLayer> groupLayers = map.GetLayersAsFlattenedList().OfType<GroupLayer>().Where(layer => 
+                        layer.Name.Equals(Model.Asset.RootGroup) ||
+                        layer.Name.Equals(Model.Asset.BasemapsGroup));
+                    foreach (GroupLayer groupLayer in groupLayers)
+                    {
+                        map.RemoveLayer(groupLayer);
+                    }
+                    //remove any other planet layers
+                    IEnumerable<TiledServiceLayer> tiledServiceLayers = map.GetLayersAsFlattenedList().OfType<TiledServiceLayer>().Where(layer =>
+                        layer.URL.Contains("planet.com") &&
+                        layer.URL.Contains("api_key"));
+                    foreach(TiledServiceLayer tiledServiceLayer in tiledServiceLayers)
+                    {
+                        map.RemoveLayer(tiledServiceLayer);
+                    }
+                }
+            });
+
+        }
 
         private void DoLogOut()
         {
@@ -113,6 +144,11 @@ namespace Planet
             FrameworkApplication.State.Deactivate("planet_state_connection");
             getkey();
             LoginVisible = true;
+
+            //remove all planet data from contents
+            RemovePlanetLayers();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
 
         private ICommand _clicklogin2;
@@ -233,7 +269,7 @@ namespace Planet
 
                         getkey();
                         //var response = await postResp.Content.ReadAsStringAsync();
-                        Console.WriteLine(result.token);
+                        //Console.WriteLine(result.token);
                     }
 
 
