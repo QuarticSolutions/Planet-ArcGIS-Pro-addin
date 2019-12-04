@@ -62,6 +62,7 @@ namespace Planet.ViewModel
         private static HttpClientHandler _handler = new HttpClientHandler()
         {
             AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            
         };
         private HttpClient _client = new HttpClient(_handler)
         {
@@ -1047,7 +1048,7 @@ namespace Planet.ViewModel
 
                 });
                 
-                using (HttpClient _client = new HttpClient(_handler))
+                using (HttpClient _client = new HttpClient(_handler,false))
                 {
                     _client.BaseAddress = new Uri("https://api.planet.com");
                     HttpClientHandler _handler = new HttpClientHandler()

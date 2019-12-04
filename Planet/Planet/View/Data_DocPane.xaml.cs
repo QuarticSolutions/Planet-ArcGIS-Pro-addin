@@ -65,16 +65,39 @@ namespace Planet
             if (v == "Other Filters" && margin.Left<0)
             {
                 Storyboard sb = Resources["showfilters"] as Storyboard;
+                advancedsearch.Visibility = Visibility.Visible;
                 advancedsearch.HorizontalAlignment = HorizontalAlignment.Stretch;
                 sb.Begin(advancedsearch);
+                
             }
             else if (margin.Left == 0)
             {
                 Storyboard sb = Resources["hidefilters"] as Storyboard;
                 sb.Begin(advancedsearch);
                 advancedsearch.HorizontalAlignment = HorizontalAlignment.Left;
+                advancedsearch.Visibility = Visibility.Collapsed;
             }
 
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            //btn.Command.Execute(btn.CommandParameter);
+            menuslide(btn.Name.ToString(), advancedsearch);
+            
+        }
+
+        private void TabControl_TouchUp(object sender, TouchEventArgs e)
+        {
+            if (sender is TabItem tab)
+            {
+                menuslide(tab.Header.ToString(), advancedsearch);
+            }
+            if (sender is System.Windows.Controls.Grid gd)
+            {
+                menuslide(gd.Name, advancedsearch);
+            }
         }
         //private async void DG_Hyperlink_Click(object sender, RoutedEventArgs e)
         //{

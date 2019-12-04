@@ -144,10 +144,10 @@
                 </Setter>
             </Style>
             <Storyboard x:Key="showfilters">
-                <ThicknessAnimation Storyboard.TargetProperty="Margin" From="-600,0,0,0" To="0,0,0,0" DecelerationRatio=".8" Duration="0:0:.1"/>
+                <ThicknessAnimation Storyboard.TargetProperty="Margin" From="-1800,0,0,0" To="0,0,0,0" DecelerationRatio=".8" Duration="0:0:.1"/>
             </Storyboard>
             <Storyboard x:Key="hidefilters">
-                <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="-600,0,0,0" DecelerationRatio=".8" Duration="0:0:.5"/>
+                <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="-1800,0,0,0" DecelerationRatio=".8" Duration="0:0:.5"/>
             </Storyboard>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -165,7 +165,7 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <TabControl Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <TabControl Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}" TouchUp="TabControl_TouchUp" MouseUp="TabItem_MouseUp">
                         <TabItem Header="Date Acquired" Background="{x:Null}"  Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -304,12 +304,12 @@
 
                     </TabControl>
 
-                    <Grid Grid.Row="2" Margin="5,0,5,5" MouseUp="TabItem_MouseUp" x:Name="OrderButtons">
+                    <Grid Grid.Row="2" Margin="5,0,5,5" MouseUp="TabItem_MouseUp"  x:Name="OrderButtons">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Width="auto" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="22" Content="Search" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center" MouseDown="TabItem_MouseUp" MouseUp="TabItem_MouseUp"/>
+                        <Button Grid.Column="0" Width="auto" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="22" Content="Search" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center" Click="Button_Click" MouseDown="TabItem_MouseUp" MouseUp="TabItem_MouseUp"/>
                         <Button Grid.Column="1" Width="auto" Command="{Binding OrderCommand}" Content="Order"  IsEnabled="{Binding HasSelectedAssets}" Style="{DynamicResource Esri_Button}" Margin="5,0,0,0" VerticalAlignment="Center"  />
                         <!--<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="False">
                             <Label Content="Page Size:" Margin="5,0,0,0" VerticalAlignment="Center" />
@@ -318,8 +318,8 @@
                             </ComboBox>
                         </StackPanel>-->
                     </Grid>
-                    <ScrollViewer Grid.Row="3"  Panel.ZIndex="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" Name="advancedsearch" Margin="-600,10,10,10" HorizontalAlignment="Left">
-                        <StackPanel  Orientation="Vertical" Name="advancedsearchc" HorizontalAlignment="Stretch" Margin="10" Background="{DynamicResource Esri_DialogClientAreaBackgroundBrush}" ScrollViewer.VerticalScrollBarVisibility="Visible" >
+                    <ScrollViewer Grid.Row="3"  Panel.ZIndex="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" Name="advancedsearch" Margin="-1800,0,0,0" HorizontalAlignment="Left" Visibility="Collapsed">
+                        <StackPanel  Orientation="Vertical" Name="advancedsearchc" HorizontalAlignment="Stretch" Margin="5,0,10,0" Background="{DynamicResource Esri_DialogClientAreaBackgroundBrush}" ScrollViewer.VerticalScrollBarVisibility="Visible" >
                             <!--<Label Content="Date Aquired" Background="{DynamicResource Esri_BackgroundPressedBrush}" 
                           Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
                             <Grid Margin="10">
@@ -686,7 +686,7 @@
                                         <ColumnDefinition Width="20*"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Style="{DynamicResource Esri_TextBlockRegular}"  >When active, only images with ground control will be shown</TextBlock>
-                                    <controls1:ToggleSwitch Grid.Row="0"  Grid.Column="1"  CheckedText="" UncheckedText=""  HorizontalAlignment="Right" IsChecked="{Binding GroundCover}"  />
+                                    <CheckBox Grid.Row="0"  Grid.Column="1"   Style="{DynamicResource Esri_CheckboxToggleSwitch}" HorizontalAlignment="Right" IsChecked="{Binding GroundCover}"  />
                                 </Grid>
                             </Grid>
                             <Grid Margin="10">
@@ -705,7 +705,7 @@
                                         <ColumnDefinition Width="20*"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock VerticalAlignment="Stretch" Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Style="{DynamicResource Esri_TextBlockRegular}"  >When active, only display imagery you have access to download</TextBlock>
-                                    <controls1:ToggleSwitch Grid.Row="0"  Grid.Column="1"  CheckedText="" UncheckedText=""  HorizontalAlignment="Right" IsChecked="{Binding PermissionFilter}"  />
+                                    <CheckBox Grid.Row="0"  Grid.Column="1" Style="{DynamicResource Esri_CheckboxToggleSwitch}"   HorizontalAlignment="Right" IsChecked="{Binding PermissionFilter}"  />
                                 </Grid>
                             </Grid>
                         </StackPanel>
@@ -716,7 +716,7 @@
                         <TextBlock Grid.Row="3" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{DynamicResource Esri_TextBlockH3}">Try relaxing your filters, extending the daterange, or searching in another location.</TextBlock>
                     </StackPanel>
 
-                    <TreeView Name="SearchResults" Grid.Row="3" Grid.Column="0" IsEnabled="{Binding TreeEnabled}" ItemsSource="{Binding Items}" Background="{x:Null}" BorderBrush="{x:Null}" >
+                    <TreeView Name="SearchResults" Grid.Row="3" Grid.Column="0" IsEnabled="{Binding TreeEnabled}" ItemsSource="{Binding Items}" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,-1,0" >
                         <TreeView.Resources>
                             <HierarchicalDataTemplate DataType="{x:Type model:AcquiredDateGroup}" ItemsSource="{Binding Items}">
                                 <TextBlock Margin="5,0,0,0" Text="{Binding Path=date}" IsEnabled="{Binding TreeEnabled}">

@@ -1,5 +1,7 @@
-﻿using ArcGIS.Core.Geometry;
+﻿using ArcGIS.Core.CIM;
+using ArcGIS.Core.Geometry;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
+using ArcGIS.Desktop.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +58,16 @@ namespace test_docing_Panel.Models
                     var sr = SpatialReferenceBuilder.CreateSpatialReference(4326);
                     Geometry spurcepolygon = PolygonBuilder.CreatePolygon(vertices, sr).Clone();
                     Polygon interse = (Polygon)GeometryEngine.Instance.Intersection(queryGeom, spurcepolygon);
+                    //if (interse.Parts.Count > 1)
+                    //{
+
+                    //    IDisposable _graphic = null;
+                    //    IDisposable _graph2 = null;
+                    //    CIMPolygonSymbol _polygonSymbol = SymbolFactory.Instance.ConstructPolygonSymbol(ColorFactory.Instance.BlackRGB, SimpleFillStyle.Cross, SymbolFactory.Instance.ConstructStroke(ColorFactory.Instance.BlackRGB, 1.0, SimpleLineStyle.Solid));
+                    //    _graphic = MapView.Active.AddOverlay(interse, _polygonSymbol.MakeSymbolReference());
+                    //    _graphic = MapView.Active.AddOverlay(interse, _polygonSymbol.MakeSymbolReference());
+
+                    //}
                     Polygon source = (Polygon)queryGeom;
                     AreaCover = Math.Round((interse.Area / source.Area) * 100,1,MidpointRounding.AwayFromZero);
 

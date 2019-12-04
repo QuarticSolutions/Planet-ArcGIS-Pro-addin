@@ -1,11 +1,11 @@
 ﻿<ArcGIS defaultAssembly="Planet.dll" defaultNamespace="Planet" xmlns="http://schemas.esri.com/DADF/Registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
-  <AddInInfo id="{232431fe-6db9-4d83-84bc-2ee7d7f55205}" version="2.0.6" desktopVersion="2.2.12813">
+  <AddInInfo id="{232431fe-6db9-4d83-84bc-2ee7d7f55205}" version="3.0.2" desktopVersion="2.2.12813">
     <Name>Planet Basemap Explorer</Name>
     <Description>Toolbar to display and download Planet data</Description>
     <Image>Images\Planet_logo-dark.png</Image>
     <Author>Quartic Solutions</Author>
     <Company>Quartic Solutions</Company>
-    <Date>10/10/2019 08:55:12 AM, 2019</Date>
+    <Date>12/04/2019 12:55:12 AM, 2019</Date>
     <Subject>Framework</Subject>
     <!-- Note subject can be one or more of these topics:
                     Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
