@@ -46,37 +46,53 @@ namespace Planet
 
         private void TabItem_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (sender is TabItem tab)
-            {
-                menuslide(tab.Header.ToString(), advancedsearch);
-            }
-            if (sender is System.Windows.Controls.Grid gd)
-            {
-                menuslide(gd.Name, advancedsearch);
-            }
-            //menuslide(sender., advancedsearch);
+
+
         }
 
         private void menuslide(string v, ScrollViewer advancedsearch)
         {
-            //throw new NotImplementedException();
-            
-            Thickness margin = advancedsearch.Margin;
-            if (v == "Other Filters" && margin.Left<0)
+            if (v=="")
+            {
+                Storyboard sb = Resources["hidefilters"] as Storyboard;
+                sb.Begin(advancedsearch);
+                advancedsearch.HorizontalAlignment = HorizontalAlignment.Left;
+                advancedsearch.Visibility = Visibility.Collapsed;
+                return;
+            }
+            (SearchTabs.SelectedItem as TabItem).Header.ToString();
+            if ((SearchTabs.SelectedItem as TabItem).Header.ToString() == "Other Filters" && advancedsearch.Margin.Left < 0)
             {
                 Storyboard sb = Resources["showfilters"] as Storyboard;
                 advancedsearch.Visibility = Visibility.Visible;
                 advancedsearch.HorizontalAlignment = HorizontalAlignment.Stretch;
                 sb.Begin(advancedsearch);
-                
             }
-            else if (margin.Left == 0)
+            else if ((SearchTabs.SelectedItem as TabItem).Header.ToString() == "Other Filters" && advancedsearch.Margin.Left == 0)
             {
                 Storyboard sb = Resources["hidefilters"] as Storyboard;
                 sb.Begin(advancedsearch);
                 advancedsearch.HorizontalAlignment = HorizontalAlignment.Left;
                 advancedsearch.Visibility = Visibility.Collapsed;
             }
+
+            //Thickness margin = advancedsearch.Margin;
+            ////string tabItem = ((sender as TabControl).SelectedItem as TabItem).Header as string;
+            //if (v == "Other Filters" && margin.Left<0)
+            //{
+            //    Storyboard sb = Resources["showfilters"] as Storyboard;
+            //    advancedsearch.Visibility = Visibility.Visible;
+            //    advancedsearch.HorizontalAlignment = HorizontalAlignment.Stretch;
+            //    sb.Begin(advancedsearch);
+
+            //}
+            //else if (margin.Left == 0)
+            //{
+            //    Storyboard sb = Resources["hidefilters"] as Storyboard;
+            //    sb.Begin(advancedsearch);
+            //    advancedsearch.HorizontalAlignment = HorizontalAlignment.Left;
+            //    advancedsearch.Visibility = Visibility.Collapsed;
+            //}
 
         }
 
@@ -98,6 +114,28 @@ namespace Planet
             {
                 menuslide(gd.Name, advancedsearch);
             }
+        }
+
+        private void MainTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+            string tabItem = ((sender as TabControl).SelectedItem as TabItem).Header as string;
+            //menuslide(tabItem, advancedsearch);
+            if (tabItem == "Other Filters")
+            {
+                Storyboard sb = Resources["showfilters"] as Storyboard;
+                advancedsearch.Visibility = Visibility.Visible;
+                advancedsearch.HorizontalAlignment = HorizontalAlignment.Stretch;
+                sb.Begin(advancedsearch);
+            }
+            else if(advancedsearch.Margin.Left == 0)
+            {
+                Storyboard sb = Resources["hidefilters"] as Storyboard;
+                sb.Begin(advancedsearch);
+                advancedsearch.HorizontalAlignment = HorizontalAlignment.Left;
+                advancedsearch.Visibility = Visibility.Collapsed;
+            }
+            e.Handled = true;
         }
         //private async void DG_Hyperlink_Click(object sender, RoutedEventArgs e)
         //{

@@ -155,7 +155,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TabControl x:Name="MainTabs" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,0,0">
+        <TabControl x:Name="MainTabs" Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,0,0"  >
             <TabItem Style="{DynamicResource MainTabItemStyle}" Header="Search"  Padding="5,0,5,0">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -165,8 +165,8 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <TabControl Grid.Row="0" Background="{x:Null}" BorderBrush="{x:Null}" TouchUp="TabControl_TouchUp" MouseUp="TabItem_MouseUp">
-                        <TabItem Header="Date Acquired" Background="{x:Null}"  Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
+                    <TabControl Grid.Row="0" x:Name="SearchTabs" Background="{x:Null}" BorderBrush="{x:Null}" TouchUp="TabControl_TouchUp"  SelectionChanged="MainTabs_SelectionChanged">
+                        <TabItem Header="Date Acquired" Background="{x:Null}"  Style="{DynamicResource SubTabItemStyle}" >
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
@@ -189,7 +189,7 @@
                                 </Grid>
                             </Grid>
                         </TabItem>
-                        <TabItem Header="Source"  Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
+                        <TabItem Header="Source"  Style="{DynamicResource SubTabItemStyle}">
                             <Grid Margin="0,5" VerticalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
@@ -212,7 +212,7 @@
                                 <CheckBox Grid.Row="2" Grid.Column="1" Padding ="5,0" IsChecked="{Binding ProductSentinel2L1C, Mode=TwoWay}" VerticalAlignment="Center" Height="22" >Sentinel-2 Tile</CheckBox>
                             </Grid>
                         </TabItem>
-                        <TabItem Header="Cloud Cover"  Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
+                        <TabItem Header="Cloud Cover"  Style="{DynamicResource SubTabItemStyle}" >
                             <Grid VerticalAlignment="Center" Margin="0,5">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="56*"/>
@@ -252,7 +252,7 @@
                                 </excd:RangeSlider>
                             </Grid>
                         </TabItem>
-                        <TabItem Header="Area Cover"  Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
+                        <TabItem Header="Area Cover"  Style="{DynamicResource SubTabItemStyle}" >
                             <Grid VerticalAlignment="Center" Margin="0,5">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
@@ -298,7 +298,7 @@
                                 </excd:RangeSlider>
                             </Grid>
                         </TabItem>
-                        <TabItem Header="Other Filters" Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp">
+                        <TabItem Header="Other Filters" Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp" >
 
                         </TabItem>
 
@@ -309,7 +309,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Width="auto" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="22" Content="Search" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center" Click="Button_Click" MouseDown="TabItem_MouseUp" MouseUp="TabItem_MouseUp"/>
+                        <Button Grid.Column="0" Width="auto" Command="{Binding SearchCommand}" IsEnabled="{Binding HasGeom}" Height="22" Content="Search" Style="{DynamicResource Esri_Button}" Margin="0" VerticalAlignment="Center" Click="Button_Click"/>
                         <Button Grid.Column="1" Width="auto" Command="{Binding OrderCommand}" Content="Order"  IsEnabled="{Binding HasSelectedAssets}" Style="{DynamicResource Esri_Button}" Margin="5,0,0,0" VerticalAlignment="Center"  />
                         <!--<StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" IsEnabled="False">
                             <Label Content="Page Size:" Margin="5,0,0,0" VerticalAlignment="Center" />
@@ -898,20 +898,20 @@
                         </TreeView.Resources>
                     </TreeView>
                     <controls:CircularAnimationControl Grid.Row="4" SpeedRatio="0.5" Visibility="{Binding ShowCircularAnimation}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" Foreground="{DynamicResource Esri_TextCaptionActiveBrush}"/>
-                    <Grid Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0">
+                    <Grid Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0" MouseUp="TabItem_MouseUp">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" Orientation="Horizontal" Visibility="{Binding PaginatorVisibility}">
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Visibility="{Binding PaginatorVisibility}" MouseUp="TabItem_MouseUp">
                             <TextBlock Margin="0,0,5,0" VerticalAlignment="Center"  Foreground="{DynamicResource Esri_TextControlBrush}">
                             <Run Text="Page" />
                             <Run Text="{Binding PageNumber}"/>
                             <Run Text="of"/>
                             <Run Text="{Binding PageTotal}"/>
                             </TextBlock>
-                            <Button Command="{Binding GoToPrevPage}" IsEnabled="{Binding IsNotFirstPage}" Style="{DynamicResource Esri_ButtonBackSmall}" HorizontalAlignment="Right" Margin="5" ToolTip="Previous page">
+                            <Button Command="{Binding GoToPrevPage}" IsEnabled="{Binding IsNotFirstPage}" Style="{DynamicResource Esri_ButtonBackSmall}" HorizontalAlignment="Right" Margin="5" ToolTip="Previous page" Click="Button_Click">
                             </Button>
-                            <Button Command="{Binding GoToNextPage}" IsEnabled="{Binding HasNextPage}" Style="{DynamicResource Esri_ButtonForwardSmall}" HorizontalAlignment="Right" Margin="5,0,0,0" ToolTip="Load next page">
+                            <Button Command="{Binding GoToNextPage}" IsEnabled="{Binding HasNextPage}" Style="{DynamicResource Esri_ButtonForwardSmall}" HorizontalAlignment="Right" Margin="5,0,0,0" ToolTip="Load next page" Click="Button_Click" >
                             </Button>
                         </StackPanel>
                     </Grid>
