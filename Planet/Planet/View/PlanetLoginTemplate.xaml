@@ -88,7 +88,7 @@
                     <TextBlock Grid.Row="0" Margin="0,5" TextWrapping="Wrap">Not a member?
                         <Hyperlink  xml:space="preserve"
                             NavigateUri="https://go.planet.com/basemaps-trial-esri"
-                            Command="{Binding OpenHyperlinkCommand}">Sign up
+                            Command="{Binding OpenHyperlinkCommand}">Contact us
                         </Hyperlink>
                         <LineBreak/>
                     </TextBlock>
