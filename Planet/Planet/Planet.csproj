@@ -188,6 +188,7 @@
     <Compile Include="GalleryFilterBox.cs" />
     <Compile Include="GalleryNextButton.cs" />
     <Compile Include="GalleryPrevButton.cs" />
+    <Compile Include="Tools\InformationGallery.cs" />
     <Compile Include="Moasic.cs" />
     <Compile Include="Model\AcquiredDateGroup.cs" />
     <Compile Include="Model\Asset.cs" />
@@ -209,15 +210,12 @@
     <Compile Include="Module1.cs" />
     <Compile Include="PlanetBasemapsComboBox.cs" />
     <Compile Include="PlanetBasemapsLoadMoreButton.cs" />
-    <Compile Include="Tools\btnInfo.cs" />
     <Compile Include="Utils\AnalyticsReporter.cs" />
+    <Compile Include="ViewModel\InformationItem.cs" />
     <Compile Include="ViewModel\OrderWindowViewModel.cs" />
     <Compile Include="ViewModel\Valueconverter.cs" />
     <Compile Include="View\Data_DocPane.xaml.cs">
       <DependentUpon>Data_DocPane.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Information_window.xaml.cs">
-      <DependentUpon>Information_window.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\OrderWindow.xaml.cs">
       <DependentUpon>OrderWindow.xaml</DependentUpon>
@@ -293,10 +291,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\Information_window.xaml">
+    <Resource Include="View\informationItemTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
+    </Resource>
     <Page Include="View\OrderItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

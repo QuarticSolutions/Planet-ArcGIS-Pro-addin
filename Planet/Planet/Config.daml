@@ -65,7 +65,7 @@
           <tool refID="Planet_AOI_Selected" size="large" />
         </group>
         <group id="Planet_Group3" caption="">
-          <button refID="Planet_Tools_btnInfo" size="large" />
+          <gallery refID="Planet_Information" inline="false" size="large" />
         </group>
       </groups>
       <controls>
@@ -118,11 +118,6 @@
         <button id="Planet_PlanetBasemapsLoadMoreButton" condition="planet_condition_isconnected" caption="Load More" className="PlanetBasemapsLoadMoreButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericImport16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericImport32.png">
           <tooltip heading="Load More">Load 10 more basemaps<disabledText /></tooltip>
         </button>
-        <button id="Planet_Tools_btnInfo" caption="Planet Info" className="Planet.Tools.btnInfo" loadOnClick="true" smallImage="Images\Info-Help_Planet.png" largeImage="Images\Info-Help_Planet.png">
-          <tooltip heading="More Information about Planet">
-            <disabledText />
-          </tooltip>
-        </button>
       </controls>
       <galleries>
         <gallery id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Basemap Mosaics" className="PlanetGalleryInline" itemsInRow="5" dataTemplateFile="pack://application:,,,/Planet;component//View/PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
@@ -132,6 +127,11 @@
         <gallery id="Planet_PlanetLogin" caption="Planet Login" className="PlanetLogin" itemsInRow="1" dataTemplateFile="pack://application:,,,/Planet;component//View/PlanetLoginTemplate.xaml" templateID="PlanetLoginItemTemplate" resizable="false" largeImage="Images\Clouddata.png">
           <tooltip heading="Login">
             Open login details panel<disabledText /></tooltip>
+        </gallery>
+        <gallery id="Planet_Information" caption="Planet Info" className="InformationGallery" itemsInRow="1" dataTemplateFile="pack://application:,,,/Planet;component//View/informationItemTemplate.xaml" templateID="PlanetInformationItemTemplate" resizable="false" largeImage="Images\Info-Help_Planet.png">
+          <tooltip heading="Information about Planet">
+            <disabledText />
+          </tooltip>
         </gallery>
       </galleries>
       <panes>
