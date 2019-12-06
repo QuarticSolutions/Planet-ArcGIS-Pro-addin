@@ -188,6 +188,7 @@
     <Compile Include="GalleryFilterBox.cs" />
     <Compile Include="GalleryNextButton.cs" />
     <Compile Include="GalleryPrevButton.cs" />
+    <Compile Include="Tools\InformationGallery.cs" />
     <Compile Include="Moasic.cs" />
     <Compile Include="Model\AcquiredDateGroup.cs" />
     <Compile Include="Model\Asset.cs" />
@@ -210,6 +211,7 @@
     <Compile Include="PlanetBasemapsComboBox.cs" />
     <Compile Include="PlanetBasemapsLoadMoreButton.cs" />
     <Compile Include="Utils\AnalyticsReporter.cs" />
+    <Compile Include="ViewModel\InformationItem.cs" />
     <Compile Include="ViewModel\OrderWindowViewModel.cs" />
     <Compile Include="ViewModel\Valueconverter.cs" />
     <Compile Include="View\Data_DocPane.xaml.cs">
@@ -250,7 +252,9 @@
     <AddInContent Include="DarkImages\GenericButtonYellow32.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -287,6 +291,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Resource Include="View\informationItemTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
     <Page Include="View\OrderItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -398,6 +406,9 @@
     <Folder Include="ArcGIS\Desktop\Framework\" />
   </ItemGroup>
   <ItemGroup>
+    <AddInContent Include="Images\Info-Help_Planet.png" />
+    <Resource Include="DarkImages\Planet_logo-dark.png" />
+    <Resource Include="DarkImages\Planet_logo-dark2.png" />
     <Content Include="libs\Analytics.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

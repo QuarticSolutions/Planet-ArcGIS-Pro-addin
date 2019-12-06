@@ -1,11 +1,11 @@
 ﻿<ArcGIS defaultAssembly="Planet.dll" defaultNamespace="Planet" xmlns="http://schemas.esri.com/DADF/Registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
-  <AddInInfo id="{232431fe-6db9-4d83-84bc-2ee7d7f55205}" version="3.0.2" desktopVersion="2.2.12813">
+  <AddInInfo id="{232431fe-6db9-4d83-84bc-2ee7d7f55205}" version="3.0.3" desktopVersion="2.2.12813">
     <Name>Planet Basemap Explorer</Name>
     <Description>Toolbar to display and download Planet data</Description>
     <Image>Images\Planet_logo-dark.png</Image>
     <Author>Quartic Solutions</Author>
     <Company>Quartic Solutions</Company>
-    <Date>12/04/2019 12:55:12 AM, 2019</Date>
+    <Date>12/06/2019 12:28:56 PM, 2019</Date>
     <Subject>Framework</Subject>
     <!-- Note subject can be one or more of these topics:
                     Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
@@ -35,6 +35,7 @@
         <tab keytip="z1" id="Planet_Tab1" caption="Planet Imagery">
           <group refID="Planet_Group1" />
           <group refID="Planet_Group2" />
+          <group refID="Planet_Group3" />
         </tab>
       </tabs>
       <groups>
@@ -57,10 +58,14 @@
           <!--<button refID="Planet_Data_PocPane2_ShowButton" size="large" />-->
           <!--<button refID="Planet_OrderWindow" size="large" />-->
           <!--<button refID="Planet_GalleryFilterBox" size="large" />-->
+          
         </group>
         <group id="Planet_Group2" caption="Search for Planet Imagery" appearsOnAddInTab="false">
           <tool refID="Planet_AOI_Select" size="large" />
           <tool refID="Planet_AOI_Selected" size="large" />
+        </group>
+        <group id="Planet_Group3" caption="">
+          <gallery refID="Planet_Information" inline="false" size="large" />
         </group>
       </groups>
       <controls>
@@ -104,9 +109,9 @@
         <editBox id="Planet_Gallery_FilterBox" caption="Filter" condition="planet_condition_isconnected" keytip="F" className="GalleryFilterBox" disableIfBusy="false" sizeString="123456789012345">
           <tooltip heading="Filter">
             Filter Basemaps by name
-            <disabledText></disabledText></tooltip>
+            <disabledText>Login to filter</disabledText></tooltip>
         </editBox>
-        <labelControl id="Planet_PlanetBasemaps_Label" condition="planet_condition_isconnected" caption="Planet Basemaps" hasTwoLines="false"/>
+        <labelControl id="Planet_PlanetBasemaps_Label" condition="planet_condition_isconnected" caption="Planet Basemaps" hasTwoLines="false" />
         <comboBox id="Planet_PlanetBasemapsComboBox" condition="planet_condition_isconnected" caption="Basemaps" className="PlanetBasemapsComboBox" itemWidth="180" extendedCaption="Planet Basemaps" isEditable="false" isReadOnly="true" resizable="true">
           <tooltip heading="Planet Basemaps">Planet Basemaps<disabledText /></tooltip>
         </comboBox>
@@ -122,6 +127,11 @@
         <gallery id="Planet_PlanetLogin" caption="Planet Login" className="PlanetLogin" itemsInRow="1" dataTemplateFile="pack://application:,,,/Planet;component//View/PlanetLoginTemplate.xaml" templateID="PlanetLoginItemTemplate" resizable="false" largeImage="Images\Clouddata.png">
           <tooltip heading="Login">
             Open login details panel<disabledText /></tooltip>
+        </gallery>
+        <gallery id="Planet_Information" caption="Planet Info" className="InformationGallery" itemsInRow="1" dataTemplateFile="pack://application:,,,/Planet;component//View/informationItemTemplate.xaml" templateID="PlanetInformationItemTemplate" resizable="false" largeImage="Images\Info-Help_Planet.png">
+          <tooltip heading="Information about Planet">
+            <disabledText />
+          </tooltip>
         </gallery>
       </galleries>
       <panes>

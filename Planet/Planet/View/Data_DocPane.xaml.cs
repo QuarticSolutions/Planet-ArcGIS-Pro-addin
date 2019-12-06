@@ -58,22 +58,28 @@ namespace Planet
                 sb.Begin(advancedsearch);
                 advancedsearch.HorizontalAlignment = HorizontalAlignment.Left;
                 advancedsearch.Visibility = Visibility.Collapsed;
+                if (AllFiltersTabItem.IsSelected == true)
+                {
+                    DateAcquiredTabItem.IsSelected = true;
+                }
                 return;
             }
             (SearchTabs.SelectedItem as TabItem).Header.ToString();
-            if ((SearchTabs.SelectedItem as TabItem).Header.ToString() == "Other Filters" && advancedsearch.Margin.Left < 0)
+            if ((SearchTabs.SelectedItem as TabItem).Header.ToString() == "All Filters" && advancedsearch.Margin.Left < 0)
             {
                 Storyboard sb = Resources["showfilters"] as Storyboard;
                 advancedsearch.Visibility = Visibility.Visible;
                 advancedsearch.HorizontalAlignment = HorizontalAlignment.Stretch;
                 sb.Begin(advancedsearch);
             }
-            else if ((SearchTabs.SelectedItem as TabItem).Header.ToString() == "Other Filters" && advancedsearch.Margin.Left == 0)
+            else if ((SearchTabs.SelectedItem as TabItem).Header.ToString() == "All Filters" && advancedsearch.Margin.Left == 0)
             {
                 Storyboard sb = Resources["hidefilters"] as Storyboard;
                 sb.Begin(advancedsearch);
                 advancedsearch.HorizontalAlignment = HorizontalAlignment.Left;
                 advancedsearch.Visibility = Visibility.Collapsed;
+                DateAcquiredTabItem.IsSelected = true;
+
             }
 
             //Thickness margin = advancedsearch.Margin;
@@ -121,7 +127,7 @@ namespace Planet
             
             string tabItem = ((sender as TabControl).SelectedItem as TabItem).Header as string;
             //menuslide(tabItem, advancedsearch);
-            if (tabItem == "Other Filters")
+            if (tabItem == "All Filters")
             {
                 Storyboard sb = Resources["showfilters"] as Storyboard;
                 advancedsearch.Visibility = Visibility.Visible;

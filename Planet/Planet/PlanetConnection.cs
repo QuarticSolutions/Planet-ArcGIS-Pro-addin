@@ -310,7 +310,7 @@ namespace Planet
 
         private void ExecuteHyperlink()
         {
-            System.Diagnostics.Process.Start("https://go.planet.com/trial");
+            System.Diagnostics.Process.Start("https://www.planet.com/contact/");
         }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)
@@ -367,6 +367,28 @@ namespace Planet
         public void Execute(object parameter)
         {
             _action((PasswordBox)parameter);
+        }
+    }
+    public class CommandHandlerParam : ICommand
+    {
+        private Action<object> _action;
+        private bool _canExecute;
+        public CommandHandlerParam(Action<object> action, bool canExecute)
+        {
+            _action = action;
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return _canExecute;
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public void Execute(object parameter)
+        {
+            _action((object)parameter);
         }
     }
 }
