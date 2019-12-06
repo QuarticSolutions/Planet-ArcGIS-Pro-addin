@@ -35,6 +35,7 @@
         <tab keytip="z1" id="Planet_Tab1" caption="Planet Imagery">
           <group refID="Planet_Group1" />
           <group refID="Planet_Group2" />
+          <group refID="Planet_Group3" />
         </tab>
       </tabs>
       <groups>
@@ -57,10 +58,14 @@
           <!--<button refID="Planet_Data_PocPane2_ShowButton" size="large" />-->
           <!--<button refID="Planet_OrderWindow" size="large" />-->
           <!--<button refID="Planet_GalleryFilterBox" size="large" />-->
+          
         </group>
         <group id="Planet_Group2" caption="Search for Planet Imagery" appearsOnAddInTab="false">
           <tool refID="Planet_AOI_Select" size="large" />
           <tool refID="Planet_AOI_Selected" size="large" />
+        </group>
+        <group id="Planet_Group3" caption="">
+          <button refID="Planet_Tools_btnInfo" size="large" />
         </group>
       </groups>
       <controls>
@@ -104,14 +109,19 @@
         <editBox id="Planet_Gallery_FilterBox" caption="Filter" condition="planet_condition_isconnected" keytip="F" className="GalleryFilterBox" disableIfBusy="false" sizeString="123456789012345">
           <tooltip heading="Filter">
             Filter Basemaps by name
-            <disabledText></disabledText></tooltip>
+            <disabledText>Login to filter</disabledText></tooltip>
         </editBox>
-        <labelControl id="Planet_PlanetBasemaps_Label" condition="planet_condition_isconnected" caption="Planet Basemaps" hasTwoLines="false"/>
+        <labelControl id="Planet_PlanetBasemaps_Label" condition="planet_condition_isconnected" caption="Planet Basemaps" hasTwoLines="false" />
         <comboBox id="Planet_PlanetBasemapsComboBox" condition="planet_condition_isconnected" caption="Basemaps" className="PlanetBasemapsComboBox" itemWidth="180" extendedCaption="Planet Basemaps" isEditable="false" isReadOnly="true" resizable="true">
           <tooltip heading="Planet Basemaps">Planet Basemaps<disabledText /></tooltip>
         </comboBox>
         <button id="Planet_PlanetBasemapsLoadMoreButton" condition="planet_condition_isconnected" caption="Load More" className="PlanetBasemapsLoadMoreButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericImport16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericImport32.png">
           <tooltip heading="Load More">Load 10 more basemaps<disabledText /></tooltip>
+        </button>
+        <button id="Planet_Tools_btnInfo" caption="Planet Info" className="Planet.Tools.btnInfo" loadOnClick="true" smallImage="Images\Info-Help_Planet.png" largeImage="Images\Info-Help_Planet.png">
+          <tooltip heading="More Information about Planet">
+            <disabledText />
+          </tooltip>
         </button>
       </controls>
       <galleries>

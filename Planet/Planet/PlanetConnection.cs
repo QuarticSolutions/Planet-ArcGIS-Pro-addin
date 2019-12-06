@@ -310,7 +310,7 @@ namespace Planet
 
         private void ExecuteHyperlink()
         {
-            System.Diagnostics.Process.Start("https://go.planet.com/trial");
+            System.Diagnostics.Process.Start("https://www.planet.com/contact/");
         }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)
