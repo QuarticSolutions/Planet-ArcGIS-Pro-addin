@@ -166,7 +166,7 @@
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
                     <TabControl Grid.Row="0" x:Name="SearchTabs" Background="{x:Null}" BorderBrush="{x:Null}" TouchUp="TabControl_TouchUp"  SelectionChanged="MainTabs_SelectionChanged">
-                        <TabItem Header="Date Acquired" Background="{x:Null}"  Style="{DynamicResource SubTabItemStyle}" >
+                        <TabItem Header="Date Acquired" Background="{x:Null}"  Style="{DynamicResource SubTabItemStyle}" x:Name="DateAcquiredTabItem">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
@@ -298,8 +298,7 @@
                                 </excd:RangeSlider>
                             </Grid>
                         </TabItem>
-                        <TabItem Header="Other Filters" Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp" >
-
+                        <TabItem Header="All Filters" Style="{DynamicResource SubTabItemStyle}" MouseUp="TabItem_MouseUp" x:Name="AllFiltersTabItem">
                         </TabItem>
 
                     </TabControl>
@@ -319,7 +318,7 @@
                         </StackPanel>-->
                     </Grid>
                     <ScrollViewer Grid.Row="3"  Panel.ZIndex="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" Name="advancedsearch" Margin="-1800,0,0,0" HorizontalAlignment="Left" Visibility="Collapsed">
-                        <StackPanel  Orientation="Vertical" Name="advancedsearchc" HorizontalAlignment="Stretch" Margin="5,0,10,0" Background="{DynamicResource Esri_DialogClientAreaBackgroundBrush}" ScrollViewer.VerticalScrollBarVisibility="Visible" >
+                        <StackPanel  Orientation="Vertical" Name="advancedsearchc" HorizontalAlignment="Stretch" Margin="0" Background="{DynamicResource Esri_DockPaneClientAreaBackgroundBrush}" ScrollViewer.VerticalScrollBarVisibility="Visible" >
                             <!--<Label Content="Date Aquired" Background="{DynamicResource Esri_BackgroundPressedBrush}" 
                           Foreground="{DynamicResource Esri_TextControlBrush}"/>-->
                             <Grid Margin="10">
@@ -328,7 +327,7 @@
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Date Aquired"/>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Text="Date Acquired"/>
                             <Border  BorderThickness="1" Grid.Row="1"   >
                                 <Grid Grid.Row="0" Margin="0,0,0,5">
                                     <Grid.ColumnDefinitions>
@@ -351,7 +350,7 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Sources"/>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Text="Sources"/>
                                 <Grid Grid.Row="1" Margin="0,5" VerticalAlignment="Center">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
@@ -382,7 +381,7 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Area Cover"/>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Text="Area Cover"/>
                                 <Grid Grid.Row="1" VerticalAlignment="Center" Margin="0,5">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
@@ -435,7 +434,7 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Cloud Cover"/>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Text="Cloud Cover"/>
                                 <Grid Grid.Row="1" VerticalAlignment="Center" Margin="0,5">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="56*"/>
@@ -446,7 +445,7 @@
                                         <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Margin="0,0,4.2,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                    <TextBlock Margin="0,0,4.2,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Foreground="{DynamicResource Esri_TextControlBrush}">
                                 <Run Text="{Binding CloudcoverLow}"/>
                                 <Run Text="-"/>
                                 <Run Text="{Binding CloudcoverHigh}"/>
@@ -484,7 +483,7 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextMenuBrush}" Text="Ground sample distance"/>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Text="Ground sample distance"/>
                                 <Grid Grid.Row="1" VerticalAlignment="Center" Margin="0,5">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="56*"/>
@@ -494,7 +493,7 @@
                                         <RowDefinition Height="auto" />
                                         <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
-                                    <TextBlock Margin="0,0,4.2,0" VerticalAlignment="Center" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                    <TextBlock Margin="0,0,4.2,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Foreground="{DynamicResource Esri_TextControlBrush}">
                                 <Run Text="{Binding GroundSampleDistLow}"/>
                                 <Run Text="-"/>
                                 <Run Text="{Binding GroundSampleDistHigh}"/>
@@ -542,8 +541,8 @@
                                         <RowDefinition Height="auto" />
                                         <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
-                                    <TextBlock Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextControlBrush}" Text="Off-nadir angle"/>
-                                    <TextBlock Margin="110,0,4.2,0" VerticalAlignment="Bottom" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                    <TextBlock Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Text="Off-nadir angle"/>
+                                    <TextBlock Margin="110,0,4.2,0" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Foreground="{DynamicResource Esri_TextControlBrush}">
                                 <Run Text="{Binding OffNadireLow}"/>
                                 <Run Text="-"/>
                                 <Run Text="{Binding OffNadireHigh}"/>
@@ -591,8 +590,8 @@
                                         <RowDefinition Height="auto" />
                                         <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
-                                    <TextBlock Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextControlBrush}" Text="Sun azimuth"/>
-                                    <TextBlock Margin="100,0,4.2,0" VerticalAlignment="Bottom" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                    <TextBlock Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Text="Sun azimuth"/>
+                                    <TextBlock Margin="100,0,4.2,0" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Foreground="{DynamicResource Esri_TextControlBrush}">
                                 <Run Text="{Binding SunAzLow}"/>
                                 <Run Text="-"/>
                                 <Run Text="{Binding SunAzHigh}"/>
@@ -639,8 +638,8 @@
                                         <RowDefinition Height="auto" />
                                         <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
-                                    <TextBlock Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextControlBrush}" Text="Sun Elevation"/>
-                                    <TextBlock Margin="100,0,4.2,0" VerticalAlignment="Bottom" Foreground="{DynamicResource Esri_TextControlBrush}" Grid.ColumnSpan="2">
+                                    <TextBlock Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Text="Sun Elevation"/>
+                                    <TextBlock Margin="100,0,4.2,0" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Foreground="{DynamicResource Esri_TextControlBrush}">
                                 <Run Text="{Binding SunElevationHLow}"/>
                                 <Run Text="-"/>
                                 <Run Text="{Binding SunElevationHigh}"/>
@@ -675,7 +674,7 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextControlBrush}" Text="Ground Control"/>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Text="Ground Control"/>
 
                                 <Grid Grid.Row="1" Margin="10">
                                     <Grid.RowDefinitions>
@@ -694,7 +693,7 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Foreground="{DynamicResource Esri_TextControlBrush}" Text="Access Filter"/>
+                                <TextBlock Grid.Row="0" Style="{DynamicResource Esri_TextBlockH2}" Margin="5,0,4.2,0" Text="Access Filter"/>
 
                                 <Grid Grid.Row="1" Margin="10">
                                     <Grid.RowDefinitions>
@@ -713,7 +712,7 @@
                     
                     <StackPanel Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding NoSearchResulrvis}">
                         <TextBlock Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{DynamicResource Esri_TextBlockH1}">Sorry, no results found.</TextBlock>
-                        <TextBlock Grid.Row="3" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{DynamicResource Esri_TextBlockH3}">Try relaxing your filters, extending the daterange, or searching in another location.</TextBlock>
+                        <TextBlock Grid.Row="3" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{DynamicResource Esri_TextBlockH3}">Try relaxing your filters, extending the date range, or searching in another location.</TextBlock>
                     </StackPanel>
 
                     <TreeView Name="SearchResults" Grid.Row="3" Grid.Column="0" IsEnabled="{Binding TreeEnabled}" ItemsSource="{Binding Items}" Background="{x:Null}" BorderBrush="{x:Null}" Margin="0,0,-1,0" >
