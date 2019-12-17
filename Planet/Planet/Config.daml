@@ -48,21 +48,13 @@
           <comboBox refID="Planet_PlanetBasemapsComboBox" />
           <editBox refID="Planet_Gallery_FilterBox" size="middle" />
           <button refID="Planet_PlanetBasemapsLoadMoreButton" size="middle" />
-          <!--<gallery refID="Planet_PlanetGalleryInline" inline="true" size="large" />
-          <button refID="Planet_GalleryNextButton" size="middle" />
-          <button refID="Planet_GalleryPrevButton" size="middle" />
-          <editBox refID="Planet_Gallery_FilterBox" size="middle" />-->
-          <!--<button refID="Planet_LoginDetails_OpenButton" size="large" />-->
           <tool refID="Planet_DownloadData" size="large" />
-          <!--<button refID="Planet_TrialWarning" size="large" />-->
-          <!--<button refID="Planet_Data_PocPane2_ShowButton" size="large" />-->
-          <!--<button refID="Planet_OrderWindow" size="large" />-->
-          <!--<button refID="Planet_GalleryFilterBox" size="large" />-->
-          
+
         </group>
         <group id="Planet_Group2" caption="Search for Planet Imagery" appearsOnAddInTab="false">
           <tool refID="Planet_AOI_Select" size="large" />
           <tool refID="Planet_AOI_Selected" size="large" />
+          <toolPalette size="large" refID="Planet_Tools_SelectionToolPallet" />
         </group>
         <group id="Planet_Group3" caption="">
           <gallery refID="Planet_Information" inline="false" size="large" />
@@ -118,6 +110,15 @@
         <button id="Planet_PlanetBasemapsLoadMoreButton" condition="planet_condition_isconnected" caption="Load More" className="PlanetBasemapsLoadMoreButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericImport16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericImport32.png">
           <tooltip heading="Load More">Load 10 more basemaps<disabledText /></tooltip>
         </button>
+        <tool id="Planet_Tools_SelectionToolPallet_Items_SelectRect" caption="Palette Button 1" className="Planet.Tools.SelectionToolPallet_button1" loadOnClick="true" smallImage="Images\GenericButtonGrey16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/SelectionSelectTool32.png">
+          <tooltip heading="Palette Button 1">ToolTip<disabledText /></tooltip>
+        </tool>
+        <tool id="Planet_Tools_SelectionToolPallet_Items_SelectPoly" caption="Palette Button 2" className="Planet.Tools.SelectionToolPallet_button2" loadOnClick="true" smallImage="Images\GenericButtonGrey16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/SelectionSelectPolygonTool32.png">
+          <tooltip heading="Palette Button 2">ToolTip<disabledText /></tooltip>
+        </tool>
+        <tool id="Planet_Tools_SelectionToolPallet_Items_SelectLasso" caption="Palette Button 3" className="Planet.Tools.SelectionToolPallet_button3" loadOnClick="true" smallImage="Images\GenericButtonGrey16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/SelectionSelectLassoTool32.png">
+          <tooltip heading="Palette Button 3">ToolTip<disabledText /></tooltip>
+        </tool>
       </controls>
       <galleries>
         <gallery id="Planet_PlanetGalleryInline" condition="planet_condition_isconnected" showGroup="true" itemWidth="900" caption="Planet Basemap Mosaics" className="PlanetGalleryInline" itemsInRow="5" dataTemplateFile="pack://application:,,,/Planet;component//View/PlanetGalleryInlineTemplate.xaml" templateID="PlanetGalleryInlineItemTemplate" resizable="true" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonYellow32.png">
@@ -152,6 +153,13 @@
           <button refID="Planet_Data_DocPane_MenuButton" />
         </menu>
       </menus>
+      <palettes>
+        <toolPalette id="Planet_Tools_SelectionToolPallet" caption="SelectionToolPallet" itemsInRow="1" >
+          <tool refID="Planet_Tools_SelectionToolPallet_Items_SelectRect" />
+          <tool refID="Planet_Tools_SelectionToolPallet_Items_SelectPoly" />
+          <tool refID="Planet_Tools_SelectionToolPallet_Items_SelectLasso" />
+        </toolPalette>
+      </palettes>
     </insertModule>
   </modules>
 </ArcGIS>

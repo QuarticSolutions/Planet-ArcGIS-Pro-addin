@@ -210,6 +210,7 @@
     <Compile Include="Module1.cs" />
     <Compile Include="PlanetBasemapsComboBox.cs" />
     <Compile Include="PlanetBasemapsLoadMoreButton.cs" />
+    <Compile Include="Tools\SelectionToolPallet.cs" />
     <Compile Include="Utils\AnalyticsReporter.cs" />
     <Compile Include="ViewModel\InformationItem.cs" />
     <Compile Include="ViewModel\OrderWindowViewModel.cs" />

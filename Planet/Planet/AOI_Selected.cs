@@ -90,7 +90,6 @@ namespace Planet
                {
                    MessageBox.Show("There was an error getting the geometry of the selected shape. Please try your selection again." + Environment.NewLine + "Error: " + ex.Message);
                    Console.WriteLine("Error getting select shape geom");
-                   return;
                }
            });
 
