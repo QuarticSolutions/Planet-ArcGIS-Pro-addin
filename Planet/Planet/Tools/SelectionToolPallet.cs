@@ -24,6 +24,14 @@ namespace Planet.Tools
 
     internal class SelectionToolPallet_button1 : Tool
     {
+        private SubscriptionToken _eventToken = null;
+        public SelectionToolPallet_button1()
+        {
+            if (_eventToken == null) //Subscribe to the selection change event which will fire then the tool has finished executing
+            {
+                _eventToken = MapSelectionChangedEvent.Subscribe(handleSelectionListeners.MapSelectionChangedEventfromclass);
+            }
+        }
         protected override void OnClick()
         {
             // ArcGIS Pro Command's DAML ID. 
@@ -37,7 +45,7 @@ namespace Planet.Tools
                 if (iCommand.CanExecute(null))
                 {
                     iCommand.Execute(null);
-                    MessageBox.Show("Here is my own optional add-on functionality");
+                    //MessageBox.Show("Here is my own optional add-on functionality");
                 }
             }
         }
@@ -45,6 +53,14 @@ namespace Planet.Tools
 
     internal class SelectionToolPallet_button2 : Tool
     {
+        private SubscriptionToken _eventToken = null;
+        public SelectionToolPallet_button2()
+        {
+            if (_eventToken == null) //Subscribe to the selection change event which will fire then the tool has finished executing
+            {
+                _eventToken = MapSelectionChangedEvent.Subscribe(handleSelectionListeners.MapSelectionChangedEventfromclass);
+            }
+        }
         protected override void OnClick()
         {
             // ArcGIS Pro Command's DAML ID. 
@@ -58,7 +74,7 @@ namespace Planet.Tools
                 if (iCommand.CanExecute(null))
                 {
                     iCommand.Execute(null);
-                    MessageBox.Show("Here is my own optional add-on functionality");
+                    //MessageBox.Show("Here is my own optional add-on functionality");
                 }
             }
         }
@@ -66,14 +82,14 @@ namespace Planet.Tools
 
     internal class SelectionToolPallet_button3 : Tool
     {
-        private SubscriptionToken _eventToken = null;
-        public SelectionToolPallet_button3()
-        {
-            if (_eventToken == null) //Subscribe to the selection change event which will fire then the tool has finished executing
-            {
-                _eventToken = MapSelectionChangedEvent.Subscribe(handleSelectionListeners.MapSelectionChangedEventfromclass);
-            }
-        }
+        //private SubscriptionToken _eventToken = null;
+        //public SelectionToolPallet_button3()
+        //{
+        //    if (_eventToken == null) //Subscribe to the selection change event which will fire then the tool has finished executing
+        //    {
+        //        _eventToken = MapSelectionChangedEvent.Subscribe(handleSelectionListeners.MapSelectionChangedEventfromclass);
+        //    }
+        //}
 
 
 
@@ -152,7 +168,28 @@ namespace Planet.Tools
                                 }
                                 else if (layer.ShapeType == esriGeometryType.esriGeometryPoint)
                                 {
+                                    pb.SpatialReference = layer.GetSpatialReference();
+                                    List<MapPoint> pts = new List<MapPoint>();
+                                    foreach (long item in kvp.Value)
+                                    {
 
+                                        MapPoint mp = null;
+                                        var oid = item;
+                                        var oidField = layer.GetTable().GetDefinition().GetObjectIDField();
+                                        var qf = new ArcGIS.Core.Data.QueryFilter() { WhereClause = string.Format("{0} = {1}", oidField, oid) };
+                                        var cursor = layer.Search(qf);
+                                        Feature row = null;
+                                        if (cursor.MoveNext())
+                                            row = cursor.Current as Feature;
+
+                                        if (row == null)
+                                            continue;
+                                        mp = (MapPoint)row.GetShape();
+                                        pts.Add(mp);
+                                    }
+                                    Geometry ptsBuffer = GeometryEngine.Instance.Buffer(pts, 5.0);
+                                    Polygon bufferResult = ptsBuffer as Polygon;
+                                    pb.AddParts(bufferResult.Parts);
                                 }
 
                             }

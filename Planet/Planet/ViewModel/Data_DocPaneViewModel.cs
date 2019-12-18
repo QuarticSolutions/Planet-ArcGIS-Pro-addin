@@ -37,6 +37,9 @@ using Planet.Utils;
 using Segment.Model;
 using System.Threading;
 using System.Windows.Data;
+using ArcGIS.Core.Events;
+using ArcGIS.Desktop.Mapping.Events;
+using Planet.Tools;
 
 namespace Planet
 {
@@ -68,9 +71,13 @@ namespace Planet
         private DateTime _DateTo = DateTime.Now;
         public Data_DocPaneView View { get; set; }
         private bool _hasGeom = false;
-
+        private SubscriptionToken _eventToken = null;
         public  Data_DocPaneViewModel()
         {
+            if (_eventToken == null) //Subscribe to the selection change event which will fire then the tool has finished executing
+            {
+                _eventToken = MapSelectionChangedEvent.Subscribe(handleSelectionListeners.MapSelectionChangedEventfromclass);
+            }
             _selectedAssets.CollectionChanged += _selectedAssets_CollectionChanged;
             //_quickSearchResultsView = CollectionViewSource.GetDefaultView(_quickSearchResults);
             //_quickSearchResultsView.Filter = o =>
